@@ -1,0 +1,433 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 3,
+    "judul_bab": "JavaScript Dasar",
+    "deskripsi": "Materi lengkap JavaScript dari nol — mulai dari cara kerja JS di browser, variabel, tipe data, operator, kondisi, perulangan, fungsi, array, object, manipulasi string, hingga error handling dan debugging.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "MDN Web Docs – Dynamic Scripting with JavaScript",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "The Odin Project – JavaScript Foundations",
+        "url": "https://www.theodinproject.com/paths/foundations/courses/foundations#javascript-basics",
+        "lisensi": "CC-BY-NC-SA 4.0"
+      },
+      {
+        "nama": "javascript.info – The Modern JavaScript Tutorial",
+        "url": "https://javascript.info",
+        "lisensi": "CC-BY-NC-SA 4.0"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+
+  "sub_bab": [
+
+    {
+      "id": "3.1",
+      "judul": "Apa itu JavaScript & Cara Kerjanya",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Pengertian JavaScript",
+          "isi": "JavaScript (sering disingkat JS) adalah bahasa pemrograman yang menjadikan halaman web bisa 'berpikir' dan bereaksi. Jika HTML adalah kerangka dan CSS adalah tampilan, maka JavaScript adalah otak yang membuat semuanya hidup dan interaktif.\n\nBerbeda dengan HTML dan CSS yang bersifat deklaratif (kamu mendeskripsikan apa yang kamu inginkan), JavaScript adalah bahasa pemrograman imperatif — kamu menulis langkah demi langkah instruksi yang harus dieksekusi komputer. Dengan JavaScript kamu bisa:\n\n• Mengubah konten halaman secara dinamis tanpa reload\n• Merespons aksi pengguna seperti klik, scroll, ketikan\n• Memvalidasi form sebelum data dikirim ke server\n• Mengambil data dari server tanpa refresh halaman (AJAX/Fetch)\n• Membuat animasi, game, dan visualisasi interaktif\n• Menyimpan data di browser (localStorage)\n\nJavaScript awalnya hanya berjalan di browser. Namun sejak lahirnya Node.js pada 2009, JavaScript bisa juga berjalan di server — menjadikannya satu-satunya bahasa yang bisa digunakan di front end DAN back end sekaligus."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Cara JavaScript Bekerja di Browser",
+          "isi": "Ketika browser membuka halaman web, ia membaca HTML dari atas ke bawah dan membangun DOM (Document Object Model) — representasi struktur halaman dalam bentuk pohon objek yang bisa dimanipulasi.\n\nKetika browser menemukan tag <script> atau file .js, ia menghentikan proses rendering sejenak, mengunduh script tersebut, lalu JavaScript Engine (mesin JS di browser) mulai mengeksekusi kode baris demi baris.\n\nSetiap browser punya JavaScript engine-nya sendiri:\n• Chrome & Edge — V8 (buatan Google, paling cepat)\n• Firefox — SpiderMonkey\n• Safari — JavaScriptCore (Nitro)\n\nV8 begitu cepat dan efisien sehingga Ryan Dahl menggunakannya sebagai fondasi Node.js — JavaScript untuk server."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Cara Menyisipkan JavaScript ke HTML",
+          "isi": "Ada tiga cara menyisipkan JavaScript ke halaman HTML:\n\n• Inline JS — langsung di atribut event HTML seperti onclick. Sangat tidak disarankan karena mencampur struktur dan logika.\n• Internal JS — di dalam tag <script> di dalam file HTML. Cocok untuk skrip kecil atau eksperimen cepat.\n• Eksternal JS — file .js terpisah yang dihubungkan via atribut src. Ini cara yang direkomendasikan.\n\nUntuk tag <script> eksternal, letakkan di akhir <body> atau gunakan atribut defer di <head> agar HTML selesai diparse terlebih dahulu sebelum script dijalankan. Ini mencegah error saat script mencoba mengakses elemen yang belum ada."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Cara Menyisipkan JavaScript",
+          "bahasa": "html",
+          "kode": "<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n  <!-- Cara 3: Eksternal JS dengan defer (DIREKOMENDASIKAN) -->\n  <script src=\"/js/app.js\" defer></script>\n</head>\n<body>\n  <h1>Halaman Web Saya</h1>\n\n  <!-- Cara 1: Inline JS — HINDARI -->\n  <button onclick=\"alert('Halo!')\">Klik</button>\n\n  <!-- Cara 2: Internal JS -->\n  <script>\n    console.log('Halo dari internal script!');\n    console.log('Ini tampil di DevTools, bukan di halaman.');\n  </script>\n</body>\n</html>",
+          "penjelasan": "Atribut 'defer' membuat browser mengunduh script di latar belakang sambil terus mem-parsing HTML, lalu menjalankan script setelah HTML selesai. Ini lebih baik dari meletakkan script di akhir body."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Diagram Cara Kerja JavaScript di Browser",
+          "src": "/assets/frontend/bab3/bab3_3.1.png",
+          "deskripsi_gambar": "Diagram yang menunjukkan bagaimana browser memproses HTML, CSS, dan JavaScript. HTML membentuk DOM, CSS membentuk CSSOM, JavaScript Engine berinteraksi dengan DOM dan event, kemudian browser membangun render tree dan merender halaman ke layar. Setiap komponen dihubungkan dengan panah yang menunjukkan alur pemrosesan.",
+          "alt": "Diagram alur cara JavaScript bekerja di browser dari HTML parsing hingga manipulasi DOM"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: HTML, CSS, JavaScript seperti Manusia",
+          "isi": "HTML adalah kerangka tulang dan organ — memberi struktur. CSS adalah kulit, pakaian, dan penampilan luar. JavaScript adalah otak dan sistem saraf — memproses informasi, membuat keputusan, dan menggerakkan tubuh sebagai respons terhadap lingkungan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "JavaScript Dibuat dalam 10 Hari",
+          "isi": "Brendan Eich menciptakan JavaScript hanya dalam 10 hari pada Mei 1995 saat bekerja di Netscape. Awalnya bernama Mocha, lalu LiveScript, kemudian berganti nama menjadi JavaScript untuk memanfaatkan popularitas Java saat itu — padahal keduanya hampir tidak ada hubungannya. Keputusan penamaan itu terbilang keputusan marketing, bukan teknis."
+        }
+      ]
+    },
+
+    {
+      "id": "3.2",
+      "judul": "Variabel & Tipe Data",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu Variabel?",
+          "isi": "Variabel adalah wadah bernama untuk menyimpan data di dalam program. Bayangkan variabel seperti kotak berlabel yang bisa menyimpan satu nilai — dan label itulah yang kamu gunakan untuk mengakses atau mengubah nilai di dalamnya kapanpun kamu butuhkan.\n\nJavaScript memiliki tiga kata kunci untuk mendeklarasikan variabel, masing-masing dengan karakteristik berbeda:\n\n• var — cara lama (sebelum ES6/2015). Memiliki function scope, bisa dideklarasikan ulang, dan mengalami 'hoisting'. Hindari penggunaan var di kode modern.\n• let — diperkenalkan ES6. Block scope, tidak bisa dideklarasikan ulang di scope yang sama, tapi nilainya bisa diubah. Gunakan ini untuk variabel yang nilainya akan berubah.\n• const — diperkenalkan ES6. Block scope, tidak bisa dideklarasikan ulang, dan nilainya tidak bisa di-reassign. Gunakan ini sebagai default — kalau ternyata perlu diubah, baru ganti ke let.\n\nAturan penamaan variabel:\n• Hanya boleh mengandung huruf, angka, underscore (_), dan dollar sign ($)\n• Tidak boleh diawali angka\n• Tidak boleh menggunakan reserved words seperti let, if, function\n• JavaScript adalah case-sensitive: namaUser dan NamaUser adalah dua variabel berbeda\n• Konvensi: gunakan camelCase untuk variabel dan fungsi (namaLengkap, totalHarga)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Deklarasi Variabel",
+          "bahasa": "javascript",
+          "kode": "// const: nilai tidak bisa diubah — gunakan sebagai default\nconst namaSitus = 'Web Belajar Informatika';\nconst tahunBerdiri = 2024;\n// namaSitus = 'Ganti'; // ERROR! const tidak bisa di-reassign\n\n// let: nilai bisa diubah\nlet nilaiMahasiswa = 75;\nnilaiMahasiswa = 80;  // OK!\nnilaiMahasiswa += 5;  // Sekarang jadi 85\n\n// var — hindari di kode modern\nvar statusLama = 'aktif';  // Jangan dipakai\n\n// Deklarasi banyak variabel sekaligus\nlet nama = 'Budi', umur = 20, kota = 'Jakarta';\n\n// Variabel tanpa nilai = undefined\nlet belumDiisi;\nconsole.log(belumDiisi);  // undefined",
+          "penjelasan": "Gunakan const secara default. Ganti ke let hanya ketika kamu tahu nilainya akan berubah. Ini membuat kode lebih mudah diprediksi dan lebih aman."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Tipe Data dalam JavaScript",
+          "isi": "JavaScript memiliki 8 tipe data. Tujuh adalah tipe primitif (nilai tunggal yang tidak bisa diubah) dan satu adalah Object (kumpulan data):\n\nTipe Primitif:\n• String — teks, diapit tanda kutip tunggal, ganda, atau backtick: 'halo', \"dunia\", `template`\n• Number — semua angka, baik bulat maupun desimal: 42, 3.14, -100, Infinity, NaN\n• Boolean — hanya dua nilai: true atau false\n• Undefined — variabel yang sudah dideklarasikan tapi belum diberi nilai\n• Null — nilai kosong yang disengaja (berbeda dengan undefined)\n• BigInt — angka integer sangat besar yang melampaui batas Number\n• Symbol — nilai unik yang tidak bisa diduplikasi (jarang dipakai pemula)\n\nTipe Non-Primitif:\n• Object — kumpulan pasangan key-value, termasuk Array, Function, Date, dll.\n\nJavaScript adalah bahasa dinamis (dynamically typed) — tipe variabel ditentukan otomatis oleh nilai yang disimpan, bukan oleh deklarasi. Satu variabel bisa berubah tipe, meskipun ini praktik yang sebaiknya dihindari."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Semua Tipe Data JavaScript",
+          "bahasa": "javascript",
+          "kode": "// String\nconst nama = 'Budi Santoso';\nconst kota = \"Yogyakarta\";\nconst pesan = `Halo, nama saya ${nama}`;  // template literal\n\n// Number\nconst umur = 21;\nconst ipk = 3.75;\nconst suhu = -5;\nconsole.log(10 / 0);   // Infinity\nconsole.log('abc' * 2); // NaN (Not a Number)\n\n// Boolean\nconst sudahLogin = true;\nconst isPremium = false;\n\n// Null vs Undefined\nlet fotoProfil = null;    // sengaja dikosongkan\nlet alamat;               // belum diisi = undefined\n\n// Mengecek tipe data dengan typeof\nconsole.log(typeof nama);        // 'string'\nconsole.log(typeof umur);        // 'number'\nconsole.log(typeof sudahLogin);  // 'boolean'\nconsole.log(typeof alamat);      // 'undefined'\nconsole.log(typeof null);        // 'object' ← bug historis JS!\nconsole.log(typeof [1,2,3]);     // 'object'\nconsole.log(typeof function(){}); // 'function'",
+          "penjelasan": "typeof null mengembalikan 'object' adalah bug terkenal di JavaScript yang tidak bisa diperbaiki karena akan merusak jutaan website yang sudah ada. Ini sudah ada sejak JavaScript dibuat tahun 1995."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Peta Tipe Data JavaScript",
+          "src": "/assets/frontend/bab3/bab3_3.2.png",
+          "deskripsi_gambar":  "Diagram pohon tipe data JavaScript dengan akar 'Data Types in Javascript'.\n\nDiagram terbagi menjadi dua cabang utama:\n• Primitive Data Types\n• Non-Primitive Data Types\n\nPrimitive terdiri dari:\n• Number\n• BigInt\n• String\n• Boolean\n• Null\n• Undefined\n• Symbol\n\nNon-Primitive terdiri dari:\n• Object\n• Array\n• Function\n• Date Object\n• Regular Expression\n\nSetiap kategori ditampilkan dalam warna berbeda dan dihubungkan dengan garis hierarki.",
+          "alt": "Diagram pohon tipe data JavaScript: primitif dan non-primitif"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: const dan let seperti Papan Tulis",
+          "isi": "const seperti tulisan di papan batu (prasasti) — sekali diukir, tidak bisa diubah. let seperti papan tulis whiteboard — mudah dihapus dan ditulis ulang kapanpun. var seperti kertas sticky note tanpa lem yang kuat — mudah jatuh dan menempel di tempat yang tidak terduga (karena function scope dan hoisting)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "NaN adalah Number!",
+          "isi": "Salah satu hal paling membingungkan di JavaScript: NaN (Not a Number) secara mengejutkan memiliki tipe 'number'. typeof NaN === 'number' mengembalikan true. Dan lebih aneh lagi: NaN !== NaN — NaN tidak sama dengan dirinya sendiri! Ini satu-satunya nilai di JavaScript yang tidak sama dengan dirinya sendiri. Untuk mengecek apakah nilai adalah NaN, gunakan Number.isNaN() bukan ===."
+        }
+      ]
+    },
+
+    {
+      "id": "3.3",
+      "judul": "Operator",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Operator dalam JavaScript",
+          "isi": "Operator adalah simbol atau kata kunci yang digunakan untuk melakukan operasi pada satu atau lebih nilai (operand). JavaScript memiliki beberapa kategori operator:\n\nOperator Aritmatika — untuk perhitungan matematika:\n• + penjumlahan (juga untuk menggabungkan string)\n• - pengurangan\n• * perkalian\n• / pembagian\n• % modulus (sisa bagi) — sangat berguna untuk mengecek bilangan genap/ganjil\n• ** eksponensiasi (pangkat)\n• ++ increment (tambah 1)\n• -- decrement (kurang 1)\n\nOperator Perbandingan — menghasilkan boolean:\n• == sama nilai (tapi tidak memeriksa tipe — hindari!)\n• === sama nilai DAN sama tipe (selalu gunakan ini)\n• != tidak sama nilai\n• !== tidak sama nilai atau tipe (selalu gunakan ini)\n• > lebih besar dari\n• < lebih kecil dari\n• >= lebih besar atau sama dengan\n• <= lebih kecil atau sama dengan\n\nOperator Logika — menggabungkan kondisi boolean:\n• && (AND) — true jika SEMUA kondisi true\n• || (OR) — true jika MINIMAL SATU kondisi true\n• ! (NOT) — membalik nilai boolean\n\nOperator Assignment:\n• = assign nilai\n• += tambahkan lalu assign (x += 5 sama dengan x = x + 5)\n• -=, *=, /=, %= — serupa dengan +=\n• ??= assign hanya jika nilai saat ini null atau undefined"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Operator dalam Aksi",
+          "bahasa": "javascript",
+          "kode": "// Aritmatika\nconsole.log(10 + 3);   // 13\nconsole.log(10 % 3);   // 1 (sisa bagi)\nconsole.log(2 ** 8);   // 256 (2 pangkat 8)\nconsole.log('Halo' + ' ' + 'Dunia'); // 'Halo Dunia' (string concatenation)\n\n// Jebakan operator +\nconsole.log('5' + 3);  // '53' (string!), bukan 8!\nconsole.log('5' - 3);  // 2 (number) — minus tidak bisa concat\n\n// Perbandingan: == vs ===\nconsole.log(5 == '5');  // true  — BERBAHAYA, hindari!\nconsole.log(5 === '5'); // false — aman, cek tipe juga\nconsole.log(null == undefined);  // true\nconsole.log(null === undefined); // false\n\n// Logika\nconst umur = 20;\nconst punyaKTP = true;\nconsole.log(umur >= 17 && punyaKTP); // true (AND)\nconsole.log(umur < 17 || punyaKTP);  // true (OR)\nconsole.log(!punyaKTP);              // false (NOT)\n\n// Ternary operator: kondisi ? nilaiJikaTrue : nilaiJikaFalse\nconst status = umur >= 17 ? 'Dewasa' : 'Anak-anak';\nconsole.log(status); // 'Dewasa'\n\n// Nullish coalescing: ?? — gunakan nilai default jika null/undefined\nconst namaUser = null;\nconsole.log(namaUser ?? 'Tamu'); // 'Tamu'",
+          "penjelasan": "Selalu gunakan === dan !== bukan == dan !=. Operator == melakukan type coercion (konversi tipe otomatis) yang sering menghasilkan hasil tak terduga dan bug yang sulit dilacak."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Tabel Operator JavaScript",
+          "src": "/assets/frontend/bab3/bab3_3.3.png",
+          "deskripsi_gambar":  "Tabel dua kolom yang menampilkan kategori operator JavaScript dan simbol operatornya. Kategori yang ditampilkan meliputi Arithmetic, Assignment, String, Comparison, Identity, Logical, dan Bitwise. Setiap baris menunjukkan nama kategori di kolom kiri dan daftar operator terkait di kolom kanan.",
+          "alt": "Tabel kategori operator JavaScript beserta simbol operatornya"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: == vs === seperti KTP",
+          "isi": "Bayangkan kamu mengecek identitas seseorang. Operator == hanya mengecek nama — jika namanya sama, dianggap sama orang, meski NIK berbeda. Operator === mengecek nama DAN NIK — harus keduanya cocok baru dianggap orang yang sama. Jelas === jauh lebih aman."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Modulo untuk Hal Sehari-hari",
+          "isi": "Operator % (modulo) sangat berguna dalam kehidupan nyata: mengecek apakah angka genap (n % 2 === 0), menentukan warna baris tabel bergantian (index % 2), membuat jam yang berputar kembali ke 0 setelah 24 (jam % 24), atau membagi elemen ke dalam kelompok-kelompok. Programmer berpengalaman menggunakan modulo hampir setiap hari."
+        }
+      ]
+    },
+
+    {
+      "id": "3.4",
+      "judul": "Kondisi (if/else & switch)",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Membuat Keputusan dengan Kondisi",
+          "isi": "Kondisi memungkinkan program mengambil keputusan berdasarkan situasi tertentu — menjalankan kode yang berbeda tergantung apakah sebuah kondisi bernilai true atau false. Inilah yang membuat program 'pintar' dan bisa merespons input yang berbeda-beda.\n\nJavaScript memiliki beberapa cara membuat percabangan kondisi:\n\n• if — blok kode dijalankan jika kondisi true\n• else — blok kode dijalankan jika kondisi if-nya false\n• else if — menambah kondisi alternatif di antara if dan else\n• switch — membandingkan satu nilai dengan banyak kemungkinan (lebih rapi dari if/else if berantai)\n• Ternary operator — versi singkat if/else untuk kondisi sederhana (sudah dibahas di sub-bab Operator)\n\nKonsep penting yang berkaitan erat dengan kondisi adalah truthy dan falsy. Di JavaScript, tidak hanya nilai true dan false yang bisa digunakan sebagai kondisi — semua nilai memiliki sifat 'kebenaran':\n\nNilai yang FALSY (dianggap false dalam kondisi):\n• false\n• 0 dan -0\n• '' atau \"\" (string kosong)\n• null\n• undefined\n• NaN\n\nSemua nilai lainnya dianggap TRUTHY — termasuk string '0', string 'false', array kosong [], dan object kosong {}."
+        },
+        {
+          "tipe": "kode",
+          "judul": "if/else dan switch",
+          "bahasa": "javascript",
+          "kode": "// if / else if / else\nconst nilai = 78;\n\nif (nilai >= 90) {\n  console.log('Grade A — Sangat Baik');\n} else if (nilai >= 80) {\n  console.log('Grade B — Baik');\n} else if (nilai >= 70) {\n  console.log('Grade C — Cukup');  // ← ini yang dijalankan\n} else if (nilai >= 60) {\n  console.log('Grade D — Kurang');\n} else {\n  console.log('Grade E — Tidak Lulus');\n}\n\n// switch — lebih rapi untuk banyak kemungkinan nilai yang pasti\nconst hari = 'Senin';\n\nswitch (hari) {\n  case 'Senin':\n  case 'Selasa':\n  case 'Rabu':\n  case 'Kamis':\n  case 'Jumat':\n    console.log('Hari kerja');\n    break;  // WAJIB! tanpa break, eksekusi lanjut ke case berikutnya\n  case 'Sabtu':\n  case 'Minggu':\n    console.log('Akhir pekan!');\n    break;\n  default:\n    console.log('Hari tidak dikenal');\n}\n\n// Truthy & Falsy dalam kondisi\nconst username = '';  // string kosong = falsy\nif (username) {\n  console.log(`Halo, ${username}!`);\n} else {\n  console.log('Silakan login terlebih dahulu');\n}\n\n// Optional chaining: akses property yang mungkin null/undefined\nconst user = null;\nconsole.log(user?.nama ?? 'Nama tidak tersedia');",
+          "penjelasan": "Jangan lupa break di setiap case switch! Tanpa break, JavaScript akan terus mengeksekusi case berikutnya (disebut 'fall-through'). Kadang ini disengaja untuk mengelompokkan case seperti contoh Senin-Jumat di atas."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Flowchart Percabangan if/else",
+          "src": "/assets/frontend/bab3/bab3_3.4.png",
+          "deskripsi_gambar": "Flowchart diagram percabangan: kotak persegi panjang 'Mulai' → belah ketupat 'Kondisi?' → cabang 'true' ke kotak 'Jalankan Blok if' → 'Selesai'. Cabang 'false' → belah ketupat 'Kondisi else if?' → cabang 'true' ke kotak 'Jalankan else if' → 'Selesai'. Cabang 'false' → kotak 'Jalankan else' → 'Selesai'. Warna: hijau untuk true, merah untuk false.",
+          "alt": "Flowchart percabangan if/else if/else dalam JavaScript"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: if/else seperti Mesin ATM",
+          "isi": "Mesin ATM bekerja persis seperti if/else: IF saldo >= jumlah tarik → berikan uang, ELSE IF kartu masih berlaku → tampilkan pesan saldo tidak cukup, ELSE → telan kartu dan hubungi bank. Setiap keputusan berdasarkan kondisi yang berbeda menghasilkan aksi yang berbeda pula."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Array Kosong adalah Truthy!",
+          "isi": "Ini mengejutkan banyak pemula: [] (array kosong) dan {} (object kosong) adalah TRUTHY di JavaScript. Jadi if ([]) { console.log('truthy!') } akan mencetak 'truthy!'. Untuk mengecek apakah array benar-benar kosong, gunakan array.length === 0, bukan if (array)."
+        }
+      ]
+    },
+
+    {
+      "id": "3.5",
+      "judul": "Perulangan (Loop)",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Perulangan Penting?",
+          "isi": "Perulangan (loop) memungkinkan kita menjalankan blok kode yang sama berkali-kali tanpa harus menuliskannya berulang kali. Bayangkan harus menampilkan 1000 item dari database — tanpa loop, kamu harus menulis 1000 baris kode yang hampir identik.\n\nJavaScript menyediakan beberapa jenis loop:\n\n• for loop — loop dengan jumlah iterasi yang sudah diketahui. Paling banyak digunakan.\n• while loop — loop yang terus berjalan selama kondisi true. Cocok ketika jumlah iterasi tidak diketahui.\n• do...while loop — seperti while, tapi blok kode PASTI dijalankan minimal sekali sebelum kondisi dicek.\n• for...of loop — iterasi langsung atas nilai-nilai dalam iterable (Array, String, Set, Map). Lebih bersih dari for biasa untuk array.\n• for...in loop — iterasi atas property-property sebuah object.\n\nDua kata kunci penting dalam loop:\n• break — menghentikan loop sepenuhnya\n• continue — melewati iterasi saat ini dan lanjut ke iterasi berikutnya"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Semua Jenis Loop JavaScript",
+          "bahasa": "javascript",
+          "kode": "// for loop: paling umum\nfor (let i = 1; i <= 5; i++) {\n  console.log(`Iterasi ke-${i}`);\n}\n// Output: Iterasi ke-1, ke-2, ke-3, ke-4, ke-5\n\n// Contoh nyata: hitung total belanja\nconst harga = [15000, 25000, 8000, 42000];\nlet total = 0;\nfor (let i = 0; i < harga.length; i++) {\n  total += harga[i];\n}\nconsole.log(`Total: Rp${total}`); // Total: Rp90000\n\n// for...of: lebih bersih untuk iterasi array\nconst buah = ['Mangga', 'Apel', 'Pisang', 'Jeruk'];\nfor (const item of buah) {\n  console.log(`🍎 ${item}`);\n}\n\n// while loop: jalankan selama kondisi true\nlet stok = 5;\nwhile (stok > 0) {\n  console.log(`Stok tersisa: ${stok}`);\n  stok--;\n}\n\n// break: hentikan loop lebih awal\nfor (let i = 0; i < 10; i++) {\n  if (i === 5) break;  // berhenti di i=5\n  console.log(i);      // hanya tampil 0,1,2,3,4\n}\n\n// continue: lewati iterasi tertentu\nfor (let i = 1; i <= 10; i++) {\n  if (i % 2 === 0) continue;  // lewati angka genap\n  console.log(i);  // hanya angka ganjil: 1,3,5,7,9\n}\n\n// for...in: iterasi property object\nconst mahasiswa = { nama: 'Budi', nim: '2021001', ipk: 3.75 };\nfor (const key in mahasiswa) {\n  console.log(`${key}: ${mahasiswa[key]}`);\n}",
+          "penjelasan": "Untuk iterasi array, for...of jauh lebih bersih dan mudah dibaca daripada for biasa. Gunakan for biasa hanya ketika kamu benar-benar butuh index (i). Gunakan for...in hanya untuk object, bukan array."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Flowchart for Loop",
+          "src": "/assets/frontend/bab3/bab3_3.5.png",
+          "deskripsi_gambar": "Flowchart loop: kotak 'Inisialisasi (let i=0)' → belah ketupat 'Kondisi (i < n)?' → true → kotak 'Jalankan Blok Kode' → kotak 'Update (i++)' → kembali ke belah ketupat. False → 'Keluar Loop'. Panah membentuk lingkaran. Warna hijau untuk alur true, merah untuk exit.",
+          "alt": "Flowchart cara kerja for loop dengan inisialisasi, kondisi, eksekusi, dan update"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Loop seperti Mesin Cuci",
+          "isi": "Mesin cuci melakukan siklus yang sama berulang kali: basahi → sabuni → kucek → bilas → ulangi. for loop seperti menetapkan jumlah siklus di awal ('cuci 3 kali'). while loop seperti mode 'cuci sampai bersih' — terus berulang sampai kondisi terpenuhi."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Infinite Loop: Musuh atau Teman?",
+          "isi": "Infinite loop (loop tanpa akhir) biasanya adalah bug yang ditakuti programmer karena membuat browser atau program hang. Tapi ada kasus di mana infinite loop disengaja: game loop berjalan terus sampai player keluar, server web terus mendengarkan request, atau UI terus merender frame animasi. Kuncinya adalah ada mekanisme keluar yang terkontrol."
+        }
+      ]
+    },
+
+    {
+      "id": "3.6",
+      "judul": "Fungsi (Function)",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Fungsi: Blok Kode yang Bisa Dipanggil Ulang",
+          "isi": "Fungsi adalah blok kode yang diberi nama dan bisa dipanggil (dieksekusi) kapanpun dibutuhkan, sebanyak apapun. Fungsi adalah konsep terpenting dalam JavaScript — hampir seluruh kode JavaScript yang nyata tersusun dari fungsi.\n\nMengapa fungsi sangat penting?\n• Reusability — tulis sekali, pakai berkali-kali di mana saja\n• Readability — kode terbagi menjadi bagian-bagian kecil yang mudah dipahami\n• Maintainability — perubahan cukup dilakukan di satu tempat\n• Abstraction — sembunyikan detail implementasi, hanya tampilkan antarmuka\n\nKonsep penting dalam fungsi:\n• Parameter — variabel yang menjadi 'pintu masuk' data ke fungsi (didefinisikan saat fungsi dibuat)\n• Argumen — nilai aktual yang dikirim saat fungsi dipanggil\n• Return value — nilai yang dikembalikan fungsi kepada pemanggilnya\n• Scope — variabel yang didefinisikan di dalam fungsi hanya bisa diakses di dalam fungsi tersebut\n\nJavaScript memiliki tiga cara utama mendefinisikan fungsi, masing-masing dengan karakteristik berbeda."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Tiga Cara Mendefinisikan Fungsi",
+          "bahasa": "javascript",
+          "kode": "// 1. Function Declaration — bisa dipanggil sebelum didefinisikan (hoisting)\nfunction hitungLuas(panjang, lebar) {\n  const luas = panjang * lebar;\n  return luas;  // kembalikan nilai ke pemanggil\n}\nconsole.log(hitungLuas(5, 3)); // 15\n\n// 2. Function Expression — disimpan ke variabel, tidak di-hoist\nconst hitungKeliling = function(panjang, lebar) {\n  return 2 * (panjang + lebar);\n};\nconsole.log(hitungKeliling(5, 3)); // 16\n\n// 3. Arrow Function — sintaks ringkas, diperkenalkan ES6\nconst kuadrat = (n) => n * n;         // satu expression, no return needed\nconst kali = (a, b) => a * b;\nconst sapa = nama => `Halo, ${nama}!`; // satu parameter, no parentheses\n\nconsole.log(kuadrat(7));   // 49\nconsole.log(sapa('Budi')); // 'Halo, Budi!'\n\n// Default parameter: nilai default jika argumen tidak dikirim\nfunction buat_sambutan(nama = 'Tamu', gelar = 'Sdr.') {\n  return `Selamat datang, ${gelar} ${nama}!`;\n}\nconsole.log(buat_sambutan());           // 'Selamat datang, Sdr. Tamu!'\nconsole.log(buat_sambutan('Budi', 'Dr.')); // 'Selamat datang, Dr. Budi!'\n\n// Rest parameter: terima jumlah argumen tidak terbatas\nfunction jumlahkan(...angka) {\n  return angka.reduce((total, n) => total + n, 0);\n}\nconsole.log(jumlahkan(1, 2, 3, 4, 5)); // 15",
+          "penjelasan": "Arrow function tidak hanya lebih singkat — ia juga memiliki perilaku 'this' yang berbeda dari function biasa. Ini penting ketika bekerja dengan object dan class, yang akan dibahas di sub-bab berikutnya."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Scope dan Closure",
+          "isi": "Scope menentukan di mana variabel bisa diakses. JavaScript memiliki tiga level scope:\n\n• Global scope — variabel di luar semua fungsi, bisa diakses dari mana saja. Hindari variabel global terlalu banyak.\n• Function scope — variabel di dalam fungsi, hanya bisa diakses dari dalam fungsi tersebut.\n• Block scope — variabel let dan const di dalam blok { }, hanya bisa diakses dalam blok tersebut.\n\nClosure adalah konsep yang lahir dari scope: fungsi yang 'mengingat' variabel dari scope tempat ia dibuat, bahkan setelah scope tersebut selesai dieksekusi. Ini adalah salah satu fitur paling powerful sekaligus paling membingungkan di JavaScript."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Diagram Scope JavaScript",
+          "src": "/assets/frontend/bab3/bab3_3.6.png",
+          "deskripsi_gambar": "Diagram lingkaran bersarang yang menunjukkan hierarki scope dalam JavaScript. Lingkaran terluar mewakili Global Scope, di dalamnya terdapat Function Scope, kemudian Block Scope, dan bagian terdalam berisi kode yang dieksekusi. Diagram memperlihatkan bahwa scope yang lebih dalam berada di dalam scope yang lebih luas.",
+          "alt": "Diagram lingkaran bersarang yang menunjukkan Global Scope, Function Scope, dan Block Scope dalam JavaScript"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Fungsi seperti Resep Masakan",
+          "isi": "Resep adalah instruksi yang bisa digunakan berulang kali. Parameter adalah bahan-bahan yang kamu masukkan (bisa diganti tiap kali masak). Return value adalah hidangan yang dihasilkan. Scope seperti dapur — bahan di dalam dapur hanya bisa dipakai di dapur itu, tidak bisa dibawa ke dapur tetangga begitu saja."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Fungsi adalah First-Class Citizen",
+          "isi": "Di JavaScript, fungsi adalah 'first-class citizen' — artinya fungsi bisa diperlakukan seperti nilai biasa: disimpan ke variabel, dikirim sebagai argumen ke fungsi lain, dikembalikan dari fungsi, bahkan disimpan dalam array atau object. Inilah yang memungkinkan pola pemrograman fungsional di JavaScript, seperti penggunaan map(), filter(), dan reduce() yang akan kita bahas di sub-bab Array."
+        }
+      ]
+    },
+
+    {
+      "id": "3.7",
+      "judul": "Array",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Array: Koleksi Data Berurutan",
+          "isi": "Array adalah struktur data yang menyimpan kumpulan nilai dalam satu variabel, tersusun secara berurutan dan dapat diakses menggunakan indeks numerik yang dimulai dari 0 (bukan 1!).\n\nArray sangat berguna ketika kamu punya kumpulan data sejenis: daftar nama mahasiswa, nilai ujian, daftar produk, dan lain-lain. Tanpa array, kamu harus membuat variabel terpisah untuk setiap item.\n\nKarakteristik array di JavaScript:\n• Dinamis — ukurannya tidak perlu dideklarasikan, bisa tumbuh atau menyusut\n• Mixed type — bisa menyimpan tipe data berbeda dalam satu array (meski ini jarang praktis)\n• Zero-indexed — elemen pertama ada di indeks 0, bukan 1\n• Reference type — array adalah object, sehingga disalin by reference bukan by value\n\nProperty dan method penting yang wajib dikuasai:\n\nProperty:\n• .length — jumlah elemen dalam array\n\nMethod mengubah array asli (mutating):\n• .push(item) — tambah elemen di akhir\n• .pop() — hapus dan kembalikan elemen terakhir\n• .unshift(item) — tambah elemen di awal\n• .shift() — hapus dan kembalikan elemen pertama\n• .splice(index, count) — hapus atau sisipkan elemen di posisi tertentu\n• .sort() — urutkan elemen (hati-hati dengan angka!)\n• .reverse() — balik urutan elemen\n\nMethod menghasilkan array baru (non-mutating — lebih aman):\n• .map(fn) — transformasi setiap elemen, hasilkan array baru\n• .filter(fn) — saring elemen yang memenuhi kondisi\n• .find(fn) — cari elemen pertama yang memenuhi kondisi\n• .findIndex(fn) — cari indeks elemen pertama yang memenuhi kondisi\n• .reduce(fn, initial) — akumulasi semua elemen menjadi satu nilai\n• .slice(start, end) — ambil potongan array\n• .concat(arr) — gabungkan dua array\n• .flat() — ratakan array bersarang\n\nMethod menghasilkan nilai lain:\n• .forEach(fn) — iterasi setiap elemen (seperti for...of tapi functional)\n• .includes(item) — cek apakah item ada dalam array\n• .indexOf(item) — cari posisi item\n• .join(separator) — gabungkan semua elemen menjadi string\n• .every(fn) — true jika SEMUA elemen memenuhi kondisi\n• .some(fn) — true jika MINIMAL SATU elemen memenuhi kondisi"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Array dan Method-Method Pentingnya",
+          "bahasa": "javascript",
+          "kode": "// Membuat array\nconst nilai = [75, 82, 90, 68, 95, 71];\nconst buah = ['Mangga', 'Apel', 'Pisang'];\n\n// Mengakses elemen (zero-indexed)\nconsole.log(nilai[0]);  // 75 (pertama)\nconsole.log(nilai[nilai.length - 1]); // 71 (terakhir)\n\n// Menambah & menghapus\nbuah.push('Jeruk');        // ['Mangga', 'Apel', 'Pisang', 'Jeruk']\nbuah.pop();                // hapus 'Jeruk'\nbuah.unshift('Semangka');  // tambah di awal\n\n// map: transformasi setiap elemen → array baru\nconst nilaiPlusBonus = nilai.map(n => n + 5);\nconsole.log(nilaiPlusBonus); // [80, 87, 95, 73, 100, 76]\n\n// filter: saring elemen yang memenuhi kondisi\nconst lulusUjian = nilai.filter(n => n >= 75);\nconsole.log(lulusUjian); // [75, 82, 90, 95]\n\n// find: cari elemen pertama yang memenuhi kondisi\nconst nilaiPertamaDiAtas90 = nilai.find(n => n > 90);\nconsole.log(nilaiPertamaDiAtas90); // 95\n\n// reduce: akumulasi → satu nilai\nconst totalNilai = nilai.reduce((akum, n) => akum + n, 0);\nconst rataRata = totalNilai / nilai.length;\nconsole.log(`Rata-rata: ${rataRata}`); // Rata-rata: 80.17\n\n// includes & indexOf\nconsole.log(buah.includes('Apel')); // true\nconsole.log(buah.indexOf('Apel')); // 1\n\n// Spread operator: salin atau gabung array\nconst nilaiTambahan = [88, 77];\nconst semuaNilai = [...nilai, ...nilaiTambahan];\nconsole.log(semuaNilai); // [75, 82, 90, 68, 95, 71, 88, 77]\n\n// Destructuring array\nconst [pertama, kedua, ...sisanya] = nilai;\nconsole.log(pertama); // 75\nconsole.log(kedua);   // 82\nconsole.log(sisanya); // [90, 68, 95, 71]",
+          "penjelasan": "map, filter, dan reduce adalah tiga method paling powerful dan paling sering dipakai dalam JavaScript modern. Kuasai ketiganya dan kamu bisa menggantikan hampir semua loop manual dengan kode yang lebih bersih dan ekspresif."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Visualisasi Cara Kerja map, filter, reduce",
+          "src": "/assets/frontend/bab3/bab3_3.7.png",
+          "deskripsi_gambar":  "Tiga ilustrasi berdampingan yang menjelaskan method map, filter, dan reduce pada array JavaScript.\n\nBagian map menunjukkan setiap elemen array diubah menjadi nilai baru.\n\nBagian filter menunjukkan hanya elemen yang memenuhi kondisi tertentu yang dipertahankan.\n\nBagian reduce menunjukkan banyak elemen array digabungkan menjadi satu hasil akhir.\n\nPanah atau ilustrasi visual digunakan untuk menunjukkan proses transformasi data.",
+          "alt": "Diagram cara kerja map, filter, dan reduce pada JavaScript array"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: map, filter, reduce seperti Pabrik",
+          "isi": "Bayangkan conveyor belt pabrik. map seperti mesin yang mengubah setiap produk (cat semua kotak menjadi merah). filter seperti petugas quality control yang hanya meloloskan produk yang memenuhi standar (buang yang cacat). reduce seperti mesin pengepak yang mengumpulkan semua produk menjadi satu palet besar."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Array Bukan Array yang 'Murni'",
+          "isi": "Di JavaScript, Array sebenarnya adalah Object khusus. typeof [] mengembalikan 'object', bukan 'array'. Untuk mengecek apakah sesuatu adalah array, gunakan Array.isArray(nilai). Indeks array (0, 1, 2...) sebenarnya adalah property string dari object tersebut — JavaScript hanya membuat kita seolah menggunakan angka."
+        }
+      ]
+    },
+
+    {
+      "id": "3.8",
+      "judul": "Object",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Object: Kumpulan Data Terstruktur",
+          "isi": "Object adalah struktur data yang menyimpan kumpulan pasangan key-value (kunci-nilai). Berbeda dengan array yang menggunakan indeks angka, object menggunakan nama (key/property) untuk mengakses nilainya. Object sangat cocok untuk merepresentasikan entitas dunia nyata yang punya banyak atribut.\n\nSetiap pair key-value dalam object disebut property. Value dari property bisa berupa tipe data apapun — string, number, boolean, array, object lain, bahkan fungsi. Ketika sebuah fungsi adalah property dari object, ia disebut method.\n\nCara mengakses property object:\n• Dot notation: mahasiswa.nama — lebih bersih, dipakai ketika nama property sudah diketahui\n• Bracket notation: mahasiswa['nama'] — dipakai ketika nama property disimpan dalam variabel atau mengandung spasi/karakter khusus\n\nFitur modern yang sangat berguna:\n• Object destructuring — ekstrak beberapa property sekaligus ke variabel terpisah\n• Spread operator {...obj} — salin atau gabungkan object\n• Object shorthand — jika nama variabel sama dengan nama key, cukup tulis sekali\n• Computed property names — nama key dari variabel atau ekspresi"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Object: Membuat, Mengakses, dan Memanipulasi",
+          "bahasa": "javascript",
+          "kode": "// Membuat object\nconst mahasiswa = {\n  nama: 'Siti Rahayu',\n  nim: '2021002',\n  jurusan: 'Teknik Informatika',\n  ipk: 3.85,\n  hobi: ['Coding', 'Membaca', 'Hiking'],\n  alamat: {\n    kota: 'Bandung',\n    provinsi: 'Jawa Barat'\n  },\n  // Method: fungsi sebagai property\n  perkenalan() {\n    return `Halo, saya ${this.nama} dari ${this.jurusan}`;\n  }\n};\n\n// Mengakses property\nconsole.log(mahasiswa.nama);           // 'Siti Rahayu'\nconsole.log(mahasiswa['ipk']);          // 3.85\nconsole.log(mahasiswa.alamat.kota);    // 'Bandung'\nconsole.log(mahasiswa.hobi[0]);        // 'Coding'\nconsole.log(mahasiswa.perkenalan());   // 'Halo, saya Siti Rahayu...'\n\n// Menambah & mengubah property\nmahasiswa.email = 'siti@email.com';    // tambah property baru\nmahasiswa.ipk = 3.90;                  // ubah nilai\n\n// Menghapus property\ndelete mahasiswa.hobi;\n\n// Destructuring object\nconst { nama, jurusan, ipk } = mahasiswa;\nconsole.log(nama);    // 'Siti Rahayu'\nconsole.log(jurusan); // 'Teknik Informatika'\n\n// Destructuring dengan rename\nconst { nama: namaLengkap, ipk: nilaiIPK } = mahasiswa;\nconsole.log(namaLengkap); // 'Siti Rahayu'\n\n// Spread operator: salin object\nconst mahasiswaUpdate = { ...mahasiswa, ipk: 3.95, angkatan: 2021 };\n\n// Object.keys, Object.values, Object.entries\nconsole.log(Object.keys(mahasiswa));    // ['nama', 'nim', 'jurusan', ...]\nconsole.log(Object.values(mahasiswa));  // ['Siti Rahayu', '2021002', ...]\nconsole.log(Object.entries(mahasiswa)); // [['nama', 'Siti Rahayu'], ...]\n\n// Shorthand property\nconst kota = 'Jakarta';\nconst umur = 22;\nconst profil = { kota, umur }; // sama dengan { kota: kota, umur: umur }\nconsole.log(profil); // { kota: 'Jakarta', umur: 22 }",
+          "penjelasan": "Object.entries() sangat berguna untuk iterasi object sekaligus mendapatkan key dan value-nya: Object.entries(obj).forEach(([key, val]) => console.log(key, val))."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Visualisasi Struktur Object JavaScript",
+          "src": "/assets/frontend/bab3/bab3_3.8.png",
+          "deskripsi_gambar":   "Diagram object JavaScript yang menampilkan pasangan key dan value. Beberapa property memiliki value berupa string, number, array, object, dan function (method).",
+          "alt": "Diagram struktur object JavaScript yang menampilkan property, value, nested object, array, dan method"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Object seperti KTP",
+          "isi": "KTP adalah object dalam kehidupan nyata. Setiap field di KTP (NIK, Nama, Tempat Lahir, Tanggal Lahir, Alamat, Pekerjaan) adalah property dengan nilai masing-masing. Kamu mengakses informasi seseorang dengan menyebut field-nya: 'Berapa NIK kamu?' bukan 'Berapa data ke-3 kamu?'"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Hampir Segalanya adalah Object",
+          "isi": "Di JavaScript, hampir semua tipe data non-primitif adalah object: Array adalah object, Function adalah object, Date adalah object, RegExp adalah object, bahkan null secara historis dianggap object (meski ini bug). Inilah mengapa JavaScript sering disebut bahasa berbasis prototype, bukan class — sebelum ES6 memperkenalkan sintaks class, semua inheritance dilakukan melalui prototype chain antar object."
+        }
+      ]
+    },
+
+    {
+      "id": "3.9",
+      "judul": "Manipulasi String & Number",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "String: Lebih dari Sekadar Teks",
+          "isi": "String di JavaScript memiliki puluhan method bawaan yang sangat berguna untuk manipulasi teks. String bersifat immutable — setiap method tidak mengubah string asli, melainkan menghasilkan string baru.\n\nMethod string yang paling sering dipakai:\n\nMencari & mengecek:\n• .includes(str) — cek apakah mengandung substring\n• .startsWith(str) — cek awalan\n• .endsWith(str) — cek akhiran\n• .indexOf(str) — posisi pertama substring\n\nMengubah:\n• .toUpperCase() — jadi huruf besar semua\n• .toLowerCase() — jadi huruf kecil semua\n• .trim() — hapus spasi di awal dan akhir\n• .trimStart() / .trimEnd() — hapus spasi di satu sisi\n• .replace(cari, ganti) — ganti substring pertama\n• .replaceAll(cari, ganti) — ganti semua substring\n• .padStart(n, char) — tambah karakter di awal hingga panjang n\n• .padEnd(n, char) — tambah karakter di akhir hingga panjang n\n\nMemecah & menggabung:\n• .split(separator) — pecah string menjadi array\n• .slice(start, end) — ambil substring\n• .substring(start, end) — mirip slice\n• .repeat(n) — ulang string sebanyak n kali\n\nTemplate Literal adalah cara modern menggabungkan string dengan variabel menggunakan backtick (`) dan ${ekspresi}. Jauh lebih bersih dari concatenation dengan +"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Manipulasi String dan Number",
+          "bahasa": "javascript",
+          "kode": "const judul = '  Belajar JavaScript Bersama  ';\n\n// Membersihkan & mengubah case\nconsole.log(judul.trim());         // 'Belajar JavaScript Bersama'\nconsole.log(judul.trim().toUpperCase()); // 'BELAJAR JAVASCRIPT BERSAMA'\nconsole.log(judul.trim().toLowerCase()); // 'belajar javascript bersama'\n\n// Mencari\nconst email = 'budi@example.com';\nconsole.log(email.includes('@'));          // true\nconsole.log(email.startsWith('budi'));     // true\nconsole.log(email.endsWith('.com'));       // true\nconsole.log(email.indexOf('@'));           // 4\n\n// Memecah string\nconst csv = 'Budi,Siti,Ahmad,Dewi';\nconst namaMahasiswa = csv.split(',');\nconsole.log(namaMahasiswa); // ['Budi', 'Siti', 'Ahmad', 'Dewi']\n\n// Menggabungkan array menjadi string\nconsole.log(namaMahasiswa.join(' - ')); // 'Budi - Siti - Ahmad - Dewi'\n\n// Template literal\nconst nama = 'Budi';\nconst ipk = 3.75;\nconsole.log(`Mahasiswa ${nama} memiliki IPK ${ipk}`);\nconsole.log(`${ipk >= 3.5 ? 'Cumlaude!' : 'Tetap semangat!'}`);\n\n// Manipulasi Number\nconsole.log(parseInt('42px'));     // 42 (ambil angka dari string)\nconsole.log(parseFloat('3.14rem')); // 3.14\nconsole.log(Number('100'));         // 100\nconsole.log(Number('abc'));         // NaN\n\n// Math object\nconsole.log(Math.round(3.7));   // 4 (bulatkan)\nconsole.log(Math.floor(3.9));   // 3 (bulatkan ke bawah)\nconsole.log(Math.ceil(3.1));    // 4 (bulatkan ke atas)\nconsole.log(Math.max(5, 2, 8, 1)); // 8\nconsole.log(Math.min(5, 2, 8, 1)); // 1\nconsole.log(Math.abs(-42));     // 42 (nilai absolut)\nconsole.log(Math.sqrt(144));    // 12\nconsole.log(Math.random());     // angka acak 0–1\n\n// Random angka dalam range\nconst acak1sampai10 = Math.floor(Math.random() * 10) + 1;\n\n// Format angka sebagai mata uang\nconst harga = 150000;\nconsole.log(harga.toLocaleString('id-ID', {\n  style: 'currency',\n  currency: 'IDR'\n})); // 'Rp150.000,00'",
+          "penjelasan": "Math.random() sangat berguna untuk membuat fitur seperti menampilkan soal acak, mengacak urutan soal kuis, atau membuat placeholder data untuk testing."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Cheat Sheet Method String JavaScript",
+          "src": "/assets/frontend/bab3/bab3_3.9.png",
+          "deskripsi_gambar": "Infografik yang merangkum method string JavaScript yang sering digunakan. Setiap bagian menampilkan nama method, fungsi singkat, dan contoh penggunaannya. Method dikelompokkan berdasarkan kegunaan seperti pencarian teks, manipulasi string, dan pemisahan string.",
+          "alt": "Cheat sheet method-method string JavaScript yang paling sering digunakan"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: String seperti Papan Nama Neon",
+          "isi": "String bersifat immutable — seperti papan nama neon yang sudah dipasang. Kamu tidak bisa mengubah huruf di papan itu langsung. Yang bisa kamu lakukan adalah membuat papan baru berdasarkan yang lama: papan baru dengan huruf kapital semua, papan baru tanpa spasi di pinggir, atau papan baru dengan teks yang diganti. Papan aslinya tidak berubah."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Floating Point adalah Musuh Programmer",
+          "isi": "Coba jalankan 0.1 + 0.2 di console JavaScript. Hasilnya bukan 0.3, melainkan 0.30000000000000004. Ini bukan bug JavaScript — ini adalah keterbatasan fundamental representasi bilangan desimal dalam sistem biner (IEEE 754 floating point) yang dialami hampir semua bahasa pemrograman. Solusinya: gunakan Math.round((0.1 + 0.2) * 100) / 100, atau library seperti Decimal.js untuk perhitungan keuangan yang presisi."
+        }
+      ]
+    },
+
+    {
+      "id": "3.10",
+      "judul": "Error Handling & Debugging",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Error adalah Bagian Normal dari Programming",
+          "isi": "Setiap programmer, dari pemula hingga senior, pasti mengalami error. Yang membedakan programmer berpengalaman bukan bahwa mereka tidak pernah membuat error — melainkan mereka tahu cara cepat menemukan, memahami, dan memperbaikinya.\n\nJavaScript memiliki tiga jenis error utama:\n\n• Syntax Error — kesalahan penulisan kode yang melanggar aturan bahasa. JavaScript tidak bisa memparse kode sama sekali. Contoh: lupa menutup tanda kurung, salah ejaan keyword.\n\n• Reference Error — menggunakan variabel atau fungsi yang belum dideklarasikan. Contoh: console.log(variabelBelumAda).\n\n• Type Error — melakukan operasi pada tipe data yang salah. Contoh: memanggil method string pada nilai null, atau memanggil sesuatu yang bukan fungsi.\n\nSelain itu ada:\n• Range Error — nilai di luar range yang valid (misal: array panjang negatif)\n• Logic Error — kode berjalan tanpa error tapi hasilnya salah. Ini yang paling susah ditemukan karena tidak ada pesan error!\n\nKetika error terjadi dan tidak ditangani, JavaScript melempar 'exception' yang menghentikan eksekusi program. try...catch adalah cara untuk menangkap exception tersebut dan menanganinya dengan anggun."
+        },
+        {
+          "tipe": "kode",
+          "judul": "try/catch/finally dan throw",
+          "bahasa": "javascript",
+          "kode": "// try...catch dasar\ntry {\n  const data = null;\n  console.log(data.nama); // TypeError: Cannot read properties of null\n} catch (error) {\n  console.log('Terjadi error:', error.message);\n  console.log('Tipe error:', error.name); // 'TypeError'\n} finally {\n  // Selalu dijalankan, baik error maupun tidak\n  console.log('Blok finally selalu jalan');\n}\n\n// Melempar error custom dengan throw\nfunction bagi(a, b) {\n  if (b === 0) {\n    throw new Error('Tidak bisa membagi dengan nol!');\n  }\n  return a / b;\n}\n\ntry {\n  console.log(bagi(10, 2));  // 5\n  console.log(bagi(10, 0));  // melempar Error\n} catch (err) {\n  console.error('Error:', err.message);\n}\n\n// Error handling untuk fetch API (async)\nasync function ambilData(url) {\n  try {\n    const response = await fetch(url);\n    if (!response.ok) {\n      throw new Error(`HTTP error! Status: ${response.status}`);\n    }\n    const data = await response.json();\n    return data;\n  } catch (err) {\n    console.error('Gagal mengambil data:', err.message);\n    return null;  // kembalikan null jika gagal\n  }\n}",
+          "penjelasan": "Blok finally selalu dijalankan meski ada error atau return di dalam try/catch. Sangat berguna untuk cleanup: menutup koneksi database, menyembunyikan loading spinner, atau merilis resource."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Debugging dengan Browser DevTools",
+          "isi": "Browser DevTools (tekan F12 atau Ctrl+Shift+I di Chrome) adalah senjata utama debugging JavaScript. Tab Console dan Sources adalah yang paling sering dipakai.\n\nMethod console yang berguna:\n• console.log() — menampilkan nilai biasa\n• console.error() — menampilkan pesan error merah\n• console.warn() — menampilkan peringatan kuning\n• console.table(array/obj) — menampilkan data dalam format tabel yang mudah dibaca\n• console.group() / console.groupEnd() — mengelompokkan log\n• console.time() / console.timeEnd() — mengukur waktu eksekusi\n• console.trace() — menampilkan call stack saat ini\n\nBreakpoint — titik di mana eksekusi kode dihentikan sementara sehingga kamu bisa:\n• Melihat nilai semua variabel saat itu\n• Menjalankan kode baris demi baris (Step Over, Step Into)\n• Melanjutkan eksekusi (Resume)\n• Mengevaluasi ekspresi di console saat eksekusi terhenti\n\nIni jauh lebih powerful dari sekadar menebar console.log() di mana-mana."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Tampilan Chrome DevTools Console dan Breakpoint",
+          "src": "/assets/frontend/bab3/bab3_3.10.png",
+          "deskripsi_gambar": "Screenshot DevTools Chrome: panel kiri menampilkan kode JavaScript dengan titik merah (breakpoint) di salah satu baris. Panel kanan menampilkan Scope (variabel lokal dan global saat ini). Di bawah ada tab Console dengan beberapa log output dalam berbagai warna (info biru, error merah, warn kuning).",
+          "alt": "Screenshot Chrome DevTools menampilkan breakpoint di kode JavaScript dan panel Scope"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Debugging seperti Dokter",
+          "isi": "Debugging seperti dokter mendiagnosis penyakit. console.log() seperti mengecek suhu tubuh — memberikan gejala tapi tidak detail. Breakpoint seperti scan MRI — menghentikan waktu dan memeriksa kondisi setiap organ (variabel) secara mendetail di satu titik waktu tertentu. Dokter berpengalaman tahu kapan cukup dengan termometer dan kapan perlu scan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Asal Kata 'Bug' dalam Pemrograman",
+          "isi": "Kata 'bug' dalam konteks komputer dipopulerkan oleh Grace Hopper, pioneer komputer dari Angkatan Laut AS, pada tahun 1947. Tim nya menemukan komputer Mark II mereka error — setelah dicek, ternyata ada ngengat (moth) yang nyangkut di relay komputer. Mereka menempelkan ngengat itu di buku log dengan catatan 'first actual case of bug being found'. Meskipun istilah 'bug' sudah dipakai sebelumnya, insiden ini mempopulerkannya di dunia komputasi."
+        }
+      ]
+    }
+
+  ]
+}

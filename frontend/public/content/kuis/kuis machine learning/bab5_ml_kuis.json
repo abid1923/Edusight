@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "bab": 5,
+    "judul_bab": "Model Deployment & MLOps",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "5.1",
+      "pertanyaan": "Sebuah tim memiliki model RandomForestClassifier dari scikit-learn yang akan digunakan hanya dalam ekosistem Python internal mereka, dan model berisi banyak array NumPy besar (ratusan estimator/pohon). Format serialization apa yang paling sesuai untuk kasus ini, dan mengapa Pickle bukan pilihan ideal untuk production meski secara teknis bisa digunakan?",
+      "opsi": {
+        "A": "Pickle, karena merupakan modul built-in Python sehingga selalu menjadi pilihan paling aman untuk production",
+        "B": "Joblib, karena dioptimalkan khusus untuk objek berisi array NumPy besar (lebih efisien ukuran dan kecepatan load/save); Pickle berisiko untuk production karena bisa mengeksekusi kode arbitrer saat dimuat dan kurang portable antar versi library",
+        "C": "ONNX, karena merupakan satu-satunya format yang valid untuk model scikit-learn",
+        "D": "Format native TensorFlow SavedModel, karena semua model ML sebaiknya dikonversi ke TensorFlow"
+      },
+      "jawaban": "B",
+      "penjelasan": "Untuk model scikit-learn yang akan digunakan dalam ekosistem Python yang sama (training dan serving menggunakan bahasa dan environment relatif terkontrol), Joblib adalah pilihan standar de-facto — API-nya hampir identik dengan Pickle (joblib.dump()/joblib.load()), tapi dioptimalkan dengan kompresi dan penyimpanan efisien untuk array NumPy besar, sehingga ukuran file lebih kecil dan load/save lebih cepat dibanding Pickle standar untuk model yang berisi banyak parameter array (seperti RandomForest dengan ratusan estimator). Pickle secara teknis bisa digunakan dan akan menghasilkan prediksi yang sama, tapi memiliki dua risiko penting untuk production: (1) file pickle bisa mengeksekusi kode arbitrer saat dimuat — bahaya keamanan jika file berasal dari sumber tidak terpercaya, dan (2) kurang portable antar versi Python/library yang sangat berbeda. ONNX (opsi C) lebih relevan ketika dibutuhkan portabilitas lintas framework/bahasa, bukan satu-satunya format valid untuk scikit-learn."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "5.2",
+      "pertanyaan": "Sebuah endpoint /predict pada FastAPI menerima request dengan field 'features' yang seharusnya berupa list 20 angka float, tapi client mengirim list berisi 18 angka. Apa yang akan terjadi, dan bagaimana ini berbeda dengan implementasi yang setara di Flask tanpa validasi manual?",
+      "opsi": {
+        "A": "FastAPI dan Flask akan berperilaku identik — keduanya akan menjalankan model.predict() dengan 18 fitur dan menghasilkan prediksi yang salah tanpa peringatan",
+        "B": "FastAPI, dengan skema Pydantic yang mendefinisikan min_length=20 dan max_length=20, akan otomatis menolak request dengan error 422 Unprocessable Entity sebelum mencapai logika prediksi; Flask tanpa validasi manual akan melanjutkan ke model.predict() dan kemungkinan menghasilkan error runtime (shape mismatch) atau bahkan prediksi yang tidak valid",
+        "C": "FastAPI akan otomatis menambahkan 2 angka nol ke list agar menjadi 20, lalu melanjutkan prediksi",
+        "D": "Keduanya akan menolak request dengan error 500 Internal Server Error karena Python tidak bisa memproses list dengan panjang tidak sesuai"
+      },
+      "jawaban": "B",
+      "penjelasan": "Salah satu keunggulan utama FastAPI adalah validasi data otomatis menggunakan Pydantic — dengan mendefinisikan field seperti `features: list[float] = Field(..., min_length=20, max_length=20)`, FastAPI akan memeriksa request masuk SEBELUM menjalankan kode endpoint, dan jika tidak sesuai (misal hanya 18 elemen), otomatis mengembalikan response error 422 Unprocessable Entity dengan detail validasi yang jelas — tanpa kode tambahan dari developer. Flask tidak memiliki validasi data built-in yang kuat; jika developer tidak menulis pengecekan manual (`if len(features) != 20`), request dengan 18 fitur akan diteruskan ke `np.array(features).reshape(1, -1)` dan `model.predict()`, yang kemungkinan menghasilkan error shape mismatch (500 Internal Server Error) atau, dalam kasus yang lebih berbahaya, prediksi yang 'jalan' tapi tidak valid secara semantik. FastAPI tidak melakukan auto-padding (opsi C), dan error 422 berbeda dari 500 (opsi D) — 422 secara spesifik menandakan kesalahan validasi data, bukan error server internal."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "5.3",
+      "pertanyaan": "Sebuah Dockerfile untuk ML API ditulis dengan urutan: (1) COPY seluruh kode aplikasi termasuk app.py dan model, (2) COPY requirements.txt, (3) RUN pip install -r requirements.txt. Tim mengeluhkan proses 'docker build' menjadi sangat lambat setiap kali ada perubahan kecil pada app.py. Apa penyebabnya dan bagaimana memperbaikinya?",
+      "opsi": {
+        "A": "Urutan ini menyebabkan Docker selalu menginstall ulang seluruh dependensi dari requirements.txt setiap kali app.py berubah, karena layer caching Docker bekerja berurutan — perbaikannya adalah memindahkan COPY requirements.txt dan RUN pip install ke SEBELUM COPY kode aplikasi, sehingga layer instalasi dependensi (yang jarang berubah) tetap di-cache",
+        "B": "Masalahnya adalah penggunaan base image python:3.11-slim yang terlalu besar; gunakan base image Ubuntu penuh agar lebih cepat",
+        "C": "Docker tidak mendukung caching sama sekali, sehingga urutan instruksi dalam Dockerfile tidak berpengaruh pada kecepatan build",
+        "D": "Masalahnya adalah EXPOSE 8000 yang seharusnya diletakkan di awal Dockerfile sebelum instruksi COPY apapun"
+      },
+      "jawaban": "A",
+      "penjelasan": "Docker membangun image secara berlapis (layer), dan setiap instruksi dalam Dockerfile menghasilkan satu layer yang di-cache. Jika sebuah layer tidak berubah (input-nya identik dengan build sebelumnya), Docker akan menggunakan cache dan tidak menjalankan ulang instruksi tersebut. Namun, caching bekerja secara berurutan — begitu satu layer berubah, SEMUA layer setelahnya akan di-rebuild ulang, tidak peduli apakah isinya sebenarnya tidak terpengaruh. Jika COPY seluruh kode aplikasi (termasuk app.py yang sering berubah) dilakukan SEBELUM COPY requirements.txt dan RUN pip install, maka setiap kali app.py berubah sedikit pun, layer COPY tersebut menjadi 'dirty', dan layer pip install (yang seharusnya tidak perlu diulang karena requirements.txt tidak berubah) ikut di-rebuild dari awal — proses install dependensi yang berat diulang sia-sia. Solusinya (best practice yang dijelaskan di materi) adalah menyalin dan menginstall requirements.txt TERLEBIH DAHULU, baru kemudian menyalin kode aplikasi — dependensi yang stabil tetap di-cache, hanya layer kode aplikasi yang di-rebuild saat app.py berubah, membuat build jauh lebih cepat."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "5.4",
+      "pertanyaan": "Sebuah model deteksi fraud yang sudah berjalan stabil selama 6 bulan tiba-tiba menunjukkan penurunan recall secara bertahap, meski kode dan bobot model tidak pernah diubah. Tim menduga ini adalah concept drift, bukan data drift biasa. Apa perbedaan mendasar antara keduanya dalam konteks kasus ini?",
+      "opsi": {
+        "A": "Data drift dan concept drift adalah istilah yang identik dan bisa dipertukarkan; keduanya selalu memerlukan tindakan yang sama yaitu retraining segera",
+        "B": "Data drift berarti distribusi fitur input (X) berubah namun hubungan X→y tetap sama (misalnya pola transaksi normal berubah karena tren belanja baru); concept drift berarti hubungan X→y itu sendiri berubah — dalam kasus fraud, ini berarti pola/modus operandi yang DULU mengindikasikan fraud kini mungkin sudah tidak relevan karena pelaku fraud mengubah strategi (adversarial drift)",
+        "C": "Data drift hanya terjadi pada data kategorikal, sedangkan concept drift hanya terjadi pada data numerik",
+        "D": "Concept drift hanya bisa dideteksi menggunakan PSI, sementara data drift hanya bisa dideteksi menggunakan KS test"
+      },
+      "jawaban": "B",
+      "penjelasan": "Data drift (covariate shift) adalah perubahan pada distribusi fitur input X, sementara hubungan fundamental antara X dan target y tetap konsisten — misalnya pola belanja berubah karena tren musiman, tapi 'apa yang membuat transaksi itu fraud' tidak berubah. Concept drift lebih mendalam: hubungan X→y ITU SENDIRI berubah — pola fitur yang dulu secara konsisten mengindikasikan fraud kini tidak lagi prediktif (atau bahkan menjadi indikator sebaliknya), karena pelaku fraud secara aktif mengubah modus operandi mereka untuk menghindari deteksi (disebut adversarial drift). Penurunan recall secara bertahap pada model fraud detection yang stabil sangat konsisten dengan concept drift — model masih 'menggunakan aturan lama' untuk mendeteksi pola fraud, sementara pola fraud yang sebenarnya sudah berevolusi. Baik PSI maupun KS test (opsi D) sebenarnya adalah teknik untuk mendeteksi data drift (perubahan distribusi fitur); concept drift lebih sulit dideteksi tanpa label dan biasanya terlihat melalui penurunan performance monitoring (recall, precision) ketika label ground truth tersedia."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "5.5",
+      "pertanyaan": "Sebuah aplikasi FastAPI memuat model menggunakan `mlflow.sklearn.load_model('models:/churn-prediction-model/Production')`. Tim data science kemudian mempromosikan versi model baru (versi 5) ke stage Production di MLflow Model Registry, menggantikan versi 4 yang sebelumnya berstatus Production. Apa yang terjadi pada aplikasi FastAPI tersebut TANPA perlu mengubah kode aplikasi sama sekali?",
+      "opsi": {
+        "A": "Aplikasi akan crash karena referensi 'Production' menjadi ambigu ketika ada dua versi model dengan stage yang sama",
+        "B": "Aplikasi akan terus menggunakan versi 4 secara permanen, karena referensi model di-resolve hanya sekali saat aplikasi pertama kali di-deploy dan tidak bisa diperbarui",
+        "C": "Pada eksekusi/restart berikutnya, aplikasi akan otomatis memuat versi 5 (versi terbaru yang berstatus Production), karena referensi 'models:/churn-prediction-model/Production' menunjuk ke STAGE, bukan ke versi spesifik — ini memungkinkan update model production tanpa mengubah kode aplikasi",
+        "D": "MLflow Model Registry tidak mendukung lebih dari satu versi model untuk nama model yang sama"
+      },
+      "jawaban": "C",
+      "penjelasan": "Salah satu manfaat utama MLflow Model Registry adalah referensi model berbasis STAGE (bukan run_id atau versi spesifik). Ketika kode memanggil `mlflow.sklearn.load_model('models:/churn-prediction-model/Production')`, MLflow akan mencari versi model dengan nama 'churn-prediction-model' yang SAAT INI berstatus stage 'Production' — dan hanya satu versi yang bisa memegang stage 'Production' pada satu waktu (versi lama otomatis dipindahkan ke 'Archived' atau status lain saat versi baru dipromosikan). Begitu tim data science mempromosikan versi 5 ke Production (menggantikan versi 4), pemanggilan load_model dengan referensi stage yang sama pada eksekusi/restart berikutnya akan otomatis mengambil versi 5 — TANPA aplikasi perlu diubah kodenya sama sekali. Ini memungkinkan pemisahan yang bersih antara 'siklus update model' (dikelola tim data science via registry) dan 'siklus deployment aplikasi' (dikelola tim engineering)."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "5.6",
+      "pertanyaan": "Dalam sebuah GitHub Actions workflow untuk proyek ML, job 'model-validation' didefinisikan dengan `needs: test`, dan job 'deploy-staging' didefinisikan dengan `needs: build-and-push` serta `environment: staging`. Job 'build-and-push' sendiri hanya berjalan `if: github.ref == 'refs/heads/main'`. Apa yang terjadi jika sebuah pull request (bukan push ke main) dibuka, dan job 'test' GAGAL?",
+      "opsi": {
+        "A": "Semua job (test, model-validation, build-and-push, deploy-staging) tetap berjalan secara paralel tanpa terpengaruh oleh kegagalan job lain",
+        "B": "Job 'model-validation' tidak akan berjalan karena dependensinya (test) gagal; job 'build-and-push' tidak akan berjalan karena kondisi branch (bukan main) tidak terpenuhi DAN dependensinya juga gagal; job 'deploy-staging' juga tidak berjalan karena bergantung pada build-and-push — pipeline berhenti sejak job 'test' gagal",
+        "C": "Hanya job 'deploy-staging' yang dibatalkan karena memerlukan environment protection; job-job lain tetap berjalan dan selesai normal",
+        "D": "GitHub Actions akan otomatis memperbaiki kode yang menyebabkan job 'test' gagal sebelum melanjutkan ke job berikutnya"
+      },
+      "jawaban": "B",
+      "penjelasan": "Penggunaan `needs:` dalam GitHub Actions membentuk dependency graph — sebuah job dengan `needs: test` hanya akan dijalankan jika job 'test' SUKSES (selesai tanpa error). Jika 'test' gagal, job 'model-validation' (yang needs: test) tidak akan dijalankan sama sekali. Demikian pula, 'build-and-push' (needs: [test, model-validation]) tidak akan berjalan — baik karena dependensinya gagal/tidak berjalan, MAUPUN karena kondisi `if: github.ref == 'refs/heads/main'` tidak terpenuhi untuk pull request (bukan push ke main). Job 'deploy-staging' (needs: build-and-push) pada akhirnya juga tidak berjalan karena dependensinya tidak terpenuhi. Secara efektif, kegagalan pada job paling awal (test) menghentikan seluruh rangkaian pipeline berikutnya — ini adalah perilaku yang DIINGINKAN dalam CI/CD: mencegah kode yang gagal testing dasar untuk melanjutkan ke tahap validasi model, build image, apalagi deployment. GitHub Actions tidak memiliki kemampuan 'auto-fix' kode (opsi D)."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "5.7",
+      "pertanyaan": "Sebuah startup kecil dengan tim engineering minim ingin men-deploy model churn prediction mereka dengan cepat, mendapatkan auto-scaling otomatis, dan kemampuan A/B testing antar versi model tanpa membangun infrastruktur Kubernetes sendiri. Namun mereka juga khawatir tentang potensi vendor lock-in di masa depan. Bagaimana trade-off ini sebaiknya dipertimbangkan?",
+      "opsi": {
+        "A": "Managed platform seperti SageMaker/Vertex AI tidak memiliki trade-off apapun — selalu menjadi pilihan terbaik untuk semua skenario tanpa kekurangan",
+        "B": "Managed platform (SageMaker/Vertex AI) memberikan auto-scaling, traffic splitting/A&B testing, dan model registry tanpa perlu mengelola infrastruktur sendiri — sangat sesuai untuk tim kecil dengan kebutuhan cepat; trade-off-nya adalah kode/konfigurasi yang sering spesifik platform (vendor lock-in) dan markup biaya dibanding self-managed — keputusan ini bergantung pada prioritas: kecepatan & kemudahan operasional vs fleksibilitas & kontrol biaya jangka panjang",
+        "C": "Karena khawatir vendor lock-in, satu-satunya pilihan valid adalah membangun Kubernetes cluster sendiri dari nol, terlepas dari ukuran tim",
+        "D": "Vendor lock-in hanya berlaku untuk model deep learning, sehingga model churn prediction (biasanya model klasik) tidak akan mengalami masalah ini sama sekali"
+      },
+      "jawaban": "B",
+      "penjelasan": "Materi secara eksplisit membahas trade-off managed ML platform: di satu sisi, platform seperti SageMaker/Vertex AI menyediakan auto-scaling, model registry, endpoint dengan traffic splitting (A/B testing), dan batch prediction tanpa overhead mengelola infrastruktur — sangat sesuai untuk tim dengan kapabilitas engineering/DevOps terbatas yang ingin fokus pada model. Di sisi lain, kemudahan ini datang dengan vendor lock-in (kode/konfigurasi sering spesifik platform, migrasi ke provider lain butuh effort) dan markup biaya dibanding self-managed (Docker/Kubernetes). Tidak ada pilihan yang 'selalu benar' (opsi A salah) — keputusan bergantung pada prioritas tim: jika kecepatan deployment dan minimnya overhead operasional adalah prioritas utama (kasus startup kecil ini), managed platform sangat masuk akal meski ada risiko lock-in; vendor lock-in bukan hal yang eksklusif untuk model deep learning (opsi D salah), dan membangun Kubernetes dari nol (opsi C) justru bertentangan dengan kondisi 'tim engineering minim' yang disebutkan."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "5.8",
+      "pertanyaan": "Sebuah model CNN untuk klasifikasi gambar akan dijalankan pada microcontroller dengan RAM sangat terbatas (ratusan KB). Tim mencoba konversi ke TFLite dengan full integer quantization (int8), namun TIDAK menyediakan representative_dataset saat proses konversi, dan langsung menjalankan inferensi tanpa kalibrasi. Apa risiko utama dari pendekatan ini?",
+      "opsi": {
+        "A": "Tidak ada risiko — full integer quantization selalu menghasilkan akurasi yang identik dengan model float32 asli, terlepas dari ada/tidaknya representative dataset",
+        "B": "representative_dataset digunakan untuk 'kalibrasi' — menentukan range nilai aktual aktivasi yang akan dipetakan ke rentang int8; tanpa kalibrasi yang representatif, pemetaan nilai float ke int8 bisa tidak akurat, menyebabkan penurunan akurasi model yang signifikan",
+        "C": "Tanpa representative_dataset, proses konversi ke TFLite akan gagal total dan tidak menghasilkan file .tflite apapun",
+        "D": "representative_dataset hanya diperlukan untuk dynamic range quantization, bukan untuk full integer quantization"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pada full integer quantization, baik bobot maupun aktivasi dikonversi ke int8 — sebuah rentang nilai integer terbatas (-128 hingga 127) yang harus memetakan rentang nilai float aktual yang jauh lebih luas dan bervariasi tergantung data. representative_dataset berfungsi sebagai sampel data untuk 'kalibrasi': converter menjalankan beberapa contoh data melalui model untuk mengamati rentang nilai aktivasi yang SEBENARNYA terjadi, lalu menentukan parameter scale dan zero_point yang optimal untuk pemetaan float→int8 pada setiap layer. Jika representative_dataset tidak representatif (atau tidak disediakan dengan benar, meski materi menunjukkan converter.representative_dataset tetap diset), pemetaan ini bisa sangat tidak akurat — nilai-nilai penting bisa terpotong (clipping) atau kehilangan presisi signifikan, menyebabkan penurunan akurasi model yang jauh lebih besar dibanding dynamic range quantization (opsi D salah, karena full integer quantization JUSTRU yang paling membutuhkan kalibrasi ini, lebih dari dynamic range quantization). Proses konversi sendiri kemungkinan tetap menghasilkan file (opsi C salah), tapi kualitas hasilnya yang dipertaruhkan."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "5.9",
+      "pertanyaan": "Sebuah model persetujuan pinjaman menunjukkan: true positive rate (di antara pelanggan yang sebenarnya layak, proporsi yang diprediksi layak) untuk Grup A adalah 0.85, sedangkan untuk Grup B hanya 0.60. False positive rate kedua grup relatif setara. Definisi fairness mana yang dilanggar di sini, dan apa implikasinya?",
+      "opsi": {
+        "A": "Demographic Parity dilanggar, karena tingkat persetujuan pinjaman keseluruhan pasti berbeda antar grup",
+        "B": "Equal Opportunity dilanggar — di antara pelanggan yang SEBENARNYA layak (true positive rate/recall), Grup B jauh lebih sering diprediksi TIDAK layak dibanding Grup A; ini berarti pelanggan layak dari Grup B secara tidak proporsional kehilangan kesempatan mendapat pinjaman dibanding pelanggan layak setara dari Grup A",
+        "C": "Tidak ada masalah fairness, karena false positive rate kedua grup sudah setara, dan itu adalah satu-satunya metrik fairness yang relevan",
+        "D": "Predictive Parity dilanggar, karena precision selalu sama dengan true positive rate dalam definisi fairness manapun"
+      },
+      "jawaban": "B",
+      "penjelasan": "True positive rate (recall) yang berbeda signifikan antar grup (0.85 vs 0.60) — di antara orang yang SEBENARNYA layak mendapat pinjaman, proporsi yang diprediksi layak oleh model — adalah pelanggaran terhadap Equal Opportunity, salah satu definisi fairness yang dijelaskan dalam materi: 'true positive rate (recall) harus sama antar kelompok'. Implikasinya konkret dan berdampak nyata: pelanggan Grup B yang sebenarnya layak dan mampu membayar pinjaman memiliki kemungkinan jauh lebih kecil untuk benar-benar disetujui dibanding pelanggan Grup A yang setara kelayakannya — sebuah bentuk diskriminasi tidak langsung meski mungkin tidak disengaja. False positive rate yang setara (opsi C) tidak menjamin keseluruhan sistem 'adil' — itu hanya berarti Equalized Odds dari sisi FPR terpenuhi, tapi TPR (Equal Opportunity) tetap timpang. Demographic Parity (opsi A) mengukur hal berbeda (tingkat prediksi positif keseluruhan, terlepas dari label sebenarnya), dan precision (Predictive Parity, opsi D) adalah metrik yang secara matematis berbeda dari recall/TPR — keduanya tidak otomatis sama."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "5.10",
+      "pertanyaan": "Sebuah tim ML memiliki: (1) pipeline training yang bisa dijalankan ulang otomatis dengan data baru dan tercatat di MLflow, namun (2) deployment model baru ke production masih dilakukan secara manual oleh engineer setiap kali ada model baru, tanpa CI/CD testing otomatis. Berdasarkan tingkat maturitas MLOps yang dijelaskan dalam materi, tim ini berada di level mana, dan apa langkah konkret untuk naik ke level berikutnya?",
+      "opsi": {
+        "A": "Level 0 (Manual Process), karena adanya satu langkah manual (deployment) membuat seluruh sistem dianggap sepenuhnya manual",
+        "B": "Level 1 (ML Pipeline Automation) — pipeline training sudah otomatis dan reproducible dengan experiment tracking, tapi belum mencapai Level 2 karena deployment dan testing belum terintegrasi dalam CI/CD otomatis; langkah berikutnya adalah membangun pipeline CI/CD (seperti GitHub Actions) yang menjalankan testing otomatis pada setiap perubahan dan deployment ke staging/production dengan approval gate, dilengkapi monitoring kontinu yang bisa memicu continuous training",
+        "C": "Level 2 (CI/CD Pipeline Automation), karena sudah memiliki MLflow yang merupakan syarat utama dan satu-satunya untuk Level 2",
+        "D": "Tingkat maturitas MLOps tidak relevan bagi tim ini karena hanya berlaku untuk perusahaan skala sangat besar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Berdasarkan tiga level maturitas MLOps yang dijelaskan: Level 0 (Manual Process) berarti SELURUH pipeline — data prep, training, evaluasi, DAN deployment — dilakukan manual tanpa tracking sistematis. Tim pada soal ini sudah melampaui Level 0 karena pipeline training-nya otomatis, reproducible, dan tercatat di MLflow (ciri Level 1 — ML Pipeline Automation, yang mensyaratkan continuous training capability dan metadata tracking). Namun, tim belum mencapai Level 2 (CI/CD Pipeline Automation) karena ciri utama Level 2 — seluruh siklus dari kode hingga deployment terintegrasi dalam CI/CD otomatis dengan testing, staging, dan continuous monitoring yang bisa memicu retraining — belum terpenuhi; deployment masih manual tanpa testing otomatis. Jadi tim ini berada di Level 1. Langkah konkret menuju Level 2 adalah membangun pipeline CI/CD (sub-bab 5.6) yang otomatis menjalankan test (linting, unit test, model validation) pada setiap perubahan, lalu build-deploy ke staging dan production dengan approval gate, dikombinasikan dengan monitoring (5.4) yang bisa memicu continuous training. Memiliki MLflow saja (opsi C) tidak otomatis berarti Level 2 — MLflow lebih merupakan komponen kunci Level 1 (experiment tracking/metadata)."
+    }
+  ]
+}

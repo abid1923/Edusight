@@ -1,0 +1,397 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 4,
+    "judul_bab": "JavaScript DOM & Event",
+    "deskripsi": "Materi lengkap manipulasi DOM, event handling, asynchronous JavaScript, Fetch API, hingga Web Storage. Fondasi utama membuat halaman web yang benar-benar interaktif dan dinamis.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "MDN Web Docs – DOM Scripting & Async JS",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "javascript.info – Browser & Async",
+        "url": "https://javascript.info/document",
+        "lisensi": "CC-BY-NC-SA 4.0"
+      },
+      {
+        "nama": "The Odin Project – DOM Manipulation & Async",
+        "url": "https://www.theodinproject.com/paths/foundations/courses/foundations#javascript-basics",
+        "lisensi": "CC-BY-NC-SA 4.0"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+
+  "sub_bab": [
+
+    {
+      "id": "4.1",
+      "judul": "Mengenal DOM",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu DOM?",
+          "isi": "DOM (Document Object Model) adalah representasi halaman web dalam bentuk pohon objek yang bisa diakses dan dimanipulasi oleh JavaScript. Ketika browser membaca file HTML, ia tidak hanya menampilkan teks mentahnya — ia membangun struktur data pohon dari setiap elemen, atribut, dan teks yang ada. Pohon inilah yang disebut DOM.\n\nDengan DOM, JavaScript memiliki akses penuh ke seluruh isi halaman web:\n• Membaca dan mengubah teks atau HTML elemen mana saja\n• Menambah atau menghapus elemen secara dinamis\n• Mengubah style dan class elemen\n• Merespons interaksi pengguna seperti klik, scroll, ketikan\n• Membuat animasi dan efek visual tanpa reload halaman\n\nDOM bukanlah bagian dari JavaScript — ia adalah Web API yang disediakan oleh browser. JavaScript 'berbicara' dengan DOM melalui antarmuka yang sudah distandarkan oleh W3C. Inilah mengapa kode DOM yang sama bisa berjalan di Chrome, Firefox, maupun Safari."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Struktur Pohon DOM",
+          "isi": "DOM merepresentasikan halaman sebagai pohon node yang hierarkis. Setiap bagian dari dokumen HTML adalah sebuah node:\n\n• Document node — akar dari seluruh pohon, selalu ada satu\n• Element node — merepresentasikan tag HTML: <html>, <body>, <p>, <div>, dll.\n• Text node — teks di dalam elemen\n• Attribute node — atribut elemen seperti id, class, href\n• Comment node — komentar HTML <!-- ... -->\n\nSetiap node memiliki hubungan keluarga dengan node lain:\n• Parent — node induk langsung\n• Children — semua node anak langsung\n• Siblings — node yang memiliki parent yang sama\n• Ancestor — semua node di atas dalam hierarki\n• Descendant — semua node di bawah dalam hierarki"
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Visualisasi Pohon DOM",
+          "src": "/assets/frontend/bab4/bab4_4.1.png",
+          "deskripsi_gambar": "Diagram pohon DOM yang menunjukkan struktur hierarki dokumen HTML. Akar pohon adalah document yang bercabang ke html. Node html memiliki cabang head dan body. Head berisi elemen title dengan text node, sedangkan body berisi elemen h1 dan a yang masing-masing memiliki text node. Diagram juga menampilkan attribute node pada elemen a. Warna berbeda digunakan untuk membedakan element node, text node, dan attribute node.",
+          "alt": "Diagram pohon DOM menampilkan hierarki document, html, head, body, dan elemen-elemen di dalamnya"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: DOM seperti Struktur Organisasi Perusahaan",
+          "isi": "DOM seperti bagan organisasi perusahaan. document adalah dewan direksi di puncak. html adalah CEO. head dan body adalah dua direktur yang melapor ke CEO. Di bawah body ada semua 'karyawan' (elemen-elemen HTML). JavaScript adalah konsultan eksternal yang bisa masuk, berbicara dengan siapapun di bagan ini, memindahkan orang, menambah karyawan baru, atau memecat yang lama — semua tanpa harus membangun perusahaan dari awal."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "DOM Bukan Hanya untuk HTML",
+          "isi": "DOM awalnya dirancang untuk HTML, tapi spesifikasinya juga mencakup XML dan SVG. Bahkan file SVG yang kamu embed langsung di HTML bisa dimanipulasi dengan JavaScript menggunakan API DOM yang sama persis — mengubah warna, ukuran, atau posisi elemen SVG secara dinamis tanpa perlu gambar ulang dari awal."
+        }
+      ]
+    },
+
+    {
+      "id": "4.2",
+      "judul": "Memilih Elemen DOM",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Cara Memilih Elemen",
+          "isi": "Sebelum bisa memanipulasi elemen apapun, kamu harus memilihnya terlebih dahulu — memberi tahu JavaScript elemen mana yang ingin kamu manipulasi. JavaScript menyediakan beberapa method untuk memilih elemen dari DOM.\n\nMethod modern yang direkomendasikan:\n• document.querySelector(selector) — mengembalikan elemen pertama yang cocok dengan CSS selector. Jika tidak ada yang cocok, mengembalikan null.\n• document.querySelectorAll(selector) — mengembalikan NodeList berisi SEMUA elemen yang cocok dengan CSS selector.\n\nMethod klasik (masih valid, sering ditemui di kode lama):\n• document.getElementById(id) — sangat cepat, memilih berdasarkan ID\n• document.getElementsByClassName(class) — mengembalikan HTMLCollection (live collection)\n• document.getElementsByTagName(tag) — memilih berdasarkan nama tag\n\nMengapa querySelector lebih disukai? Karena menggunakan sintaks CSS selector yang sudah kamu kenal — bisa selector elemen, class, ID, attribute, pseudo-class, bahkan selector kompleks seperti 'nav ul li:first-child'."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Memilih Elemen DOM",
+          "bahasa": "javascript",
+          "kode": "// querySelector: ambil elemen PERTAMA yang cocok\nconst judul = document.querySelector('h1');\nconst tombolSubmit = document.querySelector('#btn-submit');\nconst kartuPertama = document.querySelector('.kartu');\nconst inputEmail = document.querySelector('input[type=\"email\"]');\nconst itemPertama = document.querySelector('nav ul li:first-child');\n\n// querySelectorAll: ambil SEMUA elemen yang cocok → NodeList\nconst semuaKartu = document.querySelectorAll('.kartu');\nconst semuaParagraf = document.querySelectorAll('p');\n\n// Iterasi NodeList\nsemuaKartu.forEach(kartu => {\n  console.log(kartu.textContent);\n});\n\n// Konversi NodeList ke Array (untuk pakai semua method array)\nconst arrayKartu = Array.from(semuaKartu);\nconst kartuAktif = arrayKartu.filter(k => k.classList.contains('aktif'));\n\n// Method klasik\nconst header = document.getElementById('header');       // tanpa #\nconst tombol = document.getElementsByClassName('btn'); // tanpa .\nconst semua_p = document.getElementsByTagName('p');\n\n// Memilih elemen RELATIF dari elemen yang sudah dipilih\nconst nav = document.querySelector('nav');\nconst linkDiNav = nav.querySelectorAll('a'); // hanya <a> di dalam nav\nconst parentnya = nav.parentElement;\nconst anakPertama = nav.firstElementChild;\nconst anakTerakhir = nav.lastElementChild;\nconst saudaraBerikutnya = nav.nextElementSibling;",
+          "penjelasan": "Selalu cek apakah querySelector mengembalikan null sebelum menggunakannya: const el = document.querySelector('.target'); if (el) { /* manipulasi */ }. Jika null dan kamu langsung mengaksesnya, akan terjadi TypeError."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Perbandingan querySelector vs Method Klasik",
+          "src": "/assets/frontend/bab4/bab4_4.2.png",
+          "deskripsi_gambar":  "Infografik yang menampilkan dua kelompok method pemilihan elemen DOM di JavaScript. Bagian pertama berisi method klasik seperti getElementById, getElementsByClassName, dan getElementsByTagName. Bagian kedua berisi querySelector dan querySelectorAll yang menggunakan selector CSS untuk memilih elemen.",
+          "alt": "Tabel perbandingan querySelector dan method pemilihan DOM klasik"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: querySelector seperti Mesin Pencari",
+          "isi": "querySelector seperti kolom pencarian Google — kamu bisa mengetikkan apa saja: nama elemen, class, ID, kombinasinya, bahkan kondisi tertentu. getElementById seperti telepon langsung ke nomor extension tertentu — sangat cepat dan langsung, tapi hanya bisa menghubungi satu orang spesifik."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "NodeList vs HTMLCollection",
+          "isi": "querySelectorAll mengembalikan NodeList yang 'static' — tidak berubah meski DOM berubah setelah pemilihan. Sebaliknya, getElementsByClassName mengembalikan HTMLCollection yang 'live' — otomatis diperbarui jika elemen dengan class tersebut ditambah atau dihapus dari DOM. Ini perbedaan halus tapi penting, terutama saat memanipulasi DOM secara dinamis dalam sebuah loop."
+        }
+      ]
+    },
+
+    {
+      "id": "4.3",
+      "judul": "Memanipulasi Konten & Atribut",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengubah Konten Elemen",
+          "isi": "Setelah memilih elemen, kamu bisa membaca atau mengubah kontennya. Ada tiga property utama untuk ini, masing-masing dengan perilaku berbeda:\n\n• textContent — membaca atau mengatur teks mentah elemen beserta semua turunannya. Tag HTML di dalamnya diabaikan dan dianggap teks biasa. Aman dari serangan XSS.\n• innerText — mirip textContent, tapi hanya mengembalikan teks yang 'terlihat' (memperhatikan CSS seperti display:none). Lebih lambat karena perlu menghitung layout.\n• innerHTML — membaca atau mengatur konten HTML lengkap termasuk tag-nya. Sangat powerful tapi BERBAHAYA jika diisi dengan input dari pengguna tanpa sanitasi — celah XSS (Cross-Site Scripting).\n\nKapan menggunakan masing-masing:\n• Untuk teks biasa → gunakan textContent\n• Untuk HTML dinamis dari data yang kamu kontrol → innerHTML boleh digunakan\n• Untuk HTML dari input pengguna → JANGAN gunakan innerHTML langsung, sanitasi dulu"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Memanipulasi Konten dan Atribut",
+          "bahasa": "javascript",
+          "kode": "const judul = document.querySelector('#judul-halaman');\nconst tombol = document.querySelector('#btn-aksi');\nconst gambar = document.querySelector('#foto-profil');\nconst link = document.querySelector('#tautan-utama');\n\n// textContent: teks saja, aman\nconsole.log(judul.textContent); // 'Selamat Datang!'\njudul.textContent = 'Halo, Budi!'; // ubah teks\n\n// innerHTML: bisa berisi HTML\nconst daftarHasil = document.querySelector('#hasil');\ndaftarHasil.innerHTML = `\n  <ul>\n    <li>Item pertama</li>\n    <li>Item kedua</li>\n    <li>Item ketiga</li>\n  </ul>\n`;\n\n// BERBAHAYA: jangan lakukan ini dengan input pengguna!\n// daftarHasil.innerHTML = inputDariUser; // celah XSS!\n\n// Memanipulasi Atribut\n// getAttribute & setAttribute\nconsole.log(gambar.getAttribute('src'));   // '/foto/default.jpg'\nconsole.log(gambar.getAttribute('alt'));   // 'Foto profil'\ngambar.setAttribute('src', '/foto/budi.jpg');\ngambar.setAttribute('alt', 'Foto profil Budi');\n\n// Akses langsung untuk atribut umum\nconsole.log(link.href);   // URL lengkap\nconsole.log(tombol.id);   // 'btn-aksi'\nconsole.log(gambar.src);  // URL gambar\ntombol.disabled = true;   // nonaktifkan tombol\ntombol.disabled = false;  // aktifkan kembali\n\n// hasAttribute & removeAttribute\nconsole.log(tombol.hasAttribute('disabled')); // true/false\ntombol.removeAttribute('disabled');\n\n// Dataset: atribut data-* kustom\nconst kartu = document.querySelector('.kartu');\n// HTML: <div class=\"kartu\" data-id=\"42\" data-kategori=\"berita\">\nconsole.log(kartu.dataset.id);        // '42'\nconsole.log(kartu.dataset.kategori);  // 'berita'\nkartu.dataset.status = 'aktif';       // tambah data-status='aktif'",
+          "penjelasan": "Selalu gunakan dataset untuk menyimpan data kustom di elemen HTML alih-alih atribut sembarangan. Selain valid secara HTML, dataset memberikan API yang bersih untuk mengakses dan memanipulasi data tersebut dari JavaScript."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Perbedaan textContent, innerText, dan innerHTML",
+          "src": "/assets/frontend/bab4/bab4_4.3.png",
+          "deskripsi_gambar": "Infografik atau tabel yang membandingkan textContent, innerText, dan innerHTML. Setiap bagian menampilkan contoh nilai yang dikembalikan oleh masing-masing property serta penjelasan singkat mengenai perbedaannya dalam membaca atau mengubah konten elemen HTML.",
+          "alt": "Perbandingan output textContent, innerText, dan innerHTML pada elemen yang sama"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: innerHTML seperti Gunting Ajaib",
+          "isi": "innerHTML seperti gunting dan lem yang sangat tajam — bisa membuat apapun dengan cepat, tapi kalau tidak hati-hati bisa melukai diri sendiri (XSS). textContent seperti pensil biasa — lebih lambat untuk hal tertentu, tapi jauh lebih aman dan tidak bisa disalahgunakan untuk hal berbahaya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "XSS — Serangan Web Paling Umum",
+          "isi": "Cross-Site Scripting (XSS) adalah salah satu jenis serangan web paling umum dan ada di peringkat atas OWASP Top 10 (daftar kerentanan web paling berbahaya). Penyerang menyisipkan kode JavaScript berbahaya ke dalam input yang nantinya ditampilkan lewat innerHTML tanpa sanitasi. Kode itu bisa mencuri cookie session, mengarahkan pengguna ke halaman palsu, atau mengambil alih akun. Satu aturan: JANGAN pernah taruh input pengguna langsung ke innerHTML."
+        }
+      ]
+    },
+
+    {
+      "id": "4.4",
+      "judul": "Memanipulasi Style & Class",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Dua Cara Mengubah Tampilan via JavaScript",
+          "isi": "Ada dua cara JavaScript mengubah tampilan elemen: langsung lewat property style (inline style), atau dengan menambah/menghapus class CSS yang sudah didefinisikan di stylesheet. Cara kedua jauh lebih direkomendasikan karena memisahkan logika (JS) dari tampilan (CSS).\n\nMengubah style langsung:\n• element.style.propertyName = 'value'\n• Nama property ditulis dalam camelCase, bukan kebab-case: backgroundColor bukan background-color\n• Untuk membaca style yang diset lewat CSS (bukan inline), gunakan getComputedStyle(element)\n\nManipulasi class — lebih direkomendasikan:\n• element.classList.add('nama-class') — tambah class\n• element.classList.remove('nama-class') — hapus class\n• element.classList.toggle('nama-class') — tambah jika belum ada, hapus jika sudah ada\n• element.classList.contains('nama-class') — cek apakah class ada, returns boolean\n• element.classList.replace('lama', 'baru') — ganti satu class dengan class lain"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Manipulasi Style dan Class",
+          "bahasa": "javascript",
+          "kode": "const kartu = document.querySelector('.kartu');\nconst tombol = document.querySelector('#btn-tema');\nconst modal = document.querySelector('#modal');\n\n// Style langsung (gunakan hanya untuk nilai dinamis)\nkartu.style.backgroundColor = '#3498db';\nkartu.style.borderRadius = '12px';\nkartu.style.transform = 'translateY(-4px)';\n\n// Hapus inline style (kembalikan ke CSS)\nkartu.style.backgroundColor = '';\n\n// Membaca style yang ditetapkan CSS\nconst styleKomputed = getComputedStyle(kartu);\nconsole.log(styleKomputed.backgroundColor); // 'rgb(52, 152, 219)'\nconsole.log(styleKomputed.fontSize);        // '16px'\n\n// classList — cara yang DIREKOMENDASIKAN\nkartu.classList.add('aktif');\nkartu.classList.add('highlighted', 'featured'); // tambah banyak sekaligus\nkartu.classList.remove('loading');\nconsole.log(kartu.classList.contains('aktif')); // true\n\n// toggle: dark mode button\ntombol.addEventListener('click', () => {\n  document.body.classList.toggle('dark-mode');\n  const isDark = document.body.classList.contains('dark-mode');\n  tombol.textContent = isDark ? '☀️ Mode Terang' : '🌙 Mode Gelap';\n});\n\n// Buka/tutup modal dengan toggle\nfunction bukaModal() {\n  modal.classList.add('aktif');     // CSS: .modal.aktif { display: flex }\n  document.body.classList.add('overflow-hidden');\n}\n\nfunction tutupModal() {\n  modal.classList.remove('aktif');\n  document.body.classList.remove('overflow-hidden');\n}\n\n// Mengubah CSS Variable dari JavaScript\ndocument.documentElement.style.setProperty('--warna-utama', '#e74c3c');\nconst warnaUtama = getComputedStyle(document.documentElement)\n  .getPropertyValue('--warna-utama'); // '#e74c3c'",
+          "penjelasan": "Pola toggle class adalah cara paling elegan untuk membuat fitur show/hide, dark mode, accordion, atau animasi masuk/keluar. Definisikan semua style di CSS, lalu gunakan JS hanya untuk menambah/menghapus class pemicu."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: classList seperti Lemari Baju",
+          "isi": "classList adalah lemari baju elemen. Setiap class adalah satu set pakaian. add() seperti memasukkan baju baru ke lemari. remove() seperti mengeluarkan baju tertentu. toggle() seperti tombol ajaib: kalau baju sedang dipakai, lepas — kalau tidak dipakai, pakai. contains() seperti mengecek apakah baju tertentu ada di lemari."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "CSS Variable + JavaScript = Tema Dinamis",
+          "isi": "Kombinasi CSS Custom Properties dan JavaScript adalah cara modern membuat tema yang bisa diganti pengguna secara real-time. Simpan preferensi tema di localStorage, apply saat halaman dimuat, dan ubah saat pengguna mengklik tombol ganti tema — semua tanpa reload halaman. Inilah yang dipakai hampir semua website modern untuk fitur dark mode."
+        }
+      ]
+    },
+
+    {
+      "id": "4.5",
+      "judul": "Membuat & Menghapus Elemen",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Menambah Elemen Baru ke DOM",
+          "isi": "Selain memodifikasi elemen yang sudah ada, JavaScript bisa membuat elemen baru dari nol dan menyisipkannya ke mana saja dalam DOM. Ini adalah fondasi dari aplikasi web dinamis — menampilkan data dari API tanpa reload, membuat komponen UI secara programatik, atau membangun daftar dari array data.\n\nAlur kerja membuat elemen baru:\n1. Buat elemen dengan document.createElement('tagname')\n2. Set konten, atribut, dan class-nya\n3. Sisipkan ke DOM dengan method appendChild, prepend, insertBefore, dll.\n\nMethod untuk menyisipkan elemen:\n• parent.appendChild(el) — sisipkan di akhir parent\n• parent.prepend(el) — sisipkan di awal parent\n• parent.insertBefore(el, referensi) — sisipkan sebelum elemen referensi\n• referensi.insertAdjacentElement(posisi, el) — fleksibel, posisi bisa 'beforebegin', 'afterbegin', 'beforeend', 'afterend'\n• parent.replaceChild(baru, lama) — ganti elemen\n\nMethod untuk menghapus elemen:\n• element.remove() — hapus elemen itu sendiri (modern)\n• parent.removeChild(child) — hapus elemen anak (cara lama)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Membuat Elemen & Merender Data dari Array",
+          "bahasa": "javascript",
+          "kode": "// Membuat satu elemen\nconst paragrafBaru = document.createElement('p');\nparagrafBaru.textContent = 'Ini paragraf yang dibuat dengan JavaScript!';\nparagrafBaru.classList.add('info', 'fade-in');\nparagrafBaru.id = 'pesan-selamat-datang';\ndocument.body.appendChild(paragrafBaru);\n\n// Membuat elemen kompleks (kartu)\nfunction buatKartu(mahasiswa) {\n  const kartu = document.createElement('article');\n  kartu.classList.add('kartu-mahasiswa');\n  kartu.dataset.id = mahasiswa.id;\n\n  kartu.innerHTML = `\n    <img src=\"${mahasiswa.foto}\" alt=\"Foto ${mahasiswa.nama}\" />\n    <div class=\"kartu-body\">\n      <h3>${mahasiswa.nama}</h3>\n      <p class=\"nim\">${mahasiswa.nim}</p>\n      <span class=\"badge badge-${mahasiswa.status}\">${mahasiswa.status}</span>\n    </div>\n    <button class=\"btn-hapus\" data-id=\"${mahasiswa.id}\">Hapus</button>\n  `;\n\n  return kartu;\n}\n\n// Render banyak elemen dari array data\nconst dataMahasiswa = [\n  { id: 1, nama: 'Budi Santoso', nim: '2021001', status: 'aktif', foto: '/foto/budi.jpg' },\n  { id: 2, nama: 'Siti Rahayu', nim: '2021002', status: 'aktif', foto: '/foto/siti.jpg' },\n  { id: 3, nama: 'Ahmad Fauzi', nim: '2021003', status: 'cuti', foto: '/foto/ahmad.jpg' }\n];\n\nconst kontainer = document.querySelector('#daftar-mahasiswa');\n\n// Gunakan DocumentFragment untuk performa lebih baik\nconst fragment = document.createDocumentFragment();\ndataMahasiswa.forEach(mhs => {\n  fragment.appendChild(buatKartu(mhs));\n});\nkontainer.appendChild(fragment); // Hanya satu DOM update!\n\n// Menghapus elemen\nconst elemenHapus = document.querySelector('#pesan-lama');\nelemenHapus.remove(); // cara modern\n\n// Hapus semua anak elemen (kosongkan kontainer)\nkontainer.innerHTML = '';      // cepat tapi tidak bersihkan event listener\nwhile (kontainer.firstChild) { // lebih bersih\n  kontainer.removeChild(kontainer.firstChild);\n}",
+          "penjelasan": "DocumentFragment adalah kontainer virtual yang tidak termasuk dalam DOM. Kumpulkan semua elemen di fragment dulu, baru appendChild sekali ke DOM. Ini mencegah browser harus reflow/repaint berulang kali — sangat penting untuk performa saat merender banyak elemen."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Proses Membuat dan Menyisipkan Elemen DOM",
+          "src": "/assets/frontend/bab4/bab4_4.5.png",
+          "deskripsi_gambar": "Diagram alur yang menunjukkan proses pembuatan elemen baru dengan createElement(), pengaturan konten atau atribut elemen, lalu penyisipan elemen ke dalam DOM menggunakan appendChild() atau prepend(). Panah menunjukkan urutan langkah hingga elemen muncul di struktur DOM.",
+          "alt": "Diagram tiga langkah membuat dan menyisipkan elemen baru ke DOM"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: createElement seperti Pabrik Furnitur",
+          "isi": "createElement seperti memesan furnitur dari pabrik — produknya sudah jadi tapi belum ditempatkan. Set konten dan atribut seperti memilih warna dan ukuran furnitur. appendChild seperti tukang yang memasang furnitur itu di ruangan tertentu. Sampai dipasang, furnitur itu ada tapi tidak terlihat di ruangan manapun."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "innerHTML vs createElement: Mana Lebih Cepat?",
+          "isi": "Untuk membuat banyak elemen sekaligus, innerHTML sering ternyata lebih cepat dari createElement berulang karena browser bisa mem-parsing string HTML secara batch. Tapi innerHTML menghapus semua event listener yang sudah terpasang pada child elements yang digantikan. Untuk konten dinamis yang butuh event listener, createElement + DocumentFragment adalah pilihan yang lebih aman."
+        }
+      ]
+    },
+
+    {
+      "id": "4.6",
+      "judul": "Event & Event Listener",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu Event?",
+          "isi": "Event adalah sinyal yang dikirimkan browser ketika sesuatu terjadi — pengguna mengklik tombol, mengetik di input, menggerakkan mouse, atau browser selesai memuat halaman. JavaScript bisa 'mendengarkan' event-event ini dan menjalankan fungsi sebagai respons.\n\nKategori event yang paling umum:\n\nEvent Mouse:\n• click — klik tombol kiri mouse\n• dblclick — double klik\n• mouseenter / mouseleave — kursor masuk/keluar area elemen\n• mouseover / mouseout — mirip enter/leave tapi bubble ke parent\n• mousemove — kursor bergerak di atas elemen\n• contextmenu — klik kanan (buka menu konteks)\n\nEvent Keyboard:\n• keydown — saat tombol ditekan (terus ulang jika ditahan)\n• keyup — saat tombol dilepas\n• keypress — deprecated, gunakan keydown\n\nEvent Form:\n• submit — saat form dikirim\n• change — nilai input berubah dan focus berpindah\n• input — setiap kali nilai input berubah (real-time)\n• focus / blur — elemen mendapat/kehilangan fokus\n\nEvent Dokumen & Window:\n• DOMContentLoaded — DOM selesai dibangun\n• load — seluruh halaman (termasuk gambar) selesai dimuat\n• resize — ukuran window berubah\n• scroll — halaman atau elemen di-scroll"
+        },
+        {
+          "tipe": "kode",
+          "judul": "addEventListener dan Event Object",
+          "bahasa": "javascript",
+          "kode": "const tombol = document.querySelector('#btn-kirim');\nconst input = document.querySelector('#search-input');\nconst form = document.querySelector('#form-login');\n\n// addEventListener(tipeEvent, fungsiHandler)\ntombol.addEventListener('click', function(event) {\n  console.log('Tombol diklik!');\n  console.log(event.target);      // elemen yang diklik\n  console.log(event.type);        // 'click'\n  console.log(event.timeStamp);   // waktu kejadian (ms)\n});\n\n// Lebih bersih dengan arrow function\ntombol.addEventListener('click', (e) => {\n  e.target.textContent = 'Sudah Diklik!';\n  e.target.disabled = true;\n});\n\n// Event keyboard: cari saat mengetik\ninput.addEventListener('input', (e) => {\n  const query = e.target.value;\n  console.log('Mencari:', query);\n  // Panggil fungsi pencarian...\n});\n\n// Prevent default: cegah perilaku default browser\nform.addEventListener('submit', (e) => {\n  e.preventDefault(); // PENTING: cegah reload halaman!\n  const data = new FormData(form);\n  const email = data.get('email');\n  const password = data.get('password');\n  // Proses login...\n  console.log('Login dengan:', email);\n});\n\n// Event keyboard spesifik\ndocument.addEventListener('keydown', (e) => {\n  if (e.key === 'Escape') tutupModal();\n  if (e.key === 'Enter' && e.ctrlKey) simpanData();\n  console.log(e.key, e.code, e.ctrlKey, e.shiftKey);\n});\n\n// removeEventListener: hapus listener\nfunction handleKlik() {\n  console.log('diklik sekali');\n  tombol.removeEventListener('click', handleKlik); // hapus diri sendiri\n}\ntombol.addEventListener('click', handleKlik);\n\n// Opsi addEventListener\ntombol.addEventListener('click', handler, {\n  once: true,    // otomatis hapus setelah dipanggil sekali\n  passive: true, // beri tahu browser handler tidak akan preventDefault (performa scroll)\n  capture: true  // tangkap di fase capturing bukan bubbling\n});",
+          "penjelasan": "Selalu gunakan e.preventDefault() di handler form submit untuk mencegah browser merefresh halaman. Tanpa ini, semua data di variabel JavaScript akan hilang dan halaman kembali ke state awal."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Diagram Event Listener",
+          "src": "/assets/frontend/bab4/bab4_4.6.png",
+          "deskripsi_gambar": "Diagram alur event: ikon pengguna mengklik tombol → panah 'event terjadi' → ikon browser dengan label 'Browser mendeteksi event' → panah 'event dikirim ke listener' → kotak kode JavaScript dengan label 'Event Handler dijalankan' → output 'DOM diperbarui'. Di sudut ada kotak kecil 'Event Object' dengan property: type, target, timeStamp.",
+          "alt": "Diagram alur event dari klik pengguna hingga event handler dijalankan"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Event Listener seperti Satpam Toko",
+          "isi": "addEventListener seperti menempatkan satpam di pintu toko. Kamu memberi instruksi: 'Kalau ada yang masuk (event: click), lakukan ini (handler: fungsi).' Satpam selalu siaga dan bereaksi setiap kali kondisi itu terjadi. removeEventListener seperti memulangkan satpam — pintu tetap ada, tapi tidak ada yang bereaksi lagi."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "{ once: true } — Listener Sekali Pakai",
+          "isi": "Sebelum opsi { once: true } ada di ES2016, developer harus memanggil removeEventListener di dalam handler itu sendiri untuk membuatnya hanya berjalan sekali — sebuah pola yang agak aneh. Sekarang cukup tulis { once: true } sebagai argumen ketiga dan browser menangani penghapusan otomatis. Berguna untuk animasi intro, tutorial pertama kali, atau konfirmasi yang hanya perlu muncul satu kali."
+        }
+      ]
+    },
+
+    {
+      "id": "4.7",
+      "judul": "Event Bubbling, Capturing & Delegation",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Bagaimana Event Merambat di DOM?",
+          "isi": "Ketika sebuah event terjadi pada elemen, event itu tidak hanya dikirim ke elemen tersebut saja — ia juga merambat melalui pohon DOM. Ada tiga fase propagasi event:\n\n1. Capturing Phase (Fase Tangkap) — event dimulai dari window, turun melewati ancestor-ancestor elemen target, menuju elemen target. Jarang digunakan dalam praktik sehari-hari.\n\n2. Target Phase — event tiba di elemen target yang sebenarnya dikenai aksi (elemen yang diklik, dll.).\n\n3. Bubbling Phase (Fase Gelembung) — setelah mencapai target, event 'naik' kembali melewati ancestor-ancestor hingga ke window. Inilah fase yang paling sering dimanfaatkan.\n\nSecara default, addEventListener menangkap event di fase bubbling. Hampir semua event di HTML melakukan bubbling kecuali beberapa seperti focus, blur, dan scroll.\n\nDua method penting untuk mengontrol propagasi:\n• event.stopPropagation() — menghentikan event agar tidak naik ke parent\n• event.preventDefault() — mencegah aksi default browser (reload form, navigasi link, dll.) tapi tidak menghentikan propagasi"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Bubbling dan Event Delegation",
+          "bahasa": "javascript",
+          "kode": "// Demonstrasi bubbling\ndocument.querySelector('#grandparent').addEventListener('click', () => {\n  console.log('Grandparent diklik!');\n});\ndocument.querySelector('#parent').addEventListener('click', () => {\n  console.log('Parent diklik!');\n});\ndocument.querySelector('#child').addEventListener('click', (e) => {\n  console.log('Child diklik!');\n  // Jika #child diklik, output: Child → Parent → Grandparent\n  // Karena event bubble ke atas!\n});\n\n// stopPropagation: hentikan bubbling\ndocument.querySelector('#modal-konten').addEventListener('click', (e) => {\n  e.stopPropagation(); // klik di dalam modal tidak menutup modal\n});\ndocument.querySelector('#modal-overlay').addEventListener('click', () => {\n  tutupModal(); // klik di overlay (luar modal) = tutup\n});\n\n// =================================================\n// EVENT DELEGATION — Pola Penting!\n// =================================================\n// MASALAH: Punya 1000 item daftar, tiap item butuh event klik.\n// SOLUSI BURUK: pasang 1000 listener terpisah (boros memori!)\n// SOLUSI BAIK: pasang 1 listener di parent, cek event.target\n\nconst daftarProduk = document.querySelector('#daftar-produk');\n\n// Satu listener untuk semua tombol 'Beli' di dalam daftar\ndaftarProduk.addEventListener('click', (e) => {\n  // Cek apakah yang diklik adalah tombol dengan class 'btn-beli'\n  if (e.target.matches('.btn-beli')) {\n    const idProduk = e.target.dataset.id;\n    tambahKeKeranjang(idProduk);\n  }\n\n  // Atau jika struktur lebih kompleks, gunakan closest()\n  const kartu = e.target.closest('.kartu-produk');\n  if (kartu) {\n    const idProduk = kartu.dataset.id;\n    console.log('Kartu produk diklik, ID:', idProduk);\n  }\n});\n\n// Event delegation juga bekerja untuk elemen yang ditambah SETELAH listener dipasang!\n// Elemen baru yang ditambah ke #daftar-produk otomatis mendapat listener!",
+          "penjelasan": "Event delegation adalah salah satu pola JavaScript paling berguna. Pasang satu listener di parent, tangani semua child dengan satu handler. Ini juga otomatis bekerja untuk elemen yang ditambah secara dinamis setelah listener dipasang."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Diagram Event Bubbling dan Capturing",
+          "src": "/assets/frontend/bab4/bab4_4.7.png",
+          "deskripsi_gambar": "Diagram pohon DOM tiga level: Window → Document → Body → Div → Button. Dua panah berbeda: panah merah turun dari Window ke Button berlabel 'Capturing Phase'. Panah biru naik dari Button ke Window berlabel 'Bubbling Phase'. Bintang di Button bertuliskan 'Target Phase'. Setiap node diberi kotak dengan label elemennya.",
+          "alt": "Diagram event bubbling (naik) dan capturing (turun) melalui pohon DOM"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Bubbling seperti Batu Jatuh ke Kolam",
+          "isi": "Event bubbling seperti batu yang jatuh ke kolam. Titik jatuhnya adalah elemen target. Riak gelombang (event) menyebar ke luar melewati lingkaran-lingkaran yang lebih besar (parent, grandparent, hingga window). stopPropagation seperti memasang penghalang yang menghentikan riak sebelum mencapai tepi kolam."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "closest() — Pemilih Ancestor Terbaik",
+          "isi": "Method element.closest(selector) berjalan ke atas pohon DOM dari elemen tersebut dan mengembalikan ancestor pertama yang cocok dengan selector. Ini pasangan sempurna untuk event delegation ketika struktur HTML kompleks: meski pengguna mengklik icon di dalam tombol, closest('.btn') tetap menemukan tombolnya. Tanpa closest(), harus menulis logika traversal manual yang rumit."
+        }
+      ]
+    },
+
+    {
+      "id": "4.8",
+      "judul": "Asynchronous JavaScript & Promise",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Sinkron vs Asinkron",
+          "isi": "JavaScript adalah bahasa single-threaded — ia hanya bisa mengerjakan satu hal dalam satu waktu. Secara default, kode JavaScript berjalan secara sinkron: satu baris selesai, baru baris berikutnya dijalankan, dari atas ke bawah.\n\nMasalah muncul ketika ada operasi yang lambat: mengambil data dari server (bisa butuh 1-5 detik), membaca file besar, menunggu timer, dll. Jika ini dilakukan secara sinkron, seluruh halaman akan freeze dan tidak bisa merespons apapun sampai operasi selesai — bayangkan tidak bisa scroll atau klik selama menunggu data dimuat!\n\nSolusinya adalah asynchronous programming — operasi lambat dijalankan di latar belakang, dan JavaScript melanjutkan mengeksekusi kode berikutnya. Ketika operasi lambat selesai, JavaScript diberi tahu dan menjalankan callback/handler yang sudah disiapkan.\n\nJavaScript menangani asinkronisitas lewat Event Loop:\n• Call Stack — tempat fungsi yang sedang dieksekusi\n• Web APIs — tempat operasi async (fetch, setTimeout) dijalankan oleh browser\n• Callback Queue — antrian fungsi yang siap dieksekusi setelah Call Stack kosong\n• Event Loop — mengawasi Call Stack, dan memindahkan dari Queue ke Stack ketika Stack kosong"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Promise: Janji yang Akan Diselesaikan",
+          "isi": "Promise adalah object yang merepresentasikan hasil dari operasi asinkron yang mungkin belum selesai. Promise punya tiga state:\n\n• Pending — operasi sedang berlangsung, hasilnya belum diketahui\n• Fulfilled (Resolved) — operasi berhasil, ada nilai hasilnya\n• Rejected — operasi gagal, ada alasan/error-nya\n\nPromise memiliki dua method utama untuk menangani hasilnya:\n• .then(callback) — dijalankan jika promise fulfilled, menerima nilai hasil\n• .catch(callback) — dijalankan jika promise rejected, menerima error\n• .finally(callback) — selalu dijalankan apapun hasilnya (seperti finally di try/catch)\n\nPromise bisa di-chain: .then() mengembalikan Promise baru, sehingga bisa disambung terus. Ini jauh lebih rapi dari callback bersarang (callback hell).\n\nMethod berguna lainnya:\n• Promise.all([p1, p2, p3]) — tunggu SEMUA promise selesai, gagal jika satu pun gagal\n• Promise.allSettled([p1, p2]) — tunggu semua, tidak peduli ada yang gagal\n• Promise.race([p1, p2]) — ambil hasil promise yang selesai paling cepat\n• Promise.any([p1, p2]) — fulfilled jika minimal satu berhasil"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Promise dan Chaining",
+          "bahasa": "javascript",
+          "kode": "// Membuat Promise\nconst cekLogin = new Promise((resolve, reject) => {\n  const berhasil = true; // simulasi\n  setTimeout(() => {\n    if (berhasil) {\n      resolve({ id: 1, nama: 'Budi', token: 'abc123' });\n    } else {\n      reject(new Error('Username atau password salah'));\n    }\n  }, 1000); // simulasi delay 1 detik\n});\n\n// Menangani Promise\ncekLogin\n  .then(user => {\n    console.log('Login berhasil:', user.nama);\n    return ambilProfil(user.id); // return Promise baru\n  })\n  .then(profil => {\n    console.log('Profil:', profil);\n    return ambilNotifikasi(profil.userId);\n  })\n  .then(notifikasi => {\n    tampilkanNotifikasi(notifikasi);\n  })\n  .catch(error => {\n    console.error('Terjadi kesalahan:', error.message);\n    tampilkanPesanError(error.message);\n  })\n  .finally(() => {\n    sembunyikanLoadingSpinner();\n  });\n\n// Promise.all: ambil banyak data sekaligus (paralel)\nconst [dataMhs, dataMataKuliah, dataJadwal] = await Promise.all([\n  fetch('/api/mahasiswa').then(r => r.json()),\n  fetch('/api/mata-kuliah').then(r => r.json()),\n  fetch('/api/jadwal').then(r => r.json())\n]);\n// Ketiga request berjalan PARALEL, bukan berurutan!\n// Jauh lebih cepat dari tiga await berurutan\n\n// Promise.allSettled: lanjut meski ada yang gagal\nconst hasil = await Promise.allSettled([\n  fetch('/api/data-a').then(r => r.json()),\n  fetch('/api/data-b').then(r => r.json()), // mungkin gagal\n]);\nhasil.forEach(item => {\n  if (item.status === 'fulfilled') {\n    console.log('Berhasil:', item.value);\n  } else {\n    console.log('Gagal:', item.reason);\n  }\n});",
+          "penjelasan": "Promise.all jauh lebih efisien dari await berurutan untuk request yang tidak saling bergantung. Tiga await berurutan butuh 3x waktu request. Promise.all menjalankan semuanya paralel dan hanya butuh waktu sebesar request yang paling lama."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Diagram Event Loop JavaScript",
+          "src": "/assets/frontend/bab4/bab4_4.8.png",
+          "deskripsi_gambar": "Diagram Event Loop: kotak 'Call Stack' di kiri dengan tumpukan fungsi. Kotak 'Web APIs' di kanan atas (fetch, setTimeout, EventListener). Kotak 'Callback Queue' di kanan bawah. Panah melingkar 'Event Loop' mengawasi Call Stack dan Queue. Animasi alur: fungsi masuk Stack → operasi async pindah ke Web APIs → selesai masuk Queue → Event Loop pindah ke Stack.",
+          "alt": "Diagram Event Loop JavaScript menampilkan Call Stack, Web APIs, Callback Queue, dan Event Loop"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Promise seperti Nomor Antrian Restoran",
+          "isi": "Ketika kamu memesan makanan dan mendapat nomor antrian, itu seperti Promise pending. Kamu tidak harus berdiri di kasir menunggu — kamu bisa duduk, main HP, ngobrol (JavaScript lanjut mengerjakan hal lain). Ketika makanan siap (fulfilled), kasir memanggil nomormu (.then() dijalankan). Jika dapur kehabisan bahan (rejected), kasir memberi tahu dan kamu mendapat refund (.catch() dijalankan)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Callback Hell — Kenapa Promise Diciptakan",
+          "isi": "Sebelum Promise ada, asynchronous JavaScript ditangani dengan callback bersarang. Ketika operasi async saling bergantung, hasilnya adalah piramida kode yang mengerikan — disebut 'Callback Hell' atau 'Pyramid of Doom'. Kode berindentasi sangat dalam, sangat sulit dibaca, dan hampir mustahil di-debug. Promise diciptakan untuk memecahkan masalah ini dengan membuat alur async bisa ditulis secara linear, bukan bersarang."
+        }
+      ]
+    },
+
+    {
+      "id": "4.9",
+      "judul": "Async/Await & Fetch API",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "async/await: Kode Async yang Terlihat Sinkron",
+          "isi": "async/await adalah sintaks yang diperkenalkan ES2017 untuk menulis kode asinkron yang terlihat dan terasa seperti kode sinkron biasa. Di balik layar, async/await adalah syntactic sugar di atas Promise — tidak menggantikan Promise, hanya membuatnya lebih mudah ditulis dan dibaca.\n\nDua kata kunci utama:\n• async — ditaruh sebelum kata function, menandai bahwa fungsi ini asinkron. Fungsi async SELALU mengembalikan Promise, meski kamu return nilai biasa.\n• await — hanya bisa digunakan di dalam fungsi async. Menghentikan eksekusi fungsi sementara sampai Promise diselesaikan, lalu mengembalikan nilai hasilnya. Tidak memblokir thread utama!\n\nKeuntungan async/await:\n• Kode lebih mudah dibaca dan dipahami\n• Error handling dengan try/catch yang sudah familiar\n• Debugging lebih mudah (stack trace lebih jelas)\n• Lebih mudah menggunakan kondisi dan perulangan dengan nilai async\n\nFetch API adalah cara modern JavaScript mengambil data dari server atau URL. Ia menggantikan XMLHttpRequest (XHR) yang lebih lama dan verbose. fetch() mengembalikan Promise yang resolve dengan Response object."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Fetch API dengan async/await",
+          "bahasa": "javascript",
+          "kode": "// Pola fetch yang baik dan benar\nasync function ambilDataMahasiswa() {\n  try {\n    // fetch() → Promise<Response>\n    const response = await fetch('https://api.kampus.id/mahasiswa');\n\n    // Cek apakah request berhasil (status 200-299)\n    if (!response.ok) {\n      throw new Error(`HTTP Error! Status: ${response.status}`);\n    }\n\n    // Parse body response sebagai JSON → Promise<Object>\n    const data = await response.json();\n    return data;\n\n  } catch (error) {\n    console.error('Gagal mengambil data:', error.message);\n    throw error; // re-throw agar pemanggil juga bisa handle\n  }\n}\n\n// Fungsi lengkap: fetch + tampilkan ke DOM\nasync function muatDaftarMahasiswa() {\n  const kontainer = document.querySelector('#daftar-mahasiswa');\n  const loading = document.querySelector('#loading-indicator');\n\n  try {\n    loading.classList.add('tampil'); // tampilkan spinner\n\n    const mahasiswaList = await ambilDataMahasiswa();\n\n    // Kosongkan kontainer dulu\n    kontainer.innerHTML = '';\n\n    // Render setiap mahasiswa ke DOM\n    mahasiswaList.forEach(mhs => {\n      const kartu = document.createElement('article');\n      kartu.classList.add('kartu-mahasiswa');\n      kartu.innerHTML = `\n        <h3>${mhs.nama}</h3>\n        <p>NIM: ${mhs.nim} | IPK: ${mhs.ipk}</p>\n      `;\n      kontainer.appendChild(kartu);\n    });\n\n  } catch (error) {\n    kontainer.innerHTML = `\n      <div class=\"pesan-error\">\n        <p>Gagal memuat data. Silakan coba lagi.</p>\n        <button onclick=\"muatDaftarMahasiswa()\">Coba Lagi</button>\n      </div>\n    `;\n  } finally {\n    loading.classList.remove('tampil'); // sembunyikan spinner\n  }\n}\n\n// Mengirim data ke server (POST)\nasync function simpanMahasiswa(dataBaru) {\n  const response = await fetch('https://api.kampus.id/mahasiswa', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${localStorage.getItem('token')}`\n    },\n    body: JSON.stringify(dataBaru)\n  });\n\n  if (!response.ok) throw new Error('Gagal menyimpan data');\n  return response.json();\n}\n\n// Jalankan saat halaman dimuat\ndocument.addEventListener('DOMContentLoaded', muatDaftarMahasiswa);",
+          "penjelasan": "Selalu cek response.ok setelah fetch! fetch() hanya reject Promise-nya jika ada masalah jaringan (offline, DNS gagal, dll.). Jika server merespons dengan status 404 atau 500, fetch() tetap resolve — kamu harus cek response.ok atau response.status secara manual."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Alur Kerja Fetch API",
+          "src": "/assets/frontend/bab4/bab4_4.9.png",
+          "deskripsi_gambar": "Diagram alur horizontal: Kotak 'JavaScript' → panah 'fetch(url)' → kotak 'Browser Network' → panah 'HTTP Request' → kotak 'Server/API'. Kembali: Server → panah 'HTTP Response (JSON)' → Browser → panah 'response.json()' → JavaScript. Di bawah alur ada label status: 'Pending → Fulfilled → Data tersedia di DOM'.",
+          "alt": "Diagram alur Fetch API dari JavaScript ke server dan kembali dengan data JSON"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: fetch() seperti Kurir Online",
+          "isi": "fetch() seperti memesan barang online. Kamu submit pesanan (request), kurir pergi mengambil barang (browser mengirim HTTP request), kamu melanjutkan aktivitas lain (JavaScript tidak blocking). Ketika barang tiba (response), kamu membuka paket (response.json()), dan baru menikmati isinya (menggunakan data). Kalau kurir gagal (jaringan error), kamu mendapat notifikasi gagal (Promise rejected)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Public API untuk Latihan",
+          "isi": "Ada banyak public API gratis yang bisa kamu gunakan untuk latihan fetch: JSONPlaceholder (jsonplaceholder.typicode.com) untuk data dummy user/post/todo, TheDogAPI untuk foto anjing acak, Open Meteo untuk data cuaca tanpa API key, PokeAPI untuk data Pokemon, dan banyak lagi. Latihan fetch dengan data nyata jauh lebih menarik dan mudah dipahami daripada contoh tiruan."
+        }
+      ]
+    },
+
+    {
+      "id": "4.10",
+      "judul": "localStorage & sessionStorage",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Menyimpan Data di Browser",
+          "isi": "Web Storage API memungkinkan JavaScript menyimpan data langsung di browser pengguna — tanpa perlu server, tanpa database. Ada dua jenis Web Storage:\n\nlocalStorage:\n• Data tersimpan permanen sampai sengaja dihapus\n• Tidak hilang meski browser ditutup atau komputer di-restart\n• Bisa diakses dari semua tab/window yang membuka domain yang sama\n• Kapasitas: sekitar 5–10 MB per origin\n• Cocok untuk: preferensi tema (dark/light), data login (token), keranjang belanja, pengaturan pengguna\n\nsessionStorage:\n• Data hanya bertahan selama sesi browser (tab) terbuka\n• Otomatis terhapus ketika tab ditutup\n• Tidak berbagi data antar tab, meski domain sama\n• Kapasitas: sama dengan localStorage\n• Cocok untuk: data form multi-step, state temporary, data yang tidak boleh bertahan\n\nAPI keduanya identik — hanya berbeda persistensinya. Kedua storage hanya bisa menyimpan STRING. Untuk menyimpan object atau array, konversi dulu dengan JSON.stringify() dan parse kembali dengan JSON.parse().\n\nMethod yang tersedia:\n• .setItem(key, value) — simpan data\n• .getItem(key) — baca data (null jika tidak ada)\n• .removeItem(key) — hapus satu item\n• .clear() — hapus semua item\n• .length — jumlah item tersimpan\n• .key(index) — nama key berdasarkan indeks"
+        },
+        {
+          "tipe": "kode",
+          "judul": "localStorage untuk Preferensi & Data Pengguna",
+          "bahasa": "javascript",
+          "kode": "// Menyimpan data sederhana\nlocalStorage.setItem('tema', 'gelap');\nlocalStorage.setItem('bahasa', 'id');\nlocalStorage.setItem('volumeMusik', '75');\n\n// Membaca data\nconst tema = localStorage.getItem('tema');  // 'gelap'\nconst volume = Number(localStorage.getItem('volumeMusik')); // 75\n\n// Data tidak ada → null\nconst belumAda = localStorage.getItem('kunciYangTidakAda'); // null\nconst nilaiDefault = localStorage.getItem('tema') ?? 'terang'; // pakai ?? untuk default\n\n// Menyimpan Object atau Array (wajib JSON.stringify)\nconst settingUser = {\n  tema: 'gelap',\n  bahasa: 'id',\n  notifikasi: true,\n  fontSizeLabel: 'sedang'\n};\nlocalStorage.setItem('setting', JSON.stringify(settingUser));\n\n// Membaca kembali Object\nconst settingTersimpan = JSON.parse(localStorage.getItem('setting'));\nconsole.log(settingTersimpan.tema);      // 'gelap'\nconsole.log(settingTersimpan.bahasa);   // 'id'\n\n// Menghapus\nlocalStorage.removeItem('volumeMusik');\n// localStorage.clear(); // hapus semua\n\n// Pola lengkap: simpan keranjang belanja\nfunction ambilKeranjang() {\n  return JSON.parse(localStorage.getItem('keranjang')) ?? [];\n}\n\nfunction simpanKeranjang(keranjang) {\n  localStorage.setItem('keranjang', JSON.stringify(keranjang));\n}\n\nfunction tambahKeKeranjang(produk) {\n  const keranjang = ambilKeranjang();\n  const sudahAda = keranjang.find(item => item.id === produk.id);\n\n  if (sudahAda) {\n    sudahAda.qty += 1;\n  } else {\n    keranjang.push({ ...produk, qty: 1 });\n  }\n\n  simpanKeranjang(keranjang);\n  updateTampilan Keranjang(keranjang);\n}\n\n// Terapkan tema saat halaman dimuat\ndocument.addEventListener('DOMContentLoaded', () => {\n  const temaTersimpan = localStorage.getItem('tema') ?? 'terang';\n  document.body.dataset.tema = temaTersimpan;\n});",
+          "penjelasan": "Jangan simpan data sensitif seperti password atau informasi kartu kredit di localStorage! Data tersebut bisa diakses siapapun yang punya akses ke browser (atau via XSS). Untuk token autentikasi, pertimbangkan httpOnly cookie yang jauh lebih aman."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Perbandingan localStorage vs sessionStorage",
+          "src": "/assets/frontend/bab4/bab4_4.10.png",
+          "deskripsi_gambar": "Tabel perbandingan dua kolom. Header kiri: 'localStorage' (ikon gembok permanen). Header kanan: 'sessionStorage' (ikon jam pasir). Baris: Persistensi (Permanen vs Tab ditutup = hilang), Scope (Semua tab domain vs Hanya tab ini), Kapasitas (5-10MB vs 5-10MB), Kegunaan Umum (tema/token/setting vs form multi-step/state sementara). Baris bawah: API sama persis.",
+          "alt": "Tabel perbandingan localStorage dan sessionStorage dari segi persistensi, scope, dan kegunaan"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: localStorage dan sessionStorage seperti Dua Jenis Catatan",
+          "isi": "localStorage seperti buku catatan permanen yang ada di meja kerja — kamu tutup kantor pun catatannya masih ada besok. sessionStorage seperti whiteboard di ruang rapat — begitu rapat selesai dan semua orang keluar (tab ditutup), whiteboard dihapus bersih. Keduanya hanya bisa dilihat oleh orang di gedung yang sama (domain yang sama)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Storage Event: Sinkronisasi Antar Tab",
+          "isi": "Ada event spesial bernama 'storage' yang dikirim ke semua tab lain (bukan tab yang melakukan perubahan) ketika localStorage berubah. Ini memungkinkan sinkronisasi antar tab secara real-time: window.addEventListener('storage', (e) => { if (e.key === 'tema') applyTema(e.newValue); }). Kalau pengguna ganti tema di satu tab, tab lain otomatis ikut berubah tanpa reload. Fitur yang sering tidak diketahui tapi sangat berguna!"
+        }
+      ]
+    }
+
+  ]
+}

@@ -1,0 +1,366 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 1,
+    "judul_bab": "Dasar Node.js",
+    "deskripsi": "Materi lengkap pengenalan Node.js — dari cara kerja runtime, module system, file system, HTTP module, npm, event emitter, hingga environment variables dan debugging. Fondasi wajib sebelum belajar Express dan database.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "MDN Web Docs – Express/Node Introduction",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Express_Nodejs/Introduction",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "W3Schools – Node.js Tutorial",
+        "url": "https://www.w3schools.com/nodejs",
+        "lisensi": "Bebas edukasi"
+      },
+      {
+        "nama": "FullStackOpen – Part 3: Node.js and Express",
+        "url": "https://fullstackopen.com/en/part3/node_js_and_express",
+        "lisensi": "CC-BY-NC-SA 3.0"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+
+  "sub_bab": [
+
+    {
+      "id": "1.1",
+      "judul": "Apa itu Node.js & Cara Kerjanya",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Pengertian Node.js",
+          "isi": "Node.js adalah runtime environment open source yang memungkinkan JavaScript berjalan di luar browser — langsung di server, komputer, atau sistem operasi apapun. Sebelum Node.js lahir pada 2009, JavaScript hanya bisa berjalan di browser. Node.js mengubah segalanya: satu bahasa untuk front end DAN back end.\n\nNode.js dibangun di atas V8 Engine — mesin JavaScript buatan Google yang sama yang digunakan Chrome. V8 mengompilasi kode JavaScript menjadi kode mesin secara langsung, membuat Node.js sangat cepat.\n\nApa yang bisa dibangun dengan Node.js:\n• REST API dan web server\n• Aplikasi real-time (chat, notifikasi live, multiplayer game)\n• Command-line tools\n• Microservices\n• Streaming data (video, audio)\n• Server-side rendering\n\nKeunggulan utama Node.js dibanding bahasa server lain:\n• Non-blocking I/O — tidak menunggu satu operasi selesai sebelum mulai yang lain\n• Single language — JavaScript di mana-mana, tidak perlu ganti konteks bahasa\n• npm — ekosistem package terbesar di dunia dengan 2+ juta package\n• Komunitas besar dan dokumentasi lengkap"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Bagaimana Node.js Bekerja: Event Loop",
+          "isi": "Node.js menggunakan model single-threaded non-blocking I/O — berbeda total dari server tradisional seperti Apache yang membuat thread baru untuk setiap request.\n\nBayangkan sebuah kasir supermarket. Server tradisional seperti kasir yang melayani satu pelanggan sampai tuntas — termasuk menunggu pelanggan mencari dompet. Kasir berikutnya tidak bisa dilayani sampai pelanggan pertama selesai.\n\nNode.js seperti kasir yang memberi nomor antrian kepada semua pelanggan, lalu langsung melanjutkan ke pelanggan berikutnya sambil menunggu pelanggan pertama menemukan dompetnya. Ketika pelanggan pertama siap, kasir kembali melayaninya.\n\nMekanisme ini disebut Event Loop — inti dari Node.js:\n• Semua operasi I/O (baca file, query database, request HTTP) dijalankan secara asinkron\n• Node.js tidak memblokir thread utama sambil menunggu\n• Ketika operasi selesai, callback/promise dipanggil\n• Satu thread bisa menangani ribuan koneksi bersamaan\n\nInilah mengapa Node.js sangat cocok untuk aplikasi yang banyak melakukan I/O — seperti API server yang harus menangani ratusan request per detik."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Instalasi dan Verifikasi Node.js",
+          "bahasa": "bash",
+          "kode": "# Cek apakah Node.js sudah terinstall\nnode --version    # Contoh output: v20.11.0\nnpm --version     # Contoh output: 10.2.4\n\n# Jalankan file JavaScript dengan Node.js\nnode nama_file.js\n\n# Atau langsung masuk ke REPL (Read-Eval-Print Loop)\n# untuk mencoba kode JS langsung di terminal\nnode\n> console.log('Halo dari Node.js!')\n> 2 + 2\n> .exit   # keluar dari REPL",
+          "penjelasan": "Download Node.js dari nodejs.org. Pilih versi LTS (Long Term Support) untuk stabilitas. Node.js sudah termasuk npm secara otomatis."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Arsitektur Node.js: Event Loop dan Non-blocking I/O",
+          "src": "/assets/backend/bab1/bab1_1.1.png",
+          "deskripsi_gambar": "Diagram arsitektur Node.js: kotak 'Client Requests' di kiri mengirim banyak request. Panah ke 'Event Loop' di tengah (single thread). Event Loop mendistribusikan ke 'Thread Pool' untuk operasi berat (file I/O, crypto) dan 'Non-blocking I/O' untuk network, database. Setelah selesai, callback kembali ke Event Loop lalu ke client. Label 'V8 Engine' di atas.",
+          "alt": "Diagram arsitektur Node.js menampilkan event loop single-thread dan non-blocking I/O"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Node.js seperti Barista Coffee Shop",
+          "isi": "Barista Node.js tidak menunggu mesin espresso selesai membuat kopi sebelum melayani pelanggan berikutnya. Ia menerima pesanan (request), memasukkan ke mesin (operasi async), lalu langsung melayani pelanggan berikutnya. Ketika mesin selesai (callback dipanggil), barista mengambil kopinya dan menyerahkan ke pelanggan yang tepat. Satu barista bisa melayani ratusan pelanggan tanpa antrian panjang."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Node.js Lahir dari Frustrasi",
+          "isi": "Ryan Dahl menciptakan Node.js pada 2009 karena frustrasi dengan Apache HTTP Server yang memblokir seluruh proses hanya untuk menunggu file selesai diupload. Dalam presentasi pertamanya, ia menunjukkan bahwa Node.js bisa menangani 10.000 koneksi bersamaan dengan konsumsi memori yang jauh lebih kecil. Perusahaan pertama yang mengadopsinya secara besar-besaran adalah LinkedIn, yang berhasil memangkas jumlah server dari 30 menjadi 3 setelah migrasi ke Node.js."
+        }
+      ]
+    },
+
+    {
+      "id": "1.2",
+      "judul": "Module System (CommonJS & ES Module)",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu Module?",
+          "isi": "Module adalah cara memecah kode menjadi file-file terpisah yang memiliki fungsi spesifik. Daripada menulis semua kode dalam satu file raksasa yang sulit dikelola, kamu memecahnya menjadi module-module kecil yang mandiri dan bisa digunakan ulang di mana saja.\n\nNode.js mendukung dua sistem module:\n\nCommonJS (CJS) — sistem module asli Node.js, sudah ada sejak awal:\n• Menggunakan require() untuk mengimpor\n• Menggunakan module.exports atau exports untuk mengekspor\n• File dengan ekstensi .js menggunakan ini secara default\n• Bersifat sinkron — module dimuat saat require() dipanggil\n\nES Module (ESM) — standar JavaScript modern (ES6+):\n• Menggunakan import untuk mengimpor\n• Menggunakan export untuk mengekspor\n• File dengan ekstensi .mjs atau package.json dengan 'type': 'module'\n• Bersifat asinkron dan lebih modern\n\nUntuk proyek baru, ESM semakin direkomendasikan karena ini adalah standar JavaScript resmi. Tapi CommonJS masih sangat umum ditemui di kode yang ada dan di tutorial lama, jadi penting menguasai keduanya."
+        },
+        {
+          "tipe": "kode",
+          "judul": "CommonJS vs ES Module",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// COMMONJS (file: matematika.js)\n// ==========================================\nconst PI = 3.14159;\n\nfunction luasLingkaran(r) {\n  return PI * r * r;\n}\n\nfunction kelilingLingkaran(r) {\n  return 2 * PI * r;\n}\n\n// Ekspor beberapa fungsi sekaligus\nmodule.exports = { luasLingkaran, kelilingLingkaran, PI };\n\n// Atau ekspor satu per satu:\n// exports.luasLingkaran = luasLingkaran;\n\n\n// ==========================================\n// COMMONJS (file: app.js) — menggunakan module\n// ==========================================\nconst { luasLingkaran, PI } = require('./matematika');\n// Catatan: ./ wajib untuk file lokal, tanpa ./ = module bawaan atau npm\n\nconsole.log(luasLingkaran(5));  // 78.53975\nconsole.log(PI);               // 3.14159\n\n\n// ==========================================\n// ES MODULE (file: matematika.mjs atau dengan \"type\":\"module\")\n// ==========================================\nexport const PI = 3.14159;\n\nexport function luasLingkaran(r) {\n  return PI * r * r;\n}\n\n// Default export — hanya satu per file\nexport default function kalkulator() {\n  return { luasLingkaran, PI };\n}\n\n\n// ==========================================\n// ES MODULE — menggunakan module\n// ==========================================\nimport { luasLingkaran, PI } from './matematika.mjs';\nimport kalkulator from './matematika.mjs'; // default import\n\nconsole.log(luasLingkaran(5));\n\n// Import semua sebagai namespace\nimport * as mat from './matematika.mjs';\nconsole.log(mat.PI);",
+          "penjelasan": "Selalu gunakan path relatif (./ atau ../) saat mengimpor file lokal. Tanpa ./ Node.js akan mencari di folder node_modules — khusus untuk package npm."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Sistem Module Node.js: CommonJS vs ES Module",
+          "src": "/assets/backend/bab1/bab1_1.2.png",
+          "deskripsi_gambar": "Diagram dua kolom berdampingan. Kiri 'CommonJS': sintaks require() dan module.exports dengan label 'Node.js asli, sinkron'. Kanan 'ES Module': sintaks import dan export dengan label 'Standar JS modern, asinkron'. Di bawah: tabel perbandingan: ekstensi file (.js vs .mjs), cara kerja (sinkron vs asinkron), dukungan top-level await (tidak vs ya).",
+          "alt": "Perbandingan sistem module Node.js: CommonJS dengan require dan ES Module dengan import"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Module seperti Kotak Peralatan",
+          "isi": "Module seperti kotak peralatan khusus. Ada kotak untuk alat listrik, kotak untuk alat pertukangan, kotak untuk alat masak. require('./matematika') seperti mengambil kotak matematika dari rak. Kamu tidak harus membawa semua kotak ke setiap proyek — ambil hanya yang kamu butuhkan. Dan kotak yang sama bisa dipakai di banyak proyek berbeda."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Node.js Punya Module Bawaan yang Sangat Berguna",
+          "isi": "Node.js hadir dengan puluhan built-in module tanpa perlu install apapun: fs (file system), http/https (server), path (path file), os (info sistem operasi), crypto (enkripsi), url (parsing URL), events (event emitter), stream (streaming data), dan masih banyak lagi. Semua bisa langsung di-require() tanpa npm install."
+        }
+      ]
+    },
+
+    {
+      "id": "1.3",
+      "judul": "File System (fs module)",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Membaca dan Menulis File dengan Node.js",
+          "isi": "Module fs (File System) adalah salah satu built-in module paling penting di Node.js. Ia memberikan akses penuh untuk membaca, menulis, menghapus, dan memanipulasi file dan direktori di sistem operasi.\n\nfs memiliki dua versi untuk setiap operasi:\n• Versi asinkron (non-blocking) — menggunakan callback atau Promise. Ini yang DIREKOMENDASIKAN karena tidak memblokir event loop.\n• Versi sinkron (blocking) — nama method diakhiri 'Sync' seperti readFileSync. Memblokir event loop sampai selesai. Hanya gunakan saat startup aplikasi, bukan di tengah request handling.\n\nNode.js juga menyediakan fs/promises — versi modern yang mengembalikan Promise sehingga bisa digunakan dengan async/await. Ini cara paling bersih dan modern untuk bekerja dengan file system."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Operasi File dengan fs",
+          "bahasa": "javascript",
+          "kode": "const fs = require('fs');\nconst fsPromises = require('fs/promises'); // versi modern dengan Promise\nconst path = require('path');\n\n// ==========================================\n// MEMBACA FILE\n// ==========================================\n\n// Async dengan callback (cara lama)\nfs.readFile('./data/mahasiswa.json', 'utf8', (err, data) => {\n  if (err) {\n    console.error('Gagal membaca file:', err.message);\n    return;\n  }\n  const mahasiswa = JSON.parse(data);\n  console.log(mahasiswa);\n});\n\n// Async dengan Promise + async/await (DIREKOMENDASIKAN)\nasync function bacaFile() {\n  try {\n    const data = await fsPromises.readFile('./data/mahasiswa.json', 'utf8');\n    const mahasiswa = JSON.parse(data);\n    console.log(`Total mahasiswa: ${mahasiswa.length}`);\n    return mahasiswa;\n  } catch (err) {\n    console.error('Error:', err.message);\n  }\n}\n\n// ==========================================\n// MENULIS FILE\n// ==========================================\n\nasync function tulisFile() {\n  const dataBaru = [\n    { id: 1, nama: 'Budi', nim: '2021001', ipk: 3.85 },\n    { id: 2, nama: 'Siti', nim: '2021002', ipk: 3.70 }\n  ];\n\n  // writeFile: timpa isi file jika sudah ada\n  await fsPromises.writeFile(\n    './data/mahasiswa.json',\n    JSON.stringify(dataBaru, null, 2), // null, 2 = format JSON dengan indentasi 2 spasi\n    'utf8'\n  );\n  console.log('File berhasil ditulis!');\n\n  // appendFile: tambahkan ke akhir file (tidak menimpa)\n  await fsPromises.appendFile('./log/app.log', `[${new Date().toISOString()}] Server started\\n`);\n}\n\n// ==========================================\n// OPERASI DIREKTORI\n// ==========================================\n\nasync function kelolaFolder() {\n  // Buat folder baru\n  await fsPromises.mkdir('./uploads', { recursive: true }); // recursive: tidak error jika sudah ada\n\n  // Baca isi folder\n  const files = await fsPromises.readdir('./uploads');\n  console.log('File di folder:', files);\n\n  // Cek apakah file/folder ada\n  try {\n    await fsPromises.access('./config.json');\n    console.log('File config.json ada');\n  } catch {\n    console.log('File config.json tidak ditemukan');\n  }\n\n  // Hapus file\n  await fsPromises.unlink('./temp/file-sementara.txt');\n\n  // Rename/pindahkan file\n  await fsPromises.rename('./old-name.txt', './new-name.txt');\n}",
+          "penjelasan": "Selalu gunakan path.join() atau path.resolve() untuk membangun path file, bukan string concatenation. Ini memastikan path bekerja di Windows (backslash) maupun Linux/Mac (forward slash)."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: fs seperti Manajer Arsip",
+          "isi": "Module fs seperti manajer arsip kantor. readFile seperti meminta arsiparis mengambilkan dokumen tertentu. writeFile seperti meminta arsiparis menyimpan dokumen baru. readdir seperti meminta daftar semua dokumen di kabinet tertentu. Versi async seperti menitipkan permintaan ke arsiparis lalu melanjutkan pekerjaan lain — arsiparis memberi tahu ketika dokumen sudah siap."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "JSON adalah Format Penyimpanan Data Favorit Node.js",
+          "isi": "Node.js sangat erat dengan JSON (JavaScript Object Notation) karena JSON adalah format data native JavaScript. JSON.parse() mengubah string JSON menjadi object JS, JSON.stringify() sebaliknya. Untuk aplikasi kecil tanpa database, menyimpan data sebagai file JSON adalah cara yang valid dan sering digunakan — bahkan package.json sendiri adalah contoh sempurna penggunaan JSON untuk konfigurasi."
+        }
+      ]
+    },
+
+    {
+      "id": "1.4",
+      "judul": "HTTP Module — Server Sederhana",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Membuat Web Server dengan Node.js",
+          "isi": "Node.js bisa membuat web server tanpa library eksternal apapun menggunakan built-in module http. Memahami http module penting karena semua framework web seperti Express dibangun di atasnya — Express hanyalah lapisan abstraksi yang membuat penggunaan http module jauh lebih mudah.\n\nKonsep dasar HTTP yang perlu dipahami:\n• Request — pesan dari client ke server. Berisi: method (GET/POST/PUT/DELETE), URL/path, headers, dan body.\n• Response — balasan dari server ke client. Berisi: status code, headers, dan body.\n• Status Code — kode tiga digit yang menjelaskan hasil request:\n  - 2xx: Sukses (200 OK, 201 Created, 204 No Content)\n  - 3xx: Redirect (301 Moved Permanently, 302 Found)\n  - 4xx: Error client (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found)\n  - 5xx: Error server (500 Internal Server Error, 503 Service Unavailable)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Web Server Sederhana dengan http Module",
+          "bahasa": "javascript",
+          "kode": "const http = require('http');\nconst fs = require('fs/promises');\nconst url = require('url');\n\nconst PORT = 3000;\nconst HOST = 'localhost';\n\n// Buat server\nconst server = http.createServer(async (req, res) => {\n  // Parse URL: pathname, query string\n  const parsedUrl = url.parse(req.url, true);\n  const pathname = parsedUrl.pathname;\n  const method = req.method;\n\n  console.log(`${method} ${pathname}`);\n\n  // Set header response default\n  res.setHeader('Content-Type', 'application/json');\n  res.setHeader('Access-Control-Allow-Origin', '*');\n\n  // Routing manual\n  if (pathname === '/' && method === 'GET') {\n    res.writeHead(200);\n    res.end(JSON.stringify({ pesan: 'Selamat datang di API saya!' }));\n\n  } else if (pathname === '/mahasiswa' && method === 'GET') {\n    try {\n      const data = await fs.readFile('./data/mahasiswa.json', 'utf8');\n      res.writeHead(200);\n      res.end(data);\n    } catch {\n      res.writeHead(500);\n      res.end(JSON.stringify({ error: 'Gagal membaca data' }));\n    }\n\n  } else if (pathname === '/mahasiswa' && method === 'POST') {\n    // Baca body dari request\n    let body = '';\n    req.on('data', chunk => { body += chunk.toString(); });\n    req.on('end', () => {\n      try {\n        const mahasiswaBaru = JSON.parse(body);\n        res.writeHead(201);\n        res.end(JSON.stringify({ pesan: 'Berhasil ditambahkan', data: mahasiswaBaru }));\n      } catch {\n        res.writeHead(400);\n        res.end(JSON.stringify({ error: 'Body tidak valid JSON' }));\n      }\n    });\n\n  } else {\n    // 404 untuk semua path yang tidak dikenali\n    res.writeHead(404);\n    res.end(JSON.stringify({ error: 'Endpoint tidak ditemukan' }));\n  }\n});\n\n// Jalankan server\nserver.listen(PORT, HOST, () => {\n  console.log(`Server berjalan di http://${HOST}:${PORT}`);\n});",
+          "penjelasan": "Ini adalah alasan mengapa Express populer — melakukan routing manual seperti di atas sangat verbose dan rentan error. Express menyederhanakan ini menjadi beberapa baris kode saja. Tapi memahami http module membuatmu mengerti apa yang Express lakukan di balik layar."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Siklus HTTP Request-Response",
+          "src": "/assets/backend/bab1/bab1_1.4.png",
+          "deskripsi_gambar": "Diagram siklus request-response HTTP: ikon browser 'Client' di kiri mengirim panah 'HTTP Request' (method, URL, headers, body) ke ikon server 'Node.js Server' di kanan. Server memproses lalu mengirim panah balik 'HTTP Response' (status code, headers, body JSON) ke client. Di bawah server: label 'createServer callback dijalankan setiap request'.",
+          "alt": "Diagram siklus HTTP request dari client ke Node.js server dan response kembali ke client"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: HTTP seperti Restoran",
+          "isi": "HTTP seperti transaksi di restoran. Client (pelanggan) mengirim request (pesanan). Method adalah jenis pesanan: GET = 'tolong ambilkan menu', POST = 'saya mau pesan ini', PUT = 'ganti pesanan saya', DELETE = 'batalkan pesanan'. Server (dapur) memproses dan mengirim response (hidangan) dengan status code: 200 = hidangan siap, 404 = menu tidak tersedia, 500 = dapur sedang bermasalah."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Status 418 — I'm a Teapot",
+          "isi": "HTTP status code 418 'I'm a Teapot' benar-benar ada dan merupakan standar resmi RFC 2324 yang dibuat sebagai lelucon April Mop pada 1998. Kodenya mengatakan bahwa server menolak menyeduh kopi karena ia adalah teko (teapot). Meski lelucon, browser dan server modern tetap mengimplementasikannya. Google bahkan pernah mempertahankan server yang merespons status 418 di google.com/teapot."
+        }
+      ]
+    },
+
+    {
+      "id": "1.5",
+      "judul": "npm & package.json",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "npm: Manajer Package Node.js",
+          "isi": "npm (Node Package Manager) adalah manajer package default Node.js sekaligus registry package terbesar di dunia dengan lebih dari 2 juta package open source yang bisa digunakan gratis. npm memungkinkan kamu menggunakan kode yang sudah dibuat orang lain daripada membangun semuanya dari nol.\n\nKonsep penting npm:\n\n• package.json — file konfigurasi proyek yang menyimpan nama proyek, versi, daftar dependencies, scripts, dan metadata lainnya. Wajib ada di setiap proyek Node.js.\n\n• node_modules/ — folder tempat semua package yang diinstall disimpan. JANGAN commit folder ini ke Git — ukurannya bisa sangat besar. Tambahkan ke .gitignore.\n\n• dependencies vs devDependencies:\n  - dependencies: package yang dibutuhkan aplikasi saat production (Express, mongoose, bcrypt)\n  - devDependencies: package hanya untuk development (nodemon, Jest, ESLint) — dipasang dengan flag --save-dev\n\n• package-lock.json — file yang menjamin semua developer menggunakan versi package yang persis sama. Selalu commit file ini ke Git.\n\n• Semantic Versioning (SemVer): format versi MAJOR.MINOR.PATCH\n  - 1.0.0 → 1.0.1: patch (bug fix, aman diupdate)\n  - 1.0.0 → 1.1.0: minor (fitur baru, backward compatible)\n  - 1.0.0 → 2.0.0: major (breaking changes, hati-hati)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Perintah npm Paling Penting",
+          "bahasa": "bash",
+          "kode": "# Inisialisasi proyek baru (buat package.json)\nnpm init          # interaktif, menjawab pertanyaan satu per satu\nnpm init -y       # otomatis isi semua dengan nilai default\n\n# Install package\nnpm install express              # install dan tambah ke dependencies\nnpm install nodemon --save-dev   # install sebagai devDependency\nnpm install                      # install semua dependencies dari package.json\n\n# Shorthand: 'install' bisa disingkat 'i'\nnpm i express\nnpm i nodemon -D   # -D = --save-dev\n\n# Hapus package\nnpm uninstall express\n\n# Update package\nnpm update              # update semua\nnpm update express      # update satu package\n\n# Cek package yang outdated\nnpm outdated\n\n# Jalankan script dari package.json\nnpm run dev\nnpm run test\nnpm start              # tidak perlu 'run' untuk start dan test\n\n# Cari package di registry\nnpm search express\n\n# Info tentang package\nnpm info express",
+          "penjelasan": "npm alternatif populer: yarn (dari Facebook) dan pnpm (lebih hemat disk space). Ketiganya kompatibel dengan ekosistem npm. Proyek modern banyak yang menggunakan pnpm karena instalasinya lebih cepat dan hemat storage."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Contoh package.json Lengkap",
+          "bahasa": "json",
+          "kode": "{\n  \"name\": \"api-web-belajar\",\n  \"version\": \"1.0.0\",\n  \"description\": \"REST API untuk platform web belajar informatika\",\n  \"main\": \"src/index.js\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"start\": \"node src/index.js\",\n    \"dev\": \"nodemon src/index.js\",\n    \"test\": \"jest --coverage\",\n    \"lint\": \"eslint src/\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"mongoose\": \"^8.0.3\",\n    \"bcryptjs\": \"^2.4.3\",\n    \"jsonwebtoken\": \"^9.0.2\",\n    \"dotenv\": \"^16.3.1\",\n    \"cors\": \"^2.8.5\"\n  },\n  \"devDependencies\": {\n    \"nodemon\": \"^3.0.2\",\n    \"jest\": \"^29.7.0\",\n    \"eslint\": \"^8.54.0\"\n  },\n  \"engines\": {\n    \"node\": \">=18.0.0\"\n  },\n  \"author\": \"Nama Developer\",\n  \"license\": \"MIT\"\n}",
+          "penjelasan": "Tanda ^ sebelum versi (^4.18.2) berarti 'versi ini atau patch/minor yang lebih baru'. Tanda ~ (~4.18.2) berarti 'hanya patch yang lebih baru'. Versi tanpa tanda = versi exact."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "left-pad Gate — Saat 11 Baris Kode Menghancurkan Internet",
+          "isi": "Pada 2016, seorang developer menghapus package 'left-pad' dari npm — sebuah package dengan hanya 11 baris kode yang hanya menambahkan spasi di kiri string. Hasilnya? React, Babel, dan ribuan project besar di seluruh dunia langsung break karena mereka bergantung (secara tidak langsung) pada package tersebut. Kejadian ini memicu debat besar tentang ketergantungan berlebihan pada package kecil dan membuat npm mengubah kebijakan penghapusan package."
+        }
+      ]
+    },
+
+    {
+      "id": "1.6",
+      "judul": "Event Emitter",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Event-Driven Programming di Node.js",
+          "isi": "Node.js dibangun di atas arsitektur event-driven — hampir semua operasi async di Node.js berdasarkan pada konsep event. Module events menyediakan class EventEmitter yang menjadi fondasi dari banyak built-in module Node.js seperti fs, http, dan stream.\n\nKonsep utama EventEmitter:\n• emit(namaEvent, data) — memicu (memancarkan) sebuah event dengan data opsional\n• on(namaEvent, handler) — mendaftarkan listener yang akan dipanggil setiap event tersebut terjadi\n• once(namaEvent, handler) — listener yang hanya dipanggil sekali, lalu otomatis dihapus\n• off(namaEvent, handler) — menghapus listener\n• removeAllListeners(namaEvent) — hapus semua listener untuk event tertentu\n\nKapan menggunakan EventEmitter?\n• Komunikasi antar komponen yang loosely coupled\n• Sistem notifikasi internal\n• Real-time features (dikombinasikan dengan WebSocket)\n• Custom logging dan monitoring\n• Plugin system"
+        },
+        {
+          "tipe": "kode",
+          "judul": "EventEmitter: Dasar dan Contoh Nyata",
+          "bahasa": "javascript",
+          "kode": "const EventEmitter = require('events');\n\n// ==========================================\n// DASAR EventEmitter\n// ==========================================\nconst emitter = new EventEmitter();\n\n// Daftarkan listener\nemitter.on('dataMasuk', (data) => {\n  console.log('Data diterima:', data);\n});\n\nemitter.on('error', (err) => {\n  console.error('Terjadi error:', err.message);\n});\n\n// Listener sekali pakai\nemitter.once('koneksi', () => {\n  console.log('Pertama kali terhubung!');\n  // Tidak akan dipanggil lagi meski emit('koneksi') dipanggil berkali-kali\n});\n\n// Pancarkan event\nemitter.emit('dataMasuk', { nama: 'Budi', nilai: 85 });\nemitter.emit('dataMasuk', { nama: 'Siti', nilai: 92 });\nemitter.emit('koneksi'); // Dipanggil\nemitter.emit('koneksi'); // TIDAK dipanggil (once)\n\n// ==========================================\n// CONTOH NYATA: Custom Logger\n// ==========================================\nclass Logger extends EventEmitter {\n  info(pesan) {\n    const log = { level: 'INFO', pesan, waktu: new Date().toISOString() };\n    console.log(`[INFO] ${pesan}`);\n    this.emit('log', log); // beri tahu semua listener bahwa ada log baru\n  }\n\n  error(pesan) {\n    const log = { level: 'ERROR', pesan, waktu: new Date().toISOString() };\n    console.error(`[ERROR] ${pesan}`);\n    this.emit('log', log);\n    this.emit('error_terjadi', log); // event khusus untuk error\n  }\n}\n\nconst logger = new Logger();\n\n// Listener: simpan semua log ke file\nlogger.on('log', async (logEntry) => {\n  const fs = require('fs/promises');\n  await fs.appendFile('./app.log', JSON.stringify(logEntry) + '\\n');\n});\n\n// Listener: kirim alert jika ada error\nlogger.on('error_terjadi', (logEntry) => {\n  console.log('🚨 ALERT: Error terdeteksi!', logEntry.pesan);\n  // kirimEmail(adminEmail, logEntry);\n});\n\nlogger.info('Server berhasil dijalankan');\nlogger.error('Koneksi database gagal');",
+          "penjelasan": "SELALU pasang listener untuk event 'error' pada EventEmitter. Jika event 'error' dipancarkan tapi tidak ada listener, Node.js akan melempar exception yang bisa crash seluruh aplikasi."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: EventEmitter seperti Sistem Paging Rumah Sakit",
+          "isi": "EventEmitter seperti sistem paging di rumah sakit. emit() seperti mengumumkan lewat speaker: 'Pasien di Kamar 5 butuh bantuan!'. Semua staf yang sudah on() (mendaftarkan diri) untuk event tersebut langsung bereaksi — perawat datang, dokter dihubungi, admin dicatat. Staf yang once() hanya datang sekali untuk respons pertama. Staf bisa melepaskan diri dari paging dengan off()."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Node.js Punya Batas Default 10 Listener",
+          "isi": "Secara default, Node.js memperingatkan jika kamu mendaftarkan lebih dari 10 listener untuk satu event yang sama — karena ini sering menandakan memory leak (listener ditambahkan berulang kali tanpa dihapus). Kamu bisa mengubah batas ini dengan emitter.setMaxListeners(n), atau set ke 0 untuk unlimited. Peringatan ini adalah fitur keamanan yang berguna untuk debugging."
+        }
+      ]
+    },
+
+    {
+      "id": "1.7",
+      "judul": "Path & OS Module",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Module path dan os",
+          "isi": "Dua built-in module yang sering digunakan namun sering diabaikan pemula: path dan os.\n\nModule path menyediakan utilities untuk bekerja dengan path file dan direktori secara cross-platform. Masalah klasik: Windows menggunakan backslash (\\) sebagai pemisah path, sedangkan Linux/Mac menggunakan forward slash (/). Tanpa path module, kode yang bekerja di Windows bisa rusak di Linux, dan sebaliknya.\n\nMethod path yang paling sering dipakai:\n• path.join(...segments) — gabungkan segmen path dengan separator yang benar\n• path.resolve(...segments) — buat absolute path dari relative path\n• path.dirname(filePath) — ambil direktori dari sebuah path\n• path.basename(filePath, ext) — ambil nama file dari path\n• path.extname(filePath) — ambil ekstensi file\n• path.parse(filePath) — pecah path menjadi object {root, dir, base, name, ext}\n• path.sep — separator yang berlaku di OS saat ini (/ atau \\)\n\nModule os memberikan informasi tentang sistem operasi tempat aplikasi berjalan. Berguna untuk:\n• Mendeteksi OS untuk logika conditional\n• Mendapatkan informasi resource (CPU, memori) untuk monitoring\n• Mendapatkan home directory dan temporary directory"
+        },
+        {
+          "tipe": "kode",
+          "judul": "path dan os Module",
+          "bahasa": "javascript",
+          "kode": "const path = require('path');\nconst os = require('os');\n\n// ==========================================\n// PATH MODULE\n// ==========================================\n\n// __dirname = direktori file saat ini (global variable di Node.js)\n// __filename = path lengkap file saat ini\nconsole.log(__dirname);   // '/home/user/project/src'\nconsole.log(__filename);  // '/home/user/project/src/app.js'\n\n// path.join: gabungkan path dengan aman (cross-platform)\nconst pathData = path.join(__dirname, '..', 'data', 'mahasiswa.json');\nconsole.log(pathData); // '/home/user/project/data/mahasiswa.json'\n// Lebih aman dari: __dirname + '/../data/mahasiswa.json'\n\n// path.resolve: absolute path\nconst absPath = path.resolve('config', 'database.js');\nconsole.log(absPath); // '/home/user/project/config/database.js'\n\n// Ekstrak info dari path\nconst filePath = '/var/www/uploads/foto-profil.jpg';\nconsole.log(path.dirname(filePath));   // '/var/www/uploads'\nconsole.log(path.basename(filePath));  // 'foto-profil.jpg'\nconsole.log(path.basename(filePath, '.jpg')); // 'foto-profil' (tanpa ekstensi)\nconsole.log(path.extname(filePath));   // '.jpg'\nconsole.log(path.parse(filePath));\n// { root: '/', dir: '/var/www/uploads', base: 'foto-profil.jpg',\n//   ext: '.jpg', name: 'foto-profil' }\n\n// ==========================================\n// OS MODULE\n// ==========================================\n\nconsole.log(os.platform());   // 'linux', 'darwin' (Mac), 'win32'\nconsole.log(os.arch());       // 'x64', 'arm64'\nconsole.log(os.hostname());   // nama komputer/server\nconsole.log(os.homedir());    // '/home/username'\nconsole.log(os.tmpdir());     // direktori temporary: '/tmp'\n\n// Informasi memori (dalam bytes)\nconst totalRAM = os.totalmem();\nconst freeRAM = os.freemem();\nconsole.log(`RAM: ${(freeRAM / 1024 ** 3).toFixed(2)} GB bebas dari ${(totalRAM / 1024 ** 3).toFixed(2)} GB total`);\n\n// Informasi CPU\nconst cpus = os.cpus();\nconsole.log(`CPU: ${cpus.length} core — ${cpus[0].model}`);\n\n// Uptime sistem (detik)\nconsole.log(`Server uptime: ${Math.floor(os.uptime() / 3600)} jam`);",
+          "penjelasan": "Selalu gunakan path.join(__dirname, 'subfolder', 'file.json') untuk path relatif, bukan string concatenation. __dirname selalu menunjuk ke direktori file yang sedang dieksekusi, bukan direktori mana npm run dijalankan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "__dirname Tidak Ada di ES Module",
+          "isi": "Jika kamu menggunakan ES Module (import/export), variabel __dirname dan __filename tidak tersedia secara otomatis. Kamu perlu membuatnya sendiri menggunakan import.meta.url: import { fileURLToPath } from 'url'; import { dirname } from 'path'; const __filename = fileURLToPath(import.meta.url); const __dirname = dirname(__filename). Ini salah satu 'gotcha' yang sering mengejutkan developer yang migrasi dari CommonJS ke ES Module."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: path.join seperti GPS",
+          "isi": "path.join seperti GPS yang tahu sistem jalan lokal. Di Indonesia, jalan ditulis dari kiri ke kanan. Di beberapa negara lain berbeda. GPS (path.join) otomatis menyesuaikan format jalan sesuai negara (OS) tempat kamu berada — kamu cukup menyebut nama jalannya, GPS yang urus formatnya."
+        }
+      ]
+    },
+
+    {
+      "id": "1.8",
+      "judul": "Streams & Buffer",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Stream Penting?",
+          "isi": "Bayangkan kamu harus membaca file video berukuran 2 GB. Tanpa stream, Node.js harus memuat seluruh 2 GB ke memori sebelum bisa melakukan apapun — ini akan crash di server dengan RAM kecil. Dengan stream, Node.js membaca file sedikit demi sedikit (chunk per chunk) dan memproses setiap potongan segera setelah tersedia, tanpa harus menunggu seluruh file dimuat.\n\nStream di Node.js ada empat jenis:\n• Readable — stream yang bisa dibaca: fs.createReadStream, req (HTTP request), process.stdin\n• Writable — stream yang bisa ditulis: fs.createWriteStream, res (HTTP response), process.stdout\n• Duplex — bisa dibaca DAN ditulis: net.Socket (koneksi TCP)\n• Transform — Duplex yang mengubah data saat melewatinya: zlib (kompresi), crypto (enkripsi)\n\nBuffer adalah area memori sementara yang menyimpan data biner (raw bytes) saat data sedang berpindah. Buffer diperlukan karena JavaScript tidak punya cara native untuk menangani data biner sebelum Node.js memperkenalkan class Buffer."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Streams: Baca dan Tulis File Besar",
+          "bahasa": "javascript",
+          "kode": "const fs = require('fs');\nconst zlib = require('zlib'); // untuk kompresi\nconst path = require('path');\n\n// ==========================================\n// READABLE STREAM\n// ==========================================\nconst readStream = fs.createReadStream('./data/file-besar.csv', {\n  encoding: 'utf8',\n  highWaterMark: 64 * 1024  // ukuran chunk: 64KB (default 16KB)\n});\n\nlet totalBaris = 0;\nreadStream.on('data', (chunk) => {\n  // Setiap chunk adalah potongan file ~64KB\n  const baris = chunk.split('\\n').length;\n  totalBaris += baris;\n  console.log(`Chunk diterima: ${chunk.length} karakter`);\n});\n\nreadStream.on('end', () => {\n  console.log(`Selesai! Estimasi total baris: ${totalBaris}`);\n});\n\nreadStream.on('error', (err) => {\n  console.error('Stream error:', err.message);\n});\n\n// ==========================================\n// PIPE: Sambungkan Readable ke Writable\n// ==========================================\n// Salin file dengan stream (memory efficient)\nconst source = fs.createReadStream('./video-besar.mp4');\nconst destination = fs.createWriteStream('./backup/video-besar-backup.mp4');\n\nsource.pipe(destination);\n\ndestination.on('finish', () => {\n  console.log('File berhasil disalin!');\n});\n\n// ==========================================\n// PIPELINE: Kompresi file dengan stream\n// ==========================================\nconst { pipeline } = require('stream/promises'); // versi Promise\n\nasync function kompresFile() {\n  await pipeline(\n    fs.createReadStream('./log/app.log'),\n    zlib.createGzip(),               // Transform stream: kompres dengan gzip\n    fs.createWriteStream('./log/app.log.gz')\n  );\n  console.log('File berhasil dikompresi!');\n}\n\n// ==========================================\n// BUFFER\n// ==========================================\n// Buat Buffer dari string\nconst buf = Buffer.from('Halo Node.js', 'utf8');\nconsole.log(buf);             // <Buffer 48 61 6c 6f 20 4e 6f 64 65 2e 6a 73>\nconsole.log(buf.toString());  // 'Halo Node.js'\nconsole.log(buf.length);      // 12 (bytes)\n\n// Encode ke Base64 (umum untuk gambar di API)\nconst base64 = buf.toString('base64');\nconsole.log(base64); // 'SGFsbyBOb2RlLmpz'\nconsole.log(Buffer.from(base64, 'base64').toString()); // 'Halo Node.js'",
+          "penjelasan": "Gunakan pipeline() dari 'stream/promises' daripada pipe() langsung — pipeline menangani error propagation secara otomatis dan membersihkan stream yang terbuka jika ada error di tengah jalan."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Stream seperti Pipa Air",
+          "isi": "Stream seperti pipa air, bukan ember. Dengan ember, kamu harus menunggu ember penuh sebelum bisa membawa air. Dengan pipa, air mengalir terus-menerus dari sumber ke tujuan — tidak perlu menunggu semua air terkumpul dulu. pipe() seperti menyambungkan dua pipa. Transform stream seperti filter di tengah pipa yang mengubah air (data) yang melewatinya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Netflix Menggunakan Node.js untuk Streaming",
+          "isi": "Netflix migrasi dari Java ke Node.js untuk UI server-side rendering mereka pada 2015 dan berhasil memangkas waktu startup dari 40 menit menjadi 70 detik! Node.js stream sangat cocok untuk use case streaming media — data video dikirim ke client sebagai stream, sehingga penonton bisa mulai menonton tanpa harus menunggu seluruh video didownload. Ini yang memungkinkan fitur 'play instantly' di Netflix."
+        }
+      ]
+    },
+
+    {
+      "id": "1.9",
+      "judul": "Environment Variables & dotenv",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu Environment Variables?",
+          "isi": "Environment variables adalah variabel yang disimpan di luar kode aplikasi — di level sistem operasi atau file konfigurasi — dan dibaca oleh aplikasi saat runtime. Ini adalah praktik terbaik (best practice) yang wajib diterapkan di semua aplikasi produksi.\n\nMengapa tidak langsung hardcode di kode saja?\n\n• Keamanan — kredensial seperti password database, API key, JWT secret TIDAK BOLEH ada di kode yang di-commit ke Git. Jika repository-mu public, siapapun bisa melihat dan menyalahgunakan kredensial tersebut.\n• Fleksibilitas — nilai berbeda untuk environment berbeda tanpa mengubah kode: development (database lokal), staging (database test), production (database produksi).\n• Portabilitas — aplikasi bisa berjalan di server mana saja hanya dengan mengatur environment variables yang tepat.\n\nDi Node.js, environment variables diakses melalui object process.env. Package dotenv memungkinkan kamu mendefinisikan environment variables dalam file .env untuk kemudahan development lokal.\n\nAturan file .env:\n• JANGAN commit file .env ke Git — tambahkan ke .gitignore\n• Buat file .env.example berisi daftar variable yang dibutuhkan (tanpa nilai aslinya) dan commit file ini\n• Nama variable biasanya HURUF_KAPITAL_DENGAN_UNDERSCORE"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Environment Variables dengan dotenv",
+          "bahasa": "javascript",
+          "kode": "// File: .env (JANGAN commit ke Git!)\n// PORT=3000\n// NODE_ENV=development\n// DB_URL=mongodb://localhost:27017/web_belajar\n// JWT_SECRET=rahasia-super-panjang-dan-acak-123!@#\n// BCRYPT_ROUNDS=12\n\n// File: .env.example (COMMIT ke Git - tanpa nilai asli)\n// PORT=\n// NODE_ENV=\n// DB_URL=\n// JWT_SECRET=\n// BCRYPT_ROUNDS=\n\n// ==========================================\n// Menggunakan dotenv\n// ==========================================\n// Install: npm install dotenv\nrequire('dotenv').config(); // Muat .env ke process.env\n// Letakkan di baris PALING ATAS file entry point (index.js/app.js)\n\n// Akses environment variables\nconst PORT = process.env.PORT || 3000;     // fallback ke 3000 jika tidak ada\nconst NODE_ENV = process.env.NODE_ENV || 'development';\nconst DB_URL = process.env.DB_URL;\nconst JWT_SECRET = process.env.JWT_SECRET;\n\nif (!JWT_SECRET) {\n  throw new Error('JWT_SECRET harus diset di environment variables!');\n}\n\nconsole.log(`Mode: ${NODE_ENV}`);\nconsole.log(`Port: ${PORT}`);\n// JANGAN log nilai secret ke console!\n\n// ==========================================\n// Pola konfigurasi yang baik (config.js)\n// ==========================================\nconst config = {\n  port: parseInt(process.env.PORT) || 3000,\n  env: process.env.NODE_ENV || 'development',\n  isProd: process.env.NODE_ENV === 'production',\n  isDev: process.env.NODE_ENV === 'development',\n  db: {\n    url: process.env.DB_URL,\n    name: process.env.DB_NAME || 'web_belajar'\n  },\n  jwt: {\n    secret: process.env.JWT_SECRET,\n    expiresIn: process.env.JWT_EXPIRES_IN || '7d'\n  },\n  bcrypt: {\n    rounds: parseInt(process.env.BCRYPT_ROUNDS) || 12\n  }\n};\n\n// Validasi semua variable wajib tersedia\nconst requiredVars = ['DB_URL', 'JWT_SECRET'];\nrequiredVars.forEach(varName => {\n  if (!process.env[varName]) {\n    throw new Error(`Environment variable ${varName} wajib diset!`);\n  }\n});\n\nmodule.exports = config;",
+          "penjelasan": "Selalu validasi environment variables yang kritikal saat startup — lebih baik aplikasi crash dengan pesan error yang jelas daripada berjalan dengan konfigurasi yang salah dan menghasilkan bug misterius di tengah jalan."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: .env seperti Kunci Brankas",
+          "isi": "Kode aplikasi seperti blueprint gedung yang bisa dilihat publik. Environment variables seperti kunci brankas dan kombinasi sandi — tidak boleh ada di blueprint. Setiap karyawan (server/developer) punya kunci mereka sendiri (.env file lokal). Blueprint menjelaskan bahwa 'ada brankas di sini dan butuh kunci' (.env.example) tapi tidak memberitahu kuncinya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "API Key Bocor di GitHub — Masalah Nyata",
+          "isi": "GitHub memiliki fitur 'Secret Scanning' yang secara otomatis mendeteksi API key, password, dan token yang tidak sengaja di-commit. Setiap hari, ribuan kredensial bocor di repository publik. Pada 2022, sebuah studi menemukan lebih dari 6 juta secret (API key, password, token) yang bocor di repository GitHub publik hanya dalam satu tahun. Beberapa korban mendapat tagihan cloud ribuan dollar karena API key mereka digunakan oleh pihak tidak bertanggung jawab untuk mining cryptocurrency."
+        }
+      ]
+    },
+
+    {
+      "id": "1.10",
+      "judul": "Nodemon & Debugging",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Nodemon: Auto-Restart untuk Development",
+          "isi": "Saat mengembangkan aplikasi Node.js, setiap kali kamu mengubah kode, kamu harus menghentikan server (Ctrl+C) dan menjalankannya ulang (node app.js) agar perubahan berlaku. Ini sangat melelahkan!\n\nNodemon menyelesaikan masalah ini — ia memantau perubahan file dan otomatis me-restart server. Nodemon adalah alat development yang tidak perlu ada di production.\n\nAlternatif modern nodemon:\n• node --watch (built-in sejak Node.js 18) — tidak perlu install package, sudah tersedia langsung\n• tsx untuk TypeScript — seperti nodemon tapi khusus untuk TypeScript\n\nSelain nodemon, ada beberapa tool lain yang sangat berguna untuk development:\n• Postman atau Thunder Client (VS Code extension) — untuk testing HTTP request ke API\n• VS Code REST Client — file .http untuk mendokumentasikan dan testing API\n• Morgan — HTTP request logger middleware untuk Express\n\nDebugging di Node.js:\n• console.log() — cara paling sederhana tapi tidak terstruktur\n• node --inspect — aktifkan debugger, buka Chrome DevTools untuk debugging visual\n• VS Code Debugger — breakpoint dan variabel inspection langsung di editor"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Setup Nodemon dan Debugging",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// SETUP NODEMON\n// ==========================================\n// Install sebagai devDependency\n// npm install nodemon --save-dev\n\n// package.json — tambahkan scripts:\n// \"scripts\": {\n//   \"start\": \"node src/index.js\",          ← production\n//   \"dev\": \"nodemon src/index.js\",          ← development\n//   \"dev:esm\": \"nodemon --experimental-vm-modules src/index.mjs\"\n// }\n\n// Jalankan dengan: npm run dev\n\n// Konfigurasi nodemon (nodemon.json atau field 'nodemonConfig' di package.json)\n// {\n//   \"watch\": [\"src\"],           ← folder yang dipantau\n//   \"ext\": \"js,json\",           ← ekstensi file yang dipantau\n//   \"ignore\": [\"node_modules\"], ← abaikan folder ini\n//   \"delay\": 1000               ← tunggu 1 detik sebelum restart\n// }\n\n// Alternatif built-in Node.js 18+ (tanpa install):\n// node --watch src/index.js\n\n// ==========================================\n// DEBUGGING DENGAN VS CODE\n// ==========================================\n// File: .vscode/launch.json\n// {\n//   \"version\": \"0.2.0\",\n//   \"configurations\": [\n//     {\n//       \"type\": \"node\",\n//       \"request\": \"launch\",\n//       \"name\": \"Debug Node.js\",\n//       \"skipFiles\": [\"<node_internals>/**\"],\n//       \"program\": \"${workspaceFolder}/src/index.js\",\n//       \"envFile\": \"${workspaceFolder}/.env\"\n//     }\n//   ]\n// }\n\n// ==========================================\n// DEBUGGING TIPS\n// ==========================================\n\n// Hindari: console.log('data:', data)\n// Lebih baik:\nconsole.log('Mahasiswa ditemukan:', { id: 1, nama: 'Budi' }); // object langsung\nconsole.table([{ id: 1 }, { id: 2 }]); // tampilkan array sebagai tabel\nconsole.time('queryDB');\n// ... operasi yang ingin diukur...\nconsole.timeEnd('queryDB'); // tampilkan waktu eksekusi\n\n// Stack trace dengan Error:\nconst err = new Error('Sesuatu salah');\nconsole.error(err.stack); // tampilkan full stack trace\n\n// Inspect object dalam (menghindari [Object] di console.log)\nconst util = require('util');\nconsole.log(util.inspect(objectKompleks, { depth: null, colors: true }));",
+          "penjelasan": "Untuk production, jangan gunakan console.log berlebihan karena memperlambat performa dan bisa membocorkan informasi sensitif ke log. Gunakan library logging seperti Winston atau Pino yang bisa dikonfigurasi per environment."
+        },
+        {
+          "tipe": "gambar",
+          "judul":  "Cara Kerja Nodemon dalam Development Node.js",
+          "src": "/assets/backend/bab1/bab1_1.10.png",
+          "deskripsi_gambar":  "Diagram yang menunjukkan Nodemon sebagai pengganti perintah node saat proses development. Nodemon menjalankan aplikasi Node.js seperti biasa, tetapi juga memantau file proyek seperti index.js. Ketika kode berubah dan disimpan, Nodemon mendeteksi perubahan tersebut lalu secara otomatis me-restart aplikasi tanpa perlu menghentikan dan menjalankan ulang server secara manual.",
+          "alt": "Diagram cara kerja Nodemon yang memantau perubahan file dan otomatis me-restart aplikasi Node.js"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Nodemon seperti Fitur Auto-Save",
+          "isi": "Nodemon seperti kombinasi auto-save dan auto-refresh di Google Docs. Setiap kali kamu menyimpan perubahan di kode, hasilnya langsung terlihat tanpa harus melakukan apapun secara manual. Tanpa nodemon, setiap perubahan kode ibarat harus keluar dari dokumen, menutup browser, membuka ulang, dan menavigasi ke halaman yang sama setiap kali."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Node.js Punya Inspector Bawaan yang Powerful",
+          "isi": "Sejak Node.js v6.3, kamu bisa menjalankan node --inspect app.js lalu membuka chrome://inspect di Chrome untuk mendapatkan debugger penuh: breakpoints, call stack, variable inspection, CPU profiling, dan memory snapshot — semua tools yang sama yang digunakan untuk debugging frontend JavaScript, tapi sekarang untuk backend Node.js. Ini salah satu keuntungan terbesar menggunakan JavaScript di server — tooling yang sudah sangat mature."
+        }
+      ]
+    }
+
+  ]
+}

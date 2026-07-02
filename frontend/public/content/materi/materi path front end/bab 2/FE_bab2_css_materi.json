@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 2,
+    "judul_bab": "Styling dengan CSS",
+    "deskripsi": "Materi lengkap CSS dari dasar hingga layout modern. Mencakup selector, box model, tipografi, flexbox, grid, positioning, responsive design, pseudo-class, variabel, hingga transisi dan animasi.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "MDN Web Docs – CSS Styling Basics",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "MDN Web Docs – CSS Layout",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "web.dev – Learn CSS (Google)",
+        "url": "https://web.dev/learn/css",
+        "lisensi": "CC-BY 4.0"
+      },
+      {
+        "nama": "The Odin Project – Intermediate HTML and CSS",
+        "url": "https://www.theodinproject.com/paths/full-stack-javascript/courses/intermediate-html-and-css",
+        "lisensi": "CC-BY-NC-SA 4.0"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+
+  "sub_bab": [
+
+    {
+      "id": "2.1",
+      "judul": "Apa itu CSS & Cara Kerjanya",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Pengertian CSS",
+          "isi": "CSS adalah singkatan dari Cascading Style Sheets — bahasa yang digunakan untuk mengatur tampilan visual halaman web. Jika HTML adalah kerangka tulang, CSS adalah kulit, warna, dan pakaian yang membuat kerangka itu terlihat indah.\n\nTanpa CSS, semua halaman web akan terlihat seperti dokumen teks lama — hitam putih, font default browser, tanpa layout yang teratur. CSS memberi kontrol penuh atas hampir semua aspek visual: warna, ukuran, jarak, font, posisi elemen, animasi, bahkan tampilan di berbagai ukuran layar."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Tiga Cara Menuliskan CSS",
+          "isi": "Ada tiga cara menghubungkan CSS ke dokumen HTML, masing-masing punya kegunaan yang berbeda:\n\n• Inline CSS — ditulis langsung di atribut style elemen HTML. Hanya berlaku untuk satu elemen itu saja. Hindari penggunaan berlebihan karena menyulitkan pemeliharaan.\n• Internal CSS — ditulis di dalam tag <style> di bagian <head> dokumen. Berlaku untuk satu halaman saja.\n• Eksternal CSS — ditulis di file .css terpisah, lalu dihubungkan ke HTML via tag <link>. Ini cara yang paling direkomendasikan karena satu file CSS bisa dipakai oleh banyak halaman sekaligus."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Tiga Cara Menulis CSS",
+          "bahasa": "html",
+          "kode": "<!-- 1. Inline CSS -->\n<p style=\"color: red; font-size: 18px;\">Teks merah inline.</p>\n\n<!-- 2. Internal CSS -->\n<head>\n  <style>\n    p {\n      color: blue;\n      font-size: 16px;\n    }\n  </style>\n</head>\n\n<!-- 3. Eksternal CSS (DIREKOMENDASIKAN) -->\n<head>\n  <link rel=\"stylesheet\" href=\"/css/style.css\" />\n</head>",
+          "penjelasan": "Untuk proyek nyata, selalu gunakan eksternal CSS. Satu file style.css bisa mengatur tampilan ratusan halaman sekaligus — ubah satu file, semua halaman ikut berubah."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Anatomi Aturan CSS",
+          "isi": "Setiap aturan CSS terdiri dari dua bagian utama:\n\n• Selector — menentukan elemen HTML mana yang akan diberi gaya\n• Declaration block — kumpulan properti dan nilai yang diapit kurung kurawal { }\n\nDi dalam declaration block, setiap baris disebut declaration, yang terdiri dari property (apa yang diubah) dan value (nilai perubahannya), dipisahkan tanda titik dua, dan diakhiri titik koma."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Anatomi Aturan CSS",
+          "bahasa": "css",
+          "kode": "/* Selector { property: value; } */\n\nh1 {\n  color: #2c3e50;        /* warna teks */\n  font-size: 32px;       /* ukuran font */\n  text-align: center;    /* perataan teks */\n  margin-bottom: 16px;   /* jarak bawah */\n}",
+          "penjelasan": "Komentar di CSS ditulis dengan /* ... */. Biasakan menulis satu property per baris — lebih mudah dibaca dan di-debug."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Fakta: Cascading = Air Terjun",
+          "isi": "Kata 'Cascading' di CSS berasal dari konsep air terjun — aturan CSS mengalir dari atas ke bawah dan bisa saling menimpa. Jika ada dua aturan yang mengatur warna elemen yang sama, aturan yang lebih spesifik atau yang ditulis belakangan akan menang. Inilah yang disebut cascade."
+        }
+      ]
+    },
+
+    {
+      "id": "2.2",
+      "judul": "Selector & Spesifisitas",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Jenis-Jenis Selector",
+          "isi": "Selector adalah cara CSS memilih elemen HTML mana yang akan diberi gaya. Memahami selector dengan baik adalah kunci menulis CSS yang efisien. Berikut jenis selector dari yang paling umum:\n\n• Element selector — menarget semua elemen dengan tag tertentu: p { } menarget semua paragraf\n• Class selector — menarget elemen dengan class tertentu, diawali titik: .kartu { }\n• ID selector — menarget satu elemen unik dengan ID tertentu, diawali pagar: #header { }\n• Universal selector — menarget semua elemen: * { }\n• Descendant selector — menarget elemen yang ada di dalam elemen lain: nav a { } menarget semua <a> di dalam <nav>\n• Child selector — menarget elemen anak langsung: ul > li { }\n• Adjacent sibling — menarget elemen yang tepat setelah elemen lain: h2 + p { }\n• Attribute selector — menarget elemen berdasarkan atributnya: input[type='email'] { }"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Berbagai Jenis Selector",
+          "bahasa": "css",
+          "kode": "/* Element selector */\np { color: #333; }\n\n/* Class selector */\n.tombol-utama { background: #3498db; color: white; }\n\n/* ID selector */\n#navbar { position: fixed; top: 0; }\n\n/* Descendant selector: semua <a> di dalam <nav> */\nnav a { text-decoration: none; color: white; }\n\n/* Child selector: hanya <li> langsung di dalam <ul> */\nul > li { list-style: none; }\n\n/* Attribute selector */\ninput[type='email'] { border: 2px solid #3498db; }\n\n/* Multiple selector: terapkan ke h1, h2, dan h3 sekaligus */\nh1, h2, h3 { font-family: 'Segoe UI', sans-serif; }",
+          "penjelasan": "Class selector (.nama) jauh lebih fleksibel dari ID selector (#nama) karena class bisa dipakai di banyak elemen, sedangkan ID hanya untuk satu elemen per halaman."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Spesifisitas: Aturan Siapa yang Menang",
+          "isi": "Ketika dua aturan CSS menarget elemen yang sama dan ada konflik, browser menghitung spesifisitas untuk menentukan aturan mana yang dimenangkan. Semakin spesifik selectornya, semakin tinggi prioritasnya.\n\nUrutan spesifisitas dari tertinggi ke terendah:\n1. Inline style (style=\"...\") — spesifisitas tertinggi\n2. ID selector (#id) — sangat spesifik\n3. Class selector (.class), pseudo-class (:hover), attribute selector ([type])\n4. Element selector (p, h1, div) — spesifisitas terendah\n\nJika spesifisitas sama, aturan yang ditulis belakangan menang (inilah 'cascade')."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Diagram Spesifisitas CSS",
+          "src": "/assets/frontend/bab2/bab2_2.2.jpg",
+          "deskripsi_gambar": "Diagram piramida atau tabel spesifisitas CSS dengan empat level: paling bawah 'element selector' (nilai 0,0,1), lalu 'class/pseudo-class' (0,1,0), lalu 'ID selector' (1,0,0), paling atas 'inline style' (nilai tertinggi). Setiap level diberi warna berbeda dan contoh selectornya.",
+          "alt": "Diagram piramida spesifisitas CSS dari element selector hingga inline style"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Spesifisitas seperti Pangkat Militer",
+          "isi": "Bayangkan aturan CSS seperti perintah militer. Perintah dari Jenderal (inline style) selalu mengalahkan perintah dari Kolonel (ID), yang mengalahkan perintah dari Mayor (class), yang mengalahkan perintah dari Prajurit (element selector). Jika dua prajurit memberikan perintah berbeda, perintah yang datang belakangan yang diikuti."
+        }
+      ]
+    },
+
+    {
+      "id": "2.3",
+      "judul": "Box Model",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Setiap Elemen adalah Kotak",
+          "isi": "Salah satu konsep paling fundamental dalam CSS adalah box model — setiap elemen HTML diperlakukan sebagai sebuah kotak persegi panjang. Memahami box model adalah kunci untuk mengontrol ukuran, jarak, dan tata letak elemen di halaman.\n\nSetiap kotak terdiri dari empat lapisan dari dalam ke luar:\n\n• Content — area di mana teks atau gambar ditampilkan. Ukurannya dikontrol dengan width dan height.\n• Padding — ruang kosong di antara content dan border. Padding bersifat transparan (mengikuti warna background elemen).\n• Border — garis yang mengelilingi padding dan content. Bisa diatur ketebalan, gaya, dan warnanya.\n• Margin — ruang kosong di luar border yang memisahkan elemen ini dari elemen lain di sekitarnya. Margin selalu transparan."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Visualisasi CSS Box Model",
+          "src": "/assets/frontend/bab2/bab2_2.3.jpg",
+          "deskripsi_gambar": "Diagram CSS Box Model berupa empat lapisan kotak bersarang yang mewakili margin, border, padding, dan content. Setiap lapisan diberi warna berbeda dan label namanya. Tampilan menyerupai visualisasi Box Model pada DevTools browser.",
+          "alt": "Diagram CSS box model menampilkan empat lapisan: margin, border, padding, dan content"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Menggunakan Box Model",
+          "bahasa": "css",
+          "kode": ".kartu {\n  /* Content */\n  width: 300px;\n  height: auto;\n\n  /* Padding: ruang dalam */\n  padding: 24px;              /* semua sisi sama */\n  padding: 16px 24px;         /* atas-bawah | kiri-kanan */\n  padding: 8px 16px 24px 12px; /* atas | kanan | bawah | kiri */\n\n  /* Border */\n  border: 2px solid #ddd;\n  border-radius: 8px;         /* sudut membulat */\n\n  /* Margin: jarak dari elemen lain */\n  margin: 0 auto;             /* tengahkan elemen secara horizontal */\n  margin-bottom: 24px;\n}",
+          "penjelasan": "Shorthand margin dan padding mengikuti urutan jarum jam: atas, kanan, bawah, kiri (TRBL — Top Right Bottom Left). Atau ingat dengan TROUBLE."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "box-sizing: border-box — Properti Wajib",
+          "isi": "Secara default, CSS menggunakan box-sizing: content-box — artinya width dan height hanya mengukur area content saja. Padding dan border ditambahkan di luar ukuran tersebut, sehingga elemen bisa lebih besar dari yang kamu tentukan.\n\nIni sering membingungkan. Solusinya: gunakan box-sizing: border-box yang membuat width dan height mencakup padding dan border sekaligus. Ini jauh lebih intuitif dan hampir semua developer modern menggunakannya sebagai default global."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Global Reset box-sizing",
+          "bahasa": "css",
+          "kode": "/* Reset global — taruh di baris paling atas file CSS */\n*, *::before, *::after {\n  box-sizing: border-box;\n}\n\n/* Contoh perbedaannya: */\n.kotak {\n  width: 200px;\n  padding: 20px;\n  border: 5px solid black;\n}\n\n/* content-box: total lebar = 200 + 20+20 + 5+5 = 250px */\n/* border-box:  total lebar = 200px (padding & border sudah termasuk) */",
+          "penjelasan": "Reset box-sizing ini adalah salah satu hal pertama yang harus ditulis di setiap project CSS. Hampir semua CSS framework modern sudah menerapkan ini secara default."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Box Model seperti Pengiriman Paket",
+          "isi": "Bayangkan mengirim vas bunga. Content adalah vas itu sendiri. Padding adalah busa pelindung di dalam kotak. Border adalah kotak kardusnya. Margin adalah jarak antara kotak ini dengan paket-paket lain di dalam truk pengiriman."
+        }
+      ]
+    },
+
+    {
+      "id": "2.4",
+      "judul": "Warna, Tipografi & Unit",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Format Warna di CSS",
+          "isi": "CSS mendukung berbagai format penulisan warna:\n\n• Named color — nama warna dalam bahasa Inggris: red, blue, coral, tomato. Ada 140+ warna bernama.\n• Hex — kode heksadesimal 6 digit: #ff6b6b. Format paling umum digunakan.\n• RGB — rgb(255, 107, 107). Lebih intuitif untuk mixing warna.\n• RGBA — rgba(255, 107, 107, 0.5). Seperti RGB dengan tambahan alpha (transparansi) 0–1.\n• HSL — hsl(0, 100%, 71%). Hue, Saturation, Lightness — paling mudah untuk membuat variasi warna.\n• HSLA — seperti HSL dengan transparansi."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Warna dan Tipografi",
+          "bahasa": "css",
+          "kode": "body {\n  /* Tipografi dasar */\n  font-family: 'Segoe UI', Roboto, Arial, sans-serif;\n  font-size: 16px;         /* ukuran dasar */\n  font-weight: 400;        /* 100-900, 400=normal, 700=bold */\n  line-height: 1.6;        /* jarak antar baris, tanpa satuan = relatif */\n  color: #2c3e50;\n}\n\nh1 {\n  font-size: 2.5rem;       /* 2.5x ukuran root = 40px */\n  font-weight: 700;\n  letter-spacing: -0.5px;\n  color: hsl(210, 30%, 20%);\n}\n\n.teks-muted {\n  color: rgba(0, 0, 0, 0.5); /* hitam 50% transparan */\n}\n\n.highlight {\n  background-color: #fff3cd;\n  color: #856404;\n}",
+          "penjelasan": "Gunakan font-family dengan fallback: tulis font pilihan pertama, lalu alternatifnya, lalu generic family (serif, sans-serif, monospace) sebagai pilihan terakhir jika semua font gagal dimuat."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Unit CSS: px, rem, em, %, vw, vh",
+          "isi": "Memilih unit yang tepat sangat penting untuk membuat halaman yang fleksibel dan responsif:\n\n• px (pixel) — ukuran absolut, tidak berubah. Cocok untuk border, shadow, ukuran yang memang tidak boleh berubah.\n• rem (root em) — relatif terhadap ukuran font elemen <html>. Default-nya 1rem = 16px. Terbaik untuk font-size dan spacing karena menghormati preferensi ukuran teks pengguna.\n• em — relatif terhadap ukuran font elemen induknya. Bisa bertumpuk dan menjadi membingungkan jika dipakai terlalu banyak.\n• % — relatif terhadap dimensi elemen induknya. Sangat berguna untuk layout.\n• vw / vh — relatif terhadap lebar/tinggi viewport (layar). 100vw = lebar penuh layar.\n• fr — unit khusus CSS Grid, artinya 'fraction' atau bagian dari ruang yang tersedia."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Kenapa rem Lebih Baik dari px untuk Font?",
+          "isi": "Banyak pengguna, terutama yang memiliki gangguan penglihatan, mengatur ukuran teks default browser mereka menjadi lebih besar dari 16px. Jika kamu menggunakan px untuk semua ukuran font, pengaturan pengguna itu akan diabaikan. Dengan rem, ukuran font di websitemu akan ikut menyesuaikan — lebih aksesibel untuk semua pengguna."
+        }
+      ]
+    },
+
+    {
+      "id": "2.5",
+      "judul": "Flexbox",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Flexbox: Layout Satu Dimensi",
+          "isi": "Flexbox (Flexible Box Layout) adalah sistem layout CSS yang dirancang untuk mengatur elemen dalam satu baris atau satu kolom sekaligus. Sebelum Flexbox, membuat layout yang rapi membutuhkan float dan hack-hack CSS yang rumit. Flexbox mengubah segalanya menjadi jauh lebih mudah.\n\nKonsep utama Flexbox:\n• Flex Container — elemen induk yang diberi display: flex. Ia yang 'memimpin' pengaturan.\n• Flex Items — semua elemen anak langsung dari flex container. Mereka yang 'diatur'.\n\nFlexbox memiliki dua sumbu:\n• Main axis — sumbu utama, arah default horizontal (kiri ke kanan)\n• Cross axis — sumbu silang, tegak lurus dari main axis (atas ke bawah)"
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Konsep Main Axis dan Cross Axis Flexbox",
+          "src": "/assets/frontend/bab2/bab2_2.5.png",
+          "deskripsi_gambar": "Diagram flex container dengan panah horizontal bertuliskan 'main axis' dari kiri ke kanan, dan panah vertikal bertuliskan 'cross axis' dari atas ke bawah. Di dalam container terdapat tiga flex item berbentuk kotak berwarna berbeda. Label 'flex container' di luar dan 'flex item' menunjuk ke masing-masing kotak.",
+          "alt": "Diagram flexbox menampilkan main axis horizontal dan cross axis vertikal"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Properti Flex Container",
+          "bahasa": "css",
+          "kode": ".container {\n  display: flex;\n\n  /* Arah susunan item */\n  flex-direction: row;           /* default: kiri ke kanan */\n  /* flex-direction: column;     atas ke bawah */\n\n  /* Perataan di main axis (horizontal jika row) */\n  justify-content: flex-start;   /* default: kiri */\n  justify-content: center;       /* tengah */\n  justify-content: space-between;/* ujung ke ujung */\n  justify-content: space-around; /* jarak merata */\n\n  /* Perataan di cross axis (vertikal jika row) */\n  align-items: stretch;          /* default: regangkan penuh */\n  align-items: center;           /* tengah vertikal */\n  align-items: flex-start;       /* rata atas */\n\n  /* Biarkan item pindah baris jika tidak cukup ruang */\n  flex-wrap: wrap;\n\n  /* Jarak antar item */\n  gap: 16px;\n  gap: 16px 24px; /* baris | kolom */\n}",
+          "penjelasan": "justify-content mengatur main axis, align-items mengatur cross axis. Ini sering tertukar — ingat: justify = horizontal (jika row), align = vertikal (jika row)."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Properti Flex Item",
+          "bahasa": "css",
+          "kode": ".item {\n  /* Kemampuan item untuk tumbuh mengisi ruang kosong */\n  flex-grow: 1;    /* 0 = tidak tumbuh (default), 1 = tumbuh proporsional */\n\n  /* Kemampuan item untuk menyusut jika ruang kurang */\n  flex-shrink: 1;  /* default: boleh menyusut */\n\n  /* Ukuran awal sebelum flex-grow/shrink diterapkan */\n  flex-basis: 200px;\n\n  /* Shorthand: grow | shrink | basis */\n  flex: 1;         /* flex: 1 1 0 — paling umum dipakai */\n  flex: 0 0 200px; /* ukuran tetap 200px, tidak tumbuh/menyusut */\n\n  /* Override align-items khusus untuk item ini */\n  align-self: flex-end;\n}",
+          "penjelasan": "flex: 1 adalah cara tercepat membuat semua item berbagi ruang secara merata. Sangat berguna untuk kolom yang harus sama lebar."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Flexbox seperti Kursi di Bus",
+          "isi": "Bayangkan flex container adalah bus, dan flex items adalah penumpangnya. justify-content menentukan bagaimana penumpang tersebar sepanjang lorong bus (kiri semua? tengah? berjauhan?). align-items menentukan apakah penumpang duduk rata atas, rata bawah, atau di tengah bangku. flex-wrap menentukan apakah penumpang boleh pindah ke baris kursi berikutnya jika baris pertama penuh."
+        }
+      ]
+    },
+
+    {
+      "id": "2.6",
+      "judul": "CSS Grid",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Grid: Layout Dua Dimensi",
+          "isi": "Jika Flexbox mengatur elemen dalam satu dimensi (satu baris atau satu kolom), CSS Grid mengatur elemen dalam dua dimensi sekaligus — baris DAN kolom. Grid adalah sistem layout paling powerful yang ada di CSS saat ini.\n\nKapan pakai Flexbox vs Grid?\n• Flexbox — untuk komponen kecil dalam satu baris/kolom: navbar, baris tombol, kartu dalam satu deretan\n• Grid — untuk layout halaman besar yang punya baris dan kolom sekaligus: layout utama halaman, galeri foto, dashboard\n\nKeduanya saling melengkapi, bukan saling menggantikan. Dalam satu halaman kamu akan sering menggunakan keduanya."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Perbandingan Flexbox vs CSS Grid",
+          "src": "/assets/frontend/bab2/bab2_2.6.png",
+          "deskripsi_gambar":  "Dua diagram berdampingan. Kiri: Flexbox dengan beberapa kotak berwarna yang tersusun dalam satu arah dan diberi label '1D layout'. Kanan: CSS Grid dengan kotak-kotak berwarna yang tersusun dalam beberapa baris dan kolom serta diberi label '2D layout'.",
+          "alt": "Perbandingan visual Flexbox (1D) dan CSS Grid (2D)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Dasar CSS Grid",
+          "bahasa": "css",
+          "kode": ".grid-container {\n  display: grid;\n\n  /* Definisi kolom: 3 kolom sama lebar */\n  grid-template-columns: 1fr 1fr 1fr;\n  grid-template-columns: repeat(3, 1fr);  /* shorthand yang sama */\n\n  /* Definisi baris: baris pertama 80px, sisanya otomatis */\n  grid-template-rows: 80px auto;\n\n  /* Jarak antar sel */\n  gap: 24px;\n\n  /* Kolom responsif: auto-fit mengisi sebanyak mungkin kolom */\n  /* dengan lebar minimum 250px */\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n}\n\n/* Item yang menempati lebih dari satu kolom/baris */\n.item-lebar {\n  grid-column: 1 / 3;   /* dari kolom 1 sampai kolom 3 */\n  grid-column: span 2;  /* rentangkan 2 kolom (shorthand) */\n}\n\n.item-tinggi {\n  grid-row: 1 / 3;      /* dari baris 1 sampai baris 3 */\n}"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Grid Area — Layout dengan Nama",
+          "isi": "CSS Grid punya fitur unik: grid-template-areas, di mana kamu bisa mendefinisikan layout halaman seperti 'menggambar' dengan teks ASCII. Tulis nama area di posisi yang kamu inginkan, lalu assign setiap item ke area tersebut. Hasilnya adalah kode layout yang sangat mudah dibaca dan dipahami."
+        }
+      ]
+    },
+
+    {
+      "id": "2.7",
+      "judul": "Positioning",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengontrol Posisi Elemen",
+          "isi": "Property position mengontrol bagaimana elemen diposisikan dalam dokumen. Ada lima nilai utama, masing-masing dengan perilaku yang sangat berbeda:\n\n• static — nilai default. Elemen mengikuti alur normal dokumen (normal flow). Properti top, right, bottom, left tidak berpengaruh.\n• relative — elemen tetap di alur normal, tapi bisa digeser dari posisi aslinya menggunakan top/right/bottom/left. Ruang aslinya di dokumen tetap ada.\n• absolute — elemen dikeluarkan dari alur normal dan diposisikan relatif terhadap ancestor terdekat yang punya position selain static. Jika tidak ada, relatif terhadap <html>.\n• fixed — dikeluarkan dari alur normal dan posisinya relatif terhadap viewport (layar). Tidak bergerak saat halaman di-scroll. Cocok untuk navbar tetap.\n• sticky — kombinasi relative dan fixed. Mengikuti alur normal sampai mencapai titik tertentu saat scroll, lalu 'menempel' di posisi tersebut."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Contoh Penggunaan Position",
+          "bahasa": "css",
+          "kode": "/* Navbar tetap di atas saat scroll */\n.navbar {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  z-index: 100;  /* tampil di atas elemen lain */\n}\n\n/* Parent untuk absolute positioning */\n.kartu {\n  position: relative;  /* jadikan anchor untuk elemen absolute di dalamnya */\n}\n\n/* Badge di pojok kanan atas kartu */\n.badge {\n  position: absolute;\n  top: -8px;\n  right: -8px;\n}\n\n/* Header tabel yang menempel saat scroll */\n.header-tabel {\n  position: sticky;\n  top: 0;\n  background: white;\n}",
+          "penjelasan": "Pola relative + absolute sangat umum: beri position: relative pada parent, lalu elemen anak dengan position: absolute akan diposisikan relatif terhadap parent tersebut, bukan halaman."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "z-index: Siapa yang Tampil di Atas?",
+          "isi": "Ketika elemen-elemen bertumpuk (karena absolute, fixed, atau relative), z-index menentukan urutan tumpukan — elemen mana yang tampil di depan.\n\nBeberapa hal penting tentang z-index:\n• Hanya bekerja pada elemen yang punya position selain static\n• Nilai lebih besar = tampil lebih depan\n• Default-nya auto (setara 0)\n• z-index tidak harus berurutan — pakai angka seperti 10, 20, 100 agar ada ruang untuk nilai di antaranya"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: z-index seperti Tumpukan Kertas",
+          "isi": "Bayangkan elemen HTML sebagai lembaran kertas di atas meja. z-index menentukan urutan tumpukan — kertas dengan z-index lebih tinggi ada di atas tumpukan dan menutupi kertas di bawahnya. position: fixed seperti menempelkan stiker di kaca meja — ia selalu terlihat di posisi yang sama meski kertas-kertas lain di bawahnya digeser."
+        }
+      ]
+    },
+
+    {
+      "id": "2.8",
+      "judul": "Responsive Design & Media Query",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu Responsive Design?",
+          "isi": "Responsive design adalah pendekatan membuat halaman web yang tampilannya menyesuaikan diri secara otomatis dengan berbagai ukuran layar — dari smartphone kecil, tablet, hingga monitor besar. Ini bukan lagi fitur tambahan, melainkan standar minimum di era mobile-first seperti sekarang.\n\nStatistik saat ini menunjukkan lebih dari 60% traffic web global berasal dari perangkat mobile. Artinya, jika websitemu tidak responsif, kamu kehilangan lebih dari separuh pengunjung potensial.\n\nTiga pilar responsive design:\n• Layout yang fleksibel — menggunakan unit relatif (%, fr, vw) dan Flexbox/Grid\n• Gambar yang fleksibel — gambar tidak meluber keluar container\n• Media query — mengubah gaya berdasarkan kondisi layar"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Media Query & Breakpoint",
+          "bahasa": "css",
+          "kode": "/* Mobile-first approach: mulai dari mobile, tambah aturan untuk layar lebih besar */\n\n/* Default: mobile */\n.container {\n  padding: 16px;\n}\n\n.grid {\n  display: grid;\n  grid-template-columns: 1fr;  /* 1 kolom di mobile */\n  gap: 16px;\n}\n\n/* Tablet ke atas: min-width 768px */\n@media (min-width: 768px) {\n  .container {\n    padding: 32px;\n    max-width: 960px;\n    margin: 0 auto;\n  }\n\n  .grid {\n    grid-template-columns: repeat(2, 1fr);  /* 2 kolom di tablet */\n    gap: 24px;\n  }\n}\n\n/* Desktop ke atas: min-width 1024px */\n@media (min-width: 1024px) {\n  .grid {\n    grid-template-columns: repeat(3, 1fr);  /* 3 kolom di desktop */\n  }\n}\n\n/* Mode gelap sistem */\n@media (prefers-color-scheme: dark) {\n  body { background: #1a1a1a; color: #f0f0f0; }\n}",
+          "penjelasan": "Mobile-first berarti menulis CSS untuk mobile dulu, lalu menambahkan aturan untuk layar lebih besar dengan min-width. Ini kebalikan dari desktop-first yang menggunakan max-width."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Responsive Design di Berbagai Ukuran Layar",
+          "src": "/assets/frontend/bab2/bab2_2.8.jpg",
+          "deskripsi_gambar": "Mockup tiga perangkat berdampingan: smartphone (1 kolom), tablet (2 kolom), dan desktop (3 kolom) menampilkan layout halaman yang sama tapi berbeda susunannya. Menunjukkan bagaimana grid responsif bekerja di berbagai breakpoint.",
+          "alt": "Tampilan website responsif di smartphone, tablet, dan desktop"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Google Menggunakan Mobile-First Indexing",
+          "isi": "Sejak 2019, Google secara resmi menggunakan mobile-first indexing — artinya versi mobile websitemu yang diindeks dan digunakan untuk menentukan peringkat di hasil pencarian, bukan versi desktopnya. Website yang tidak responsif akan mendapat penalti peringkat SEO secara otomatis."
+        }
+      ]
+    },
+
+    {
+      "id": "2.9",
+      "judul": "Pseudo-class, Pseudo-element & Variabel CSS",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Pseudo-class: Styling Berdasarkan State",
+          "isi": "Pseudo-class memungkinkan kamu memberi gaya pada elemen berdasarkan kondisi atau state-nya — bukan berdasarkan nama tag atau class saja. Diawali dengan satu titik dua (:).\n\nPseudo-class yang paling sering digunakan:\n• :hover — saat mouse berada di atas elemen\n• :focus — saat elemen sedang difokus (misal input yang sedang diketik)\n• :active — saat elemen sedang diklik\n• :visited — tautan yang sudah pernah dikunjungi\n• :first-child / :last-child — elemen pertama/terakhir di antara saudaranya\n• :nth-child(n) — elemen ke-n di antara saudaranya\n• :not(selector) — elemen yang TIDAK cocok dengan selector tertentu\n• :disabled / :checked — untuk elemen form"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Pseudo-element: Styling Bagian Tertentu",
+          "isi": "Pseudo-element memungkinkan kamu memberi gaya pada bagian spesifik dari elemen, atau bahkan menyisipkan konten baru via CSS tanpa mengubah HTML. Diawali dengan dua titik dua (::).\n\n• ::before — menyisipkan konten sebelum isi elemen\n• ::after — menyisipkan konten setelah isi elemen\n• ::first-line — baris pertama teks\n• ::first-letter — huruf pertama teks\n• ::placeholder — teks placeholder pada input\n• ::selection — teks yang sedang disorot/diseleksi pengguna"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Pseudo-class, Pseudo-element, dan Variabel CSS",
+          "bahasa": "css",
+          "kode": "/* Pseudo-class */\n.tombol:hover {\n  background: #2980b9;\n  transform: translateY(-2px);\n}\n\ninput:focus {\n  outline: 2px solid #3498db;\n  outline-offset: 2px;\n}\n\ntr:nth-child(even) {\n  background: #f8f9fa;  /* warna zebra pada tabel */\n}\n\n/* Pseudo-element */\n.artikel::first-letter {\n  font-size: 3em;\n  float: left;\n  margin-right: 8px;\n}\n\n.wajib::after {\n  content: ' *';\n  color: red;\n}\n\n/* CSS Custom Properties (Variabel) */\n:root {\n  --warna-utama: #3498db;\n  --warna-teks: #2c3e50;\n  --border-radius: 8px;\n  --bayangan: 0 2px 8px rgba(0,0,0,0.1);\n}\n\n.tombol {\n  background: var(--warna-utama);\n  border-radius: var(--border-radius);\n  box-shadow: var(--bayangan);\n}\n\n/* Untuk ganti tema: cukup ubah variabelnya saja */\n[data-tema='gelap'] {\n  --warna-utama: #2ecc71;\n  --warna-teks: #ecf0f1;\n}",
+          "penjelasan": "Deklarasikan variabel CSS di :root agar tersedia global. Untuk mengubah tema (dark/light mode), cukup timpa variabel di selector parent — semua elemen yang menggunakannya ikut berubah otomatis."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Variabel CSS seperti Palet Warna Desainer",
+          "isi": "Desainer profesional tidak menghafal kode warna di setiap elemen — mereka punya palet warna yang sudah didefinisikan: warna primer, sekunder, aksen. Variabel CSS bekerja persis seperti itu. Definisikan warna brand sekali di :root, pakai di mana-mana. Klien minta ganti warna brand? Ubah satu baris saja, seluruh website ikut berubah."
+        }
+      ]
+    },
+
+    {
+      "id": "2.10",
+      "judul": "Transisi & Animasi Dasar",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Transisi: Perubahan yang Halus",
+          "isi": "CSS transition membuat perubahan properti CSS terjadi secara mulus dan bertahap, bukan seketika. Ini adalah cara termudah menambahkan 'rasa hidup' pada elemen interaktif.\n\nProperty transition terdiri dari empat bagian:\n• property — CSS property mana yang diberi transisi (atau 'all' untuk semua)\n• duration — berapa lama transisi berlangsung (dalam detik s atau milidetik ms)\n• timing-function — kurva percepatan transisi (ease, linear, ease-in, ease-out, ease-in-out)\n• delay — jeda sebelum transisi dimulai"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Transisi dan Animasi",
+          "bahasa": "css",
+          "kode": "/* Transisi sederhana pada tombol */\n.tombol {\n  background: #3498db;\n  color: white;\n  padding: 12px 24px;\n  border-radius: 6px;\n  transition: background 0.3s ease, transform 0.2s ease;\n}\n\n.tombol:hover {\n  background: #2980b9;\n  transform: translateY(-3px);\n}\n\n.tombol:active {\n  transform: translateY(0);\n}\n\n/* Transisi pada semua properti */\n.kartu {\n  transition: all 0.3s ease;\n}\n.kartu:hover {\n  box-shadow: 0 8px 24px rgba(0,0,0,0.15);\n  transform: translateY(-4px);\n}\n\n/* Animasi CSS dengan @keyframes */\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(20px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n.muncul {\n  animation: fadeIn 0.5s ease forwards;\n}\n\n/* Animasi berulang: spinner loading */\n@keyframes putar {\n  from { transform: rotate(0deg); }\n  to   { transform: rotate(360deg); }\n}\n\n.spinner {\n  width: 40px;\n  height: 40px;\n  border: 4px solid #ddd;\n  border-top-color: #3498db;\n  border-radius: 50%;\n  animation: putar 0.8s linear infinite;\n}",
+          "penjelasan": "Untuk performa terbaik, animasikan hanya property transform dan opacity. Animasi pada property seperti width, height, atau margin menyebabkan browser melakukan reflow yang mahal secara komputasi."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "transform: Mengubah Bentuk dan Posisi",
+          "isi": "Property transform memungkinkan kamu memanipulasi elemen secara visual tanpa mengubah layout halaman:\n\n• translate(x, y) — geser elemen secara horizontal/vertikal\n• scale(n) — perbesar/perkecil elemen\n• rotate(deg) — putar elemen\n• skew(deg) — miringkan elemen\n\nKombinasikan dengan transition untuk efek yang halus, atau dengan @keyframes untuk animasi yang lebih kompleks."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Animasi CSS vs JavaScript",
+          "isi": "Animasi sederhana jauh lebih baik dibuat dengan CSS daripada JavaScript — browser bisa mengoptimalkan animasi CSS di thread GPU terpisah sehingga lebih mulus dan tidak memblokir thread JavaScript. Gunakan CSS untuk animasi visual sederhana (hover, loading, transisi masuk/keluar), dan JavaScript hanya untuk animasi yang membutuhkan logika dinamis atau interaksi kompleks."
+        }
+      ]
+    }
+
+  ]
+}

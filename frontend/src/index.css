@@ -1,0 +1,90 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 transition-colors duration-300 font-sans antialiased selection:bg-brand-500 selection:text-white;
+  }
+  
+  body.dark {
+    @apply bg-[#0b0f19] text-slate-100;
+  }
+
+  /* Custom elegant scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300/60 rounded-full hover:bg-slate-400;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-slate-800/80 rounded-full hover:bg-slate-700;
+  }
+}
+
+@layer components {
+  /* Premium glassmorphism effects */
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-slate-200/50 shadow-xl shadow-slate-100/50 rounded-2xl;
+  }
+
+  .dark .glass-card {
+    @apply bg-slate-900/60 backdrop-blur-md border border-slate-800/50 shadow-2xl shadow-black/30 rounded-2xl;
+  }
+
+  .glass-panel {
+    @apply bg-white/40 backdrop-blur-sm border-b border-slate-200/50;
+  }
+
+  .dark .glass-panel {
+    @apply bg-[#0b0f19]/60 backdrop-blur-sm border-b border-slate-800/40;
+  }
+
+  /* Interactive items */
+  .interactive-item {
+    @apply transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg;
+  }
+
+  /* Custom input styling */
+  .custom-input {
+    @apply w-full px-4 py-3 bg-slate-100/60 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/40 dark:focus:ring-brand-500/30 focus:border-brand-500 transition-all duration-200;
+  }
+
+  /* Premium Buttons */
+  .btn-primary {
+    @apply px-5 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-medium shadow-md shadow-brand-500/20 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-800/80 dark:hover:bg-slate-700 dark:text-slate-200 rounded-xl font-medium transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0;
+  }
+}
+
+/* Beautiful custom gradients for AI cards */
+.gradient-ai-card {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.dark .gradient-ai-card {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+/* Animation keyframes */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .85; transform: scale(1.02); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

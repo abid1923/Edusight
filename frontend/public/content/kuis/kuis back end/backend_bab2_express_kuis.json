@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 2,
+    "judul_bab": "Express.js & REST API",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "2.1",
+      "pertanyaan": "Mengapa Express disebut sebagai framework yang 'unopinionated' dan apa konsekuensinya?",
+      "opsi": {
+        "A": "Express tidak memiliki opini karena tidak mendukung database apapun",
+        "B": "Express tidak memaksakan cara tertentu dalam mengatur struktur aplikasi, pilihan database, atau template engine — memberikan kebebasan penuh tapi membutuhkan lebih banyak keputusan dari developer",
+        "C": "Express hanya bisa digunakan untuk membuat REST API, tidak bisa untuk web server biasa",
+        "D": "Express tidak memiliki dokumentasi resmi karena bersifat komunitas"
+      },
+      "jawaban": "B",
+      "penjelasan": "Unopinionated berarti Express tidak mendikte: struktur folder, database yang harus digunakan, template engine, atau cara menangani autentikasi. Ini memberikan fleksibilitas luar biasa — bisa digunakan untuk API kecil hingga aplikasi enterprise. Konsekuensinya: developer harus membuat lebih banyak keputusan arsitektur sendiri, berbeda dengan framework opinionated seperti NestJS atau Sails.js yang sudah menyediakan konvensi bawaan."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "2.2",
+      "pertanyaan": "Perhatikan kode berikut:\n\nconst router = express.Router();\nrouter.get('/:id', handler);\napp.use('/mahasiswa', router);\n\nURL mana yang akan ditangani oleh route di atas?",
+      "opsi": {
+        "A": "GET /:id",
+        "B": "GET /mahasiswa",
+        "C": "GET /mahasiswa/:id",
+        "D": "GET /router/:id"
+      },
+      "jawaban": "C",
+      "penjelasan": "Saat router di-mount dengan app.use('/mahasiswa', router), semua path di dalam router mendapat prefix '/mahasiswa'. Jadi router.get('/:id') menjadi GET /mahasiswa/:id. Ini adalah keuntungan utama express.Router() — modularisasi route dengan prefix yang otomatis ditambahkan saat mount."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "2.3",
+      "pertanyaan": "Sebuah middleware tidak memanggil next() dan tidak mengirim response. Apa yang terjadi?",
+      "opsi": {
+        "A": "Express otomatis melanjutkan ke middleware berikutnya",
+        "B": "Express mengirim 500 Internal Server Error secara otomatis",
+        "C": "Request akan tergantung (hang) tanpa pernah mendapat response — client menunggu sampai timeout",
+        "D": "Middleware berikutnya dilewati dan langsung ke error handler"
+      },
+      "jawaban": "C",
+      "penjelasan": "Ini adalah salah satu bug paling umum di Express. Setiap middleware HARUS melakukan salah satu dari dua hal: mengirim response (res.json(), res.send(), dll.) ATAU memanggil next() untuk meneruskan ke middleware berikutnya. Jika keduanya tidak dilakukan, request akan hang — client menunggu sampai timeout yang bisa cukup lama (30 detik hingga beberapa menit)."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "2.4",
+      "pertanyaan": "Seorang developer menulis kode ini di route POST:\n\napp.post('/data', (req, res) => {\n  console.log(req.body); // undefined!\n});\n\nApa penyebabnya dan bagaimana memperbaikinya?",
+      "opsi": {
+        "A": "req.body tidak tersedia di method POST, hanya di PUT",
+        "B": "Belum ada middleware parser — tambahkan app.use(express.json()) sebelum route definition",
+        "C": "Harus menggunakan req.data bukan req.body untuk mengakses body",
+        "D": "Body request harus dikirim sebagai query string, bukan JSON body"
+      },
+      "jawaban": "B",
+      "penjelasan": "Express tidak secara otomatis mem-parse request body. Harus menambahkan middleware express.json() (untuk JSON) atau express.urlencoded() (untuk form data) sebelum mendefinisikan route yang butuh req.body. Middleware ini harus didaftarkan dengan app.use() sebelum route handler agar tersedia di semua route."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "2.5",
+      "pertanyaan": "API endpoint /mahasiswa menerima request: GET /mahasiswa?jurusan=TI&halaman=2&limit=5\n\nBagaimana cara yang benar mengakses nilai 'halaman' dan memberikan nilai default jika tidak ada?",
+      "opsi": {
+        "A": "const halaman = req.params.halaman || 1;",
+        "B": "const halaman = req.body.halaman || 1;",
+        "C": "const halaman = parseInt(req.query.halaman) || 1;",
+        "D": "const halaman = req.headers.halaman || 1;"
+      },
+      "jawaban": "C",
+      "penjelasan": "Query string diakses via req.query. Semua nilai dari req.query selalu berupa STRING, sehingga perlu konversi ke number dengan parseInt() atau Number() untuk operasi aritmatika. Operator || memberikan nilai default 1 jika halaman tidak disertakan dalam request."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "2.6",
+      "pertanyaan": "Manakah desain URL REST API yang paling benar untuk endpoint 'dapatkan semua mata kuliah yang diambil mahasiswa dengan ID 5'?",
+      "opsi": {
+        "A": "GET /getMataKuliahMahasiswa?id=5",
+        "B": "GET /mahasiswa/5/mata-kuliah",
+        "C": "POST /mahasiswa/getMataKuliah/5",
+        "D": "GET /mataKuliah/byMahasiswa/5"
+      },
+      "jawaban": "B",
+      "penjelasan": "REST API yang baik menggunakan URL yang merepresentasikan hierarki resource dengan jelas. /mahasiswa/5/mata-kuliah dibaca: 'mata kuliah yang dimiliki mahasiswa dengan ID 5' — sangat intuitif. Hindari menggunakan kata kerja di URL (getMataKuliah), cukup gunakan HTTP method yang tepat (GET) untuk menyatakan aksi."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "2.7",
+      "pertanyaan": "Apa yang membuat Error-Handling Middleware berbeda dari middleware biasa di Express?",
+      "opsi": {
+        "A": "Error-Handling Middleware hanya bisa digunakan dengan app.use(), bukan router.use()",
+        "B": "Error-Handling Middleware memiliki tepat 4 parameter (err, req, res, next) — Express mengenali ini secara otomatis sebagai error handler",
+        "C": "Error-Handling Middleware harus diberi nama 'errorHandler' agar Express mengenalinya",
+        "D": "Error-Handling Middleware hanya dipanggil saat server restart"
+      },
+      "jawaban": "B",
+      "penjelasan": "Express mengidentifikasi Error-Handling Middleware dari jumlah parameter-nya: tepat 4 parameter (err, req, res, next). Middleware dengan 3 parameter (req, res, next) adalah middleware biasa. Ini adalah konvensi Express yang harus diikuti tepat — kurang atau lebih dari 4 parameter dan Express tidak akan memperlakukannya sebagai error handler."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "2.8",
+      "pertanyaan": "File gambar di folder 'public/images/logo.png' ingin dapat diakses oleh client. Kode mana yang benar?",
+      "opsi": {
+        "A": "app.get('/images/logo.png', (req, res) => res.sendFile('logo.png'));",
+        "B": "app.use(express.static('public'));\n// Akses via: /images/logo.png",
+        "C": "app.use('/public', express.static('public'));\n// Akses via: /public/images/logo.png",
+        "D": "app.static('/public');"
+      },
+      "jawaban": "B",
+      "penjelasan": "express.static('public') membuat semua file di folder 'public' bisa diakses langsung. File 'public/images/logo.png' bisa diakses via URL '/images/logo.png' (tanpa prefix 'public'). Tidak perlu membuat route satu per satu untuk setiap file statis."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "2.9",
+      "pertanyaan": "Front-end React di http://localhost:5173 mencoba fetch ke API Express di http://localhost:3000. Browser memblokir request dengan error CORS. Apa penyebab dan solusinya?",
+      "opsi": {
+        "A": "Kedua server harus berjalan di port yang sama. Ubah salah satunya ke port 3000",
+        "B": "CORS diblokir karena berbeda port (5173 vs 3000) — solusi: tambahkan middleware cors() di Express dengan konfigurasi yang mengizinkan origin 'http://localhost:5173'",
+        "C": "React tidak bisa fetch API dari server Node.js, harus menggunakan axios",
+        "D": "CORS hanya berlaku untuk request HTTPS, tidak untuk HTTP di localhost"
+      },
+      "jawaban": "B",
+      "penjelasan": "Same-Origin Policy browser membatasi request ke origin yang berbeda. Dua URL dianggap berbeda origin jika berbeda protocol, domain, atau PORT. localhost:5173 dan localhost:3000 berbeda port = berbeda origin. Solusi: install package 'cors' dan tambahkan app.use(cors({ origin: 'http://localhost:5173' })) di Express. CORS adalah kebijakan browser, bukan server."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "2.10",
+      "pertanyaan": "Dalam pola arsitektur Controller-Service di Express, apa tanggung jawab utama dari lapisan 'Service'?",
+      "opsi": {
+        "A": "Menerima HTTP request dan mengirim HTTP response",
+        "B": "Mendefinisikan schema dan model database",
+        "C": "Mengandung logika bisnis — aturan, perhitungan, validasi kompleks, dan orkestrasi operasi database — yang bisa digunakan ulang oleh banyak controller",
+        "D": "Menangani routing dan mendaftarkan middleware"
+      },
+      "jawaban": "C",
+      "penjelasan": "Dalam pola Controller-Service: Controller bertanggung jawab pada HTTP (parse request, kirim response), Service bertanggung jawab pada logika bisnis (aturan bisnis, validasi kompleks, kalkulasi, koordinasi operasi database). Memisahkan logika bisnis ke Service membuat kode reusable (bisa dipanggil dari beberapa controller), mudah di-test secara unit (tanpa HTTP), dan mudah dipahami."
+    }
+  ]
+}

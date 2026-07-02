@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "bab": 3,
+    "judul_bab": "Unsupervised Learning & Dimensionality Reduction",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "3.1",
+      "pertanyaan": "Pada Elbow Method untuk K-Means, kita menjalankan KMeans untuk K=1 sampai 10 dan memplot nilai inertia (WCSS) terhadap K. Bagaimana cara menentukan nilai K optimal dari grafik tersebut?",
+      "opsi": {
+        "A": "Pilih K dengan nilai inertia tertinggi, karena itu menunjukkan cluster paling padat",
+        "B": "Pilih K terbesar yang tersedia, karena semakin banyak cluster semakin akurat",
+        "C": "Cari titik 'siku' — titik di mana penurunan inertia mulai melambat drastis dibanding penurunan sebelumnya",
+        "D": "Pilih K=1, karena inertia selalu minimum pada K=1"
+      },
+      "jawaban": "C",
+      "penjelasan": "Inertia (WCSS) selalu menurun seiring bertambahnya K — pada K=1 inertia maksimum, dan pada K=n (setiap titik jadi cluster sendiri) inertia menjadi 0. Karena itu, kita tidak bisa sekadar mencari inertia minimum/maksimum. Elbow Method mencari titik 'siku': sebelum titik ini, penambahan satu cluster mengurangi inertia secara signifikan; setelah titik ini, penambahan cluster hanya memberi penurunan inertia yang kecil (diminishing returns). Titik inilah yang menjadi kandidat K optimal — keseimbangan antara kompleksitas model dan kualitas clustering. Untuk hasil yang lebih stabil, gunakan init='k-means++' dan n_init>1 agar tidak terjebak local minimum."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "3.2",
+      "pertanyaan": "Sebuah dendrogram hasil Agglomerative Clustering dengan Ward linkage dipotong secara horizontal pada ketinggian (jarak) yang LEBIH RENDAH dibanding sebelumnya. Apa dampaknya terhadap jumlah cluster yang dihasilkan, dan mengapa Ward linkage sering menjadi pilihan default?",
+      "opsi": {
+        "A": "Jumlah cluster akan berkurang, karena potongan rendah menggabungkan lebih banyak titik menjadi satu kelompok besar",
+        "B": "Jumlah cluster akan bertambah, karena potongan rendah memotong penggabungan yang terjadi pada jarak besar — menyisakan lebih banyak kelompok kecil yang belum tergabung; Ward dipilih karena meminimalkan peningkatan variance sehingga cluster lebih seimbang ukurannya",
+        "C": "Jumlah cluster tidak berubah, karena dendrogram bersifat statis terlepas dari ketinggian potongan",
+        "D": "Jumlah cluster akan bertambah, karena Ward linkage menggunakan jarak minimum antar anggota cluster (single linkage)"
+      },
+      "jawaban": "B",
+      "penjelasan": "Semakin rendah titik potong pada dendrogram, semakin sedikit penggabungan cluster yang 'dilewati', sehingga semakin banyak cluster kecil yang tersisa terpisah — jumlah cluster bertambah. Sebaliknya, potongan tinggi menghasilkan lebih sedikit cluster (lebih banyak penggabungan sudah terjadi). Ward linkage populer karena kriterianya meminimalkan peningkatan total variance saat dua cluster digabung, menghasilkan cluster yang cenderung berukuran seimbang dan compact — berbeda dari single linkage yang rentan terhadap 'chaining effect' (cluster memanjang akibat hanya mempertimbangkan jarak minimum antar anggota)."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "3.3",
+      "pertanyaan": "Dalam DBSCAN dengan eps=0.2 dan min_samples=5, sebuah titik X memiliki hanya 2 tetangga dalam radius 0.2, tetapi salah satu dari 2 tetangga tersebut adalah core point. Bagaimana titik X akan diklasifikasikan?",
+      "opsi": {
+        "A": "Core point, karena terhubung dengan core point lain",
+        "B": "Noise point, karena memiliki tetangga kurang dari min_samples",
+        "C": "Border point, karena berada dalam radius eps dari sebuah core point meski tidak memenuhi syarat core point sendiri",
+        "D": "Titik X tidak bisa diklasifikasikan tanpa menjalankan ulang algoritma dengan parameter berbeda"
+      },
+      "jawaban": "C",
+      "penjelasan": "Titik X memiliki 2 tetangga dalam radius eps (kurang dari min_samples=5), sehingga X bukan core point. Namun karena X berada dalam radius eps dari sebuah core point, X memenuhi definisi border point — masuk ke dalam cluster milik core point tersebut, tapi tidak punya kemampuan untuk 'memperluas' cluster lebih jauh seperti core point. Noise point hanya berlaku untuk titik yang BUKAN core point DAN TIDAK berada dalam radius eps dari core point manapun. Klasifikasi tiga jenis titik (core, border, noise) ini adalah inti dari cara DBSCAN membentuk cluster berbasis kepadatan tanpa perlu menentukan jumlah cluster di awal."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "3.4",
+      "pertanyaan": "Sebuah dataset memiliki 30 fitur. Setelah dilakukan PCA, diperoleh bahwa PC1 menjelaskan 45% variansi, PC2 menjelaskan 20%, PC3 menjelaskan 12%, dan seterusnya menurun. Jika target mempertahankan minimal 95% variansi total, langkah yang tepat adalah?",
+      "opsi": {
+        "A": "Cukup gunakan PC1 dan PC2 saja, karena keduanya sudah mencakup mayoritas variansi (65%)",
+        "B": "Hitung cumulative explained variance ratio dari PC1 dst., lalu ambil jumlah komponen minimum di mana kumulatif tersebut mencapai ≥95%",
+        "C": "Gunakan semua 30 PC, karena PCA tidak pernah mengurangi dimensi secara aman",
+        "D": "Pilih PC dengan explained variance ratio individual ≥95%, biasanya hanya PC1"
+      },
+      "jawaban": "B",
+      "penjelasan": "Untuk menentukan jumlah komponen yang dipertahankan demi target variansi tertentu (misal 95%), kita menghitung explained variance ratio kumulatif (cumulative sum dari explained_variance_ratio_ setiap PC secara berurutan) dan mencari jumlah komponen minimum di mana nilai kumulatif tersebut mencapai atau melebihi target. Tidak ada satu PC pun yang biasanya mencapai 95% sendirian (opsi D tidak realistis), dan menggunakan semua komponen (opsi C) menghilangkan tujuan dimensionality reduction. Scree plot dengan garis horizontal pada 95% adalah cara visual umum untuk menentukan titik ini."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "3.5",
+      "pertanyaan": "Seorang data scientist menggunakan hasil t-SNE 2D untuk menyimpulkan: 'Cluster A dan Cluster B sangat berjauhan dalam plot, jadi secara fundamental kedua kelompok data ini sangat tidak berhubungan satu sama lain di ruang fitur asli.' Apakah kesimpulan ini valid?",
+      "opsi": {
+        "A": "Valid, karena t-SNE selalu mempertahankan jarak global secara akurat",
+        "B": "Tidak valid — jarak antar cluster dalam plot t-SNE tidak merepresentasikan jarak sebenarnya di ruang dimensi tinggi; t-SNE hanya menjaga struktur ketetanggaan lokal",
+        "C": "Valid, tapi hanya jika perplexity diatur ke nilai maksimum",
+        "D": "Tidak valid, karena t-SNE hanya bisa digunakan pada data gambar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Salah satu peringatan terpenting dalam interpretasi t-SNE (dan UMAP, meski UMAP relatif lebih baik menjaga struktur global) adalah bahwa jarak antar cluster dalam plot hasil TIDAK merepresentasikan jarak/hubungan sebenarnya di ruang dimensi tinggi — algoritma ini dioptimalkan untuk mempertahankan struktur ketetanggaan LOKAL, bukan jarak global. Dua cluster yang terlihat berjauhan di plot t-SNE bisa saja sebenarnya cukup berhubungan di ruang fitur asli. Selain itu, hasil t-SNE bisa berubah signifikan dengan random seed dan hyperparameter berbeda, sehingga kesimpulan semacam ini berisiko menyesatkan jika diambil hanya dari satu plot."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "3.6",
+      "pertanyaan": "Dibandingkan dengan K-Means, mengapa Gaussian Mixture Model (GMM) disebut melakukan 'soft assignment', dan apa keuntungan praktis dari hal ini?",
+      "opsi": {
+        "A": "GMM melakukan soft assignment karena tidak pernah menentukan cluster final, sehingga hasilnya selalu berubah-ubah",
+        "B": "GMM memberikan probabilitas keanggotaan setiap titik ke setiap cluster (bukan keputusan biner), sehingga bisa merepresentasikan ketidakpastian dan menangkap cluster berbentuk elips melalui parameter covariance",
+        "C": "GMM melakukan soft assignment karena hanya bekerja pada data kontinu, sementara K-Means hanya pada data kategorikal",
+        "D": "Soft assignment berarti GMM tidak memerlukan algoritma EM untuk training"
+      },
+      "jawaban": "B",
+      "penjelasan": "K-Means melakukan 'hard assignment' — setiap titik pasti masuk ke satu cluster berdasarkan jarak ke centroid terdekat, dengan asumsi cluster berbentuk bulat dan berukuran sama. GMM sebaliknya memodelkan data sebagai campuran distribusi Gaussian, di mana setiap komponen punya mean (lokasi), covariance (bentuk/orientasi, bisa elips), dan weight (proporsi). Untuk setiap titik, GMM menghasilkan probabilitas keanggotaan ke setiap komponen (predict_proba) — soft assignment ini berguna untuk merepresentasikan ketidakpastian pada titik-titik di perbatasan antar cluster, dan covariance yang fleksibel memungkinkan GMM menangkap cluster berbentuk elips yang tidak bisa ditangani K-Means. GMM dilatih dengan algoritma EM (E-step dan M-step secara iteratif)."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "3.7",
+      "pertanyaan": "Sebuah rule association 'Jika beli A, maka beli B' memiliki Confidence = 0.9 (sangat tinggi), tapi Lift = 0.95 (mendekati 1, sedikit di bawah 1). Bagaimana seharusnya rule ini diinterpretasikan?",
+      "opsi": {
+        "A": "Rule ini sangat kuat dan layak digunakan untuk rekomendasi, karena confidence 0.9 sudah cukup sebagai bukti hubungan kuat",
+        "B": "Lift mendekati 1 (dan sedikit di bawah 1) menunjukkan A dan B hampir independen atau bahkan sedikit berkorelasi negatif — confidence tinggi ini kemungkinan besar hanya karena item B memang sangat populer secara umum, bukan karena hubungan khusus dengan A",
+        "C": "Rule ini tidak valid karena confidence dan lift harus selalu sama nilainya",
+        "D": "Lift < 1 berarti rule ini pasti hasil dari kesalahan perhitungan support"
+      },
+      "jawaban": "B",
+      "penjelasan": "Lift mengukur Confidence(A→B) / Support(B) — yaitu seberapa jauh hubungan A dan B berbeda dari kondisi independen. Lift=1 berarti independen, Lift>1 berarti korelasi positif (lebih sering muncul bersama dari kebetulan), dan Lift<1 berarti korelasi negatif ringan. Confidence yang tinggi (0.9) bisa menyesatkan jika item B memang sangat populer secara umum (Support(B) tinggi) — dalam kasus ini, Confidence(A→B) tinggi bukan karena A 'mendorong' pembelian B, tapi karena hampir semua transaksi mengandung B apapun isinya. Inilah alasan materi menekankan untuk selalu memeriksa Lift, bukan hanya Confidence, sebelum menyimpulkan suatu rule bermakna."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "3.8",
+      "pertanyaan": "Sebuah perusahaan ingin mendeteksi transaksi fraud dalam dataset jutaan transaksi, di mana fraud hanya sekitar 0.1% dari total. Mereka memilih Isolation Forest. Apa prinsip dasar yang membuat Isolation Forest efektif untuk kasus ini, dan mengapa accuracy bukan metrik evaluasi yang tepat?",
+      "opsi": {
+        "A": "Isolation Forest mengukur kepadatan lokal setiap titik dibanding tetangganya; accuracy tidak tepat karena Isolation Forest hanya menghasilkan label biner tanpa skor",
+        "B": "Isolation Forest mengisolasi titik anomali dengan jumlah pemisahan (path length) yang lebih sedikit dibanding titik normal karena anomali berada di area jarang; accuracy tidak tepat karena dataset sangat imbalanced — model yang memprediksi 'semua normal' akan punya accuracy ~99.9% tapi gagal total mendeteksi fraud",
+        "C": "Isolation Forest membutuhkan label fraud untuk training secara supervised; accuracy tidak tepat karena precision selalu lebih rendah dari accuracy",
+        "D": "Isolation Forest bekerja dengan menghitung jarak Euclidean ke centroid terdekat; accuracy tidak relevan karena Isolation Forest hanya untuk data kategorikal"
+      },
+      "jawaban": "B",
+      "penjelasan": "Isolation Forest membangun banyak pohon yang secara acak memisahkan data; intuisinya adalah titik anomali (berada di area jarang/terisolasi) membutuhkan lebih sedikit pemisahan (path length lebih pendek) untuk diisolasi dibanding titik normal yang berada di area padat. Berbeda dari LOF (yang berbasis kepadatan/jarak), Isolation Forest tidak memerlukan konsep jarak sama sekali. Untuk evaluasi, karena anomali sangat jarang (highly imbalanced, fraud hanya 0.1%), accuracy menjadi metrik yang menyesatkan — model trivial yang selalu memprediksi 'normal' akan mendapat accuracy ~99.9% padahal gagal mendeteksi satu pun fraud. Metrik yang tepat adalah precision, recall, F1-score pada kelas anomali, atau Precision-Recall AUC."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "3.9",
+      "pertanyaan": "Hasil clustering K-Means dengan K=4 menghasilkan Silhouette Score = 0.62 dan Davies-Bouldin Index = 0.45, sementara K=5 menghasilkan Silhouette Score = 0.58 dan DBI = 0.52. Berdasarkan kedua metrik ini, K mana yang lebih disarankan, dan mengapa?",
+      "opsi": {
+        "A": "K=5, karena nilai DBI yang lebih tinggi menunjukkan cluster lebih terpisah dengan baik",
+        "B": "K=4, karena Silhouette Score lebih tinggi (lebih baik, mendekati 1) DAN DBI lebih rendah (lebih baik, mendekati 0) — kedua metrik sepakat mendukung K=4",
+        "C": "K=5, karena jumlah cluster yang lebih banyak selalu menghasilkan clustering yang lebih detail dan akurat",
+        "D": "Tidak bisa disimpulkan karena Silhouette Score dan DBI harus selalu memiliki skala yang sama untuk dibandingkan"
+      },
+      "jawaban": "B",
+      "penjelasan": "Untuk Silhouette Score, semakin tinggi (mendekati +1) semakin baik — K=4 (0.62) lebih baik dari K=5 (0.58). Untuk Davies-Bouldin Index, semakin RENDAH (mendekati 0) semakin baik — K=4 (0.45) lebih baik dari K=5 (0.52). Kedua metrik secara konsisten menunjukkan bahwa K=4 menghasilkan clustering dengan cohesion (kekompakan dalam cluster) dan separation (pemisahan antar cluster) yang lebih baik dibanding K=5. Ketika kedua metrik internal ini sepakat (idealnya juga didukung oleh Elbow Method), itu menjadi sinyal kuat bahwa K=4 adalah pilihan yang lebih baik untuk dataset ini — menambah cluster (K=5) di sini justru memecah struktur data menjadi kelompok yang kurang natural."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "3.10",
+      "pertanyaan": "Sebuah autoencoder dilatih HANYA menggunakan data sensor mesin dalam kondisi normal (latent_dim=2, loss=MSE). Setelah deployment, autoencoder ini digunakan untuk mendeteksi anomali pada data sensor baru. Bagaimana mekanisme deteksi anomali ini bekerja?",
+      "opsi": {
+        "A": "Autoencoder akan otomatis memberi label 'anomali' pada output karena dilatih secara supervised dengan label fraud",
+        "B": "Data anomali akan menghasilkan reconstruction error (selisih antara input dan output rekonstruksi) yang jauh lebih tinggi dibanding data normal, karena model 'tidak familiar' dengan pola yang tidak pernah dilihat saat training — sampel dengan error di atas threshold tertentu dianggap anomali",
+        "C": "Anomali dideteksi langsung dari nilai latent_dim=2, di mana latent_dim yang kecil secara otomatis menjadi skor anomali",
+        "D": "Autoencoder tidak bisa digunakan untuk anomaly detection karena merupakan model unsupervised murni untuk kompresi data saja"
+      },
+      "jawaban": "B",
+      "penjelasan": "Karena autoencoder dilatih hanya pada data normal, encoder dan decoder 'belajar' merepresentasikan dan merekonstruksi pola-pola yang muncul dalam data normal dengan reconstruction error rendah (MSE antara input asli dan output rekonstruksi). Ketika data anomali (pola yang tidak pernah dilihat saat training) dimasukkan, model akan kesulitan merekonstruksinya dengan baik melalui representasi laten yang dipelajari — menghasilkan reconstruction error yang jauh lebih tinggi. Dengan menetapkan threshold (misalnya persentil ke-95 dari distribusi error pada data normal), sampel dengan error di atas threshold tersebut diklasifikasikan sebagai potensi anomali. Ini adalah pendekatan unsupervised murni — tidak memerlukan label anomali sama sekali saat training, mirip dengan analogi 'menulis ulang cerita dari genre berbeda menggunakan gaya ringkasan yang salah'."
+    }
+  ]
+}

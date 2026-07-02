@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 1,
+    "judul_bab": "Dasar Node.js",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "1.1",
+      "pertanyaan": "Apa yang membuat model non-blocking I/O Node.js lebih efisien dibanding model blocking tradisional untuk web server?",
+      "opsi": {
+        "A": "Node.js menggunakan banyak thread sehingga bisa menangani banyak request secara paralel",
+        "B": "Node.js tidak menunggu operasi I/O (baca file, query database) selesai sebelum melanjutkan — satu thread bisa menangani ribuan koneksi bersamaan",
+        "C": "Node.js memiliki hardware khusus yang membuatnya lebih cepat dari server lain",
+        "D": "Node.js menyimpan semua data di memori sehingga tidak perlu membaca dari disk"
+      },
+      "jawaban": "B",
+      "penjelasan": "Node.js single-threaded tapi non-blocking: saat menunggu I/O (baca file, query DB, HTTP request), Node.js tidak memblokir thread — ia lanjut mengerjakan hal lain. Ketika I/O selesai, callback/promise dijalankan via Event Loop. Ini berbeda dari server tradisional yang membuat satu thread per request — yang membuat sumber daya cepat habis saat ada banyak koneksi bersamaan."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "1.2",
+      "pertanyaan": "Perhatikan kode berikut:\n\n// file: utilitas.js\nfunction formatTanggal(date) {\n  return date.toLocaleDateString('id-ID');\n}\nmodule.exports = formatTanggal;\n\n// file: app.js\nconst format = require('./utilitas');\nconsole.log(format(new Date()));\n\nApa yang akan terjadi dan sistem module apa yang digunakan?",
+      "opsi": {
+        "A": "Error karena require() sudah deprecated dan harus menggunakan import",
+        "B": "Kode menggunakan CommonJS — formatTanggal diekspor lalu diimpor sebagai 'format', dan console.log akan mencetak tanggal hari ini dalam format Indonesia",
+        "C": "Kode menggunakan ES Module — import secara otomatis mendeteksi format CommonJS",
+        "D": "Error karena module.exports harus berupa object, tidak bisa berupa fungsi"
+      },
+      "jawaban": "B",
+      "penjelasan": "Ini adalah CommonJS module system (require/module.exports). module.exports bisa berupa apapun — fungsi, object, class, atau nilai primitif. File app.js mengimpor fungsi formatTanggal sebagai variabel 'format', lalu memanggilnya dengan new Date(). Hasilnya adalah tanggal hari ini dalam format lokal Indonesia (dd/mm/yyyy)."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "1.3",
+      "pertanyaan": "Mengapa penggunaan fs.readFileSync() sebaiknya dihindari di dalam request handler Express?",
+      "opsi": {
+        "A": "readFileSync tidak bisa membaca file JSON, hanya file teks biasa",
+        "B": "readFileSync memblokir Event Loop selama file dibaca — semua request lain harus menunggu, membuat server tidak responsif",
+        "C": "readFileSync tidak tersedia di Node.js versi terbaru",
+        "D": "readFileSync tidak mendukung encoding UTF-8 untuk karakter Indonesia"
+      },
+      "jawaban": "B",
+      "penjelasan": "readFileSync adalah operasi blocking — ia menghentikan Event Loop sampai file selesai dibaca. Jika file besar atau disk lambat, SEMUA request yang masuk harus antri menunggu. Gunakan fs.readFile() dengan callback, atau lebih baik fs/promises dengan async/await, sehingga Event Loop tetap bebas menangani request lain saat menunggu operasi file selesai."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "1.4",
+      "pertanyaan": "Server merespons dengan status code 403. Apa artinya?",
+      "opsi": {
+        "A": "Server tidak menemukan resource yang diminta",
+        "B": "Request berhasil dan data dikembalikan",
+        "C": "Client terautentikasi (tahu siapa client) tapi tidak punya izin untuk mengakses resource tersebut",
+        "D": "Server mengalami error internal yang tidak terduga"
+      },
+      "jawaban": "C",
+      "penjelasan": "Status 403 Forbidden berarti server mengerti request tapi menolak untuk memenuhinya karena masalah otorisasi. Berbeda dengan 401 Unauthorized yang berarti client belum terautentikasi (belum login). Contoh: user yang sudah login (401 tidak relevan) tapi mencoba mengakses halaman admin (403 karena tidak punya izin)."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "1.5",
+      "pertanyaan": "Apa perbedaan antara dependencies dan devDependencies di package.json?",
+      "opsi": {
+        "A": "Tidak ada perbedaan, keduanya diinstall dengan cara yang sama",
+        "B": "dependencies diinstall di semua environment; devDependencies hanya diinstall di development dan tidak dibutuhkan saat production",
+        "C": "devDependencies adalah package yang dibuat sendiri, dependencies dari npm registry",
+        "D": "dependencies harus diinstall manual, devDependencies otomatis terinstall"
+      },
+      "jawaban": "B",
+      "penjelasan": "dependencies berisi package yang dibutuhkan aplikasi saat berjalan di production (Express, mongoose, bcrypt). devDependencies berisi package hanya untuk proses development (nodemon untuk auto-restart, Jest untuk testing, ESLint untuk linting). Saat deployment production, sering menggunakan npm install --production yang hanya menginstall dependencies, menghemat storage dan mempercepat deployment."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "1.6",
+      "pertanyaan": "Perhatikan kode EventEmitter berikut:\n\nconst emitter = new EventEmitter();\nemitter.on('data', (val) => console.log('A:', val));\nemitter.once('data', (val) => console.log('B:', val));\nemitter.on('data', (val) => console.log('C:', val));\n\nemitter.emit('data', 1);\nemitter.emit('data', 2);\n\nApa output yang dihasilkan?",
+      "opsi": {
+        "A": "A: 1, B: 1, C: 1, A: 2, C: 2",
+        "B": "A: 1, B: 1, C: 1",
+        "C": "B: 1, A: 1, C: 1, A: 2, C: 2",
+        "D": "A: 1, A: 2, C: 1, C: 2"
+      },
+      "jawaban": "A",
+      "penjelasan": "Listener dijalankan sesuai urutan pendaftaran. Pada emit pertama (1): A, B, dan C semua dipanggil. Pada emit kedua (2): hanya A dan C yang dipanggil karena B menggunakan once() — ia otomatis dihapus setelah dipanggil pertama kali. Output: A:1, B:1, C:1, A:2, C:2."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "1.7",
+      "pertanyaan": "Mengapa path.join(__dirname, 'data', 'file.json') lebih baik daripada __dirname + '/data/file.json'?",
+      "opsi": {
+        "A": "path.join lebih cepat secara performa",
+        "B": "path.join otomatis menggunakan separator path yang benar sesuai OS (backslash di Windows, forward slash di Linux/Mac), mencegah bug cross-platform",
+        "C": "String concatenation tidak bisa digunakan dengan __dirname",
+        "D": "path.join otomatis membuat folder jika belum ada"
+      },
+      "jawaban": "B",
+      "penjelasan": "Windows menggunakan backslash (\\) sebagai separator path, Linux/Mac menggunakan forward slash (/). Jika hardcode '/data/file.json' di kode, aplikasi akan error di Windows. path.join() otomatis menggunakan os.sep (separator sesuai OS) sehingga kode berjalan sama di semua platform."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "1.8",
+      "pertanyaan": "Kapan sebaiknya menggunakan Stream daripada fs.readFile() biasa?",
+      "opsi": {
+        "A": "Selalu gunakan Stream karena lebih cepat untuk semua kasus",
+        "B": "Stream cocok untuk file kecil (< 1MB), readFile untuk file besar",
+        "C": "Stream cocok untuk file besar atau data yang terus mengalir karena memproses data chunk per chunk tanpa harus memuat seluruh file ke memori",
+        "D": "Stream hanya bisa digunakan untuk file video dan audio"
+      },
+      "jawaban": "C",
+      "penjelasan": "readFile() memuat seluruh file ke memori sebelum bisa diproses — aman untuk file kecil tapi bisa crash untuk file sangat besar. Stream memproses data potongan demi potongan (chunk) sehingga penggunaan memori tetap konstan meski file berukuran GB. Stream juga cocok untuk data real-time yang terus mengalir seperti live video atau sensor data."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "1.9",
+      "pertanyaan": "Seorang developer menyimpan JWT_SECRET langsung di kode:\n\nconst JWT_SECRET = 'rahasia123';\n\ndan kemudian mem-push kode ini ke repository GitHub publik. Apa risiko terburuk yang bisa terjadi?",
+      "opsi": {
+        "A": "Tidak ada risiko, JWT_SECRET hanya digunakan di server",
+        "B": "Penyerang bisa membaca JWT_SECRET, membuat token JWT palsu yang valid, dan mengakses API seolah-olah mereka adalah user yang sah — termasuk admin",
+        "C": "JWT_SECRET akan otomatis di-expire oleh GitHub setelah 24 jam",
+        "D": "Hanya pengguna yang punya akun GitHub yang bisa melihatnya"
+      },
+      "jawaban": "B",
+      "penjelasan": "JWT_SECRET digunakan untuk menandatangani dan memverifikasi token. Siapapun yang tahu secret ini bisa membuat token JWT valid untuk user atau role apapun — termasuk admin. Mereka bisa bypass autentikasi sepenuhnya. Solusi: simpan di environment variable (.env), jangan commit ke Git, tambahkan .env ke .gitignore."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "1.10",
+      "pertanyaan": "Apa perbedaan utama antara npm start dan npm run dev dalam konteks pengembangan Node.js?",
+      "opsi": {
+        "A": "npm start untuk menjalankan test, npm run dev untuk menjalankan aplikasi",
+        "B": "Tidak ada perbedaan, keduanya menjalankan perintah yang sama",
+        "C": "npm start biasanya menjalankan 'node index.js' untuk production; npm run dev biasanya menjalankan 'nodemon index.js' untuk development dengan auto-restart",
+        "D": "npm run dev membutuhkan login ke npm registry terlebih dahulu"
+      },
+      "jawaban": "C",
+      "penjelasan": "Konvensi umum: script 'start' di package.json menggunakan 'node' langsung untuk production (tidak ada auto-restart, lebih efisien). Script 'dev' menggunakan 'nodemon' atau 'node --watch' untuk development (auto-restart saat kode berubah). npm start dan npm test adalah perintah khusus yang tidak perlu kata 'run', sedangkan script lain seperti 'dev' butuh 'npm run dev'."
+    }
+  ]
+}

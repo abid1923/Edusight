@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 5,
+    "judul_bab": "Autentikasi & Keamanan",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "5.1",
+      "pertanyaan": "Perhatikan pernyataan berikut tentang autentikasi dan otorisasi:\n\n1. Autentikasi adalah proses menentukan APA yang boleh dilakukan pengguna\n2. Otorisasi adalah proses memverifikasi identitas pengguna\n3. Autentikasi memastikan 'siapa kamu' dengan memeriksa kredensial\n4. Otorisasi memeriksa hak akses setelah identitas terverifikasi\n\nPernyataan mana yang BENAR?",
+      "opsi": {
+        "A": "Hanya 1 dan 2",
+        "B": "Hanya 3 dan 4",
+        "C": "Hanya 1 dan 3",
+        "D": "Semua pernyataan benar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pernyataan 1 dan 2 saling tertukar. Autentikasi (authentication) memverifikasi identitas — 'siapa kamu?' — dengan memeriksa kredensial seperti email+password. Otorisasi (authorization) menentukan hak akses — 'apa yang boleh kamu lakukan?' — setelah identitas terverifikasi, misalnya role admin boleh menghapus data tapi user biasa tidak boleh."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "5.2",
+      "pertanyaan": "Mengapa bcrypt lebih direkomendasikan daripada SHA-256 untuk hashing password?",
+      "opsi": {
+        "A": "Karena bcrypt menghasilkan hash yang lebih pendek dari SHA-256",
+        "B": "Karena bcrypt sengaja dibuat lambat untuk mencegah brute force attack, sementara SHA-256 terlalu cepat",
+        "C": "Karena SHA-256 tidak bisa melakukan one-way hashing",
+        "D": "Karena bcrypt tidak memerlukan salt, sementara SHA-256 memerlukannya"
+      },
+      "jawaban": "B",
+      "penjelasan": "bcrypt direkomendasikan karena sengaja dibuat lambat (adaptive cost factor) — semakin tinggi salt rounds, semakin lambat proses hashing. Ini membuat brute force attack menjadi tidak praktis. SHA-256 terlalu cepat untuk password — meski aman untuk checksum, penyerang bisa mencoba miliaran password per detik dengan GPU. bcrypt juga sudah built-in dengan salt otomatis, sementara SHA-256 memerlukan salt manual."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "5.3",
+      "pertanyaan": "Perhatikan struktur JWT berikut:\n\neyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMiLCJyb2xlIjoidXNlciIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMe...\n\nBagian manakah yang dilindungi oleh secret key dan tidak bisa dibuat oleh siapapun?",
+      "opsi": {
+        "A": "Header (eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9)",
+        "B": "Payload (eyJzdWIiOiIxMjMiLCJyb2xlIjoidXNlciIsImlhdCI6MTUxNjIzOTAyMn0)",
+        "C": "Signature (SflKxwRJSMeKKF2QT4fwpMe...)",
+        "D": "Semua bagian dilindungi oleh secret key"
+      },
+      "jawaban": "C",
+      "penjelasan": "JWT terdiri dari tiga bagian: Header dan Payload hanya di-encode Base64Url — bisa dibaca dan di-decode siapapun (tidak dienkripsi). Hanya Signature yang dilindungi oleh secret key — dihitung dari HMACSHA256(header + '.' + payload, secret). Jika payload diubah, signature tidak valid. Ini mengapa JANGAN pernah menyimpan data sensitif di payload JWT."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "5.4",
+      "pertanyaan": "Dalam implementasi login, mengapa pesan error untuk 'email tidak ditemukan' dan 'password salah' harus disamakan menjadi 'Email atau password salah'?",
+      "opsi": {
+        "A": "Agar kode controller lebih pendek dan mudah dibaca",
+        "B": "Untuk mencegah user enumeration attack — penyerang tidak bisa mengetahui email mana yang terdaftar",
+        "C": "Karena JWT tidak mendukung pesan error yang berbeda-beda",
+        "D": "Agar response time login menjadi lebih cepat"
+      },
+      "jawaban": "B",
+      "penjelasan": "Jika pesan error berbeda ('Email tidak ditemukan' vs 'Password salah'), penyerang bisa melakukan user enumeration — mencoba email satu per satu untuk mengetahui mana yang terdaftar di sistem. Setelah menemukan email yang valid, mereka bisa fokus menyerang password tersebut dengan brute force. Dengan menyamakan pesan error, penyerang tidak mendapatkan informasi apapun tentang keberadaan email."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "5.5",
+      "pertanyaan": "Perhatikan kode middleware berikut:\n\nrouter.delete('/:id', authenticate, authorize('admin'), controller.delete);\n\nApa yang terjadi jika pengguna dengan role 'user' yang sudah login mencoba mengakses endpoint tersebut?",
+      "opsi": {
+        "A": "Mendapat response 401 Unauthorized karena tidak memiliki token",
+        "B": "Mendapat response 403 Forbidden karena role tidak memiliki izin",
+        "C": "Berhasil menghapus data karena sudah terautentikasi",
+        "D": "Mendapat response 500 Internal Server Error karena konflik middleware"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pengguna sudah login (token valid) sehingga lolos middleware authenticate — ini mengembalikan 401 jika gagal. Tapi role 'user' tidak ada dalam daftar allowedRoles di middleware authorize('admin') — ini mengembalikan 403 Forbidden. Bedanya: 401 = 'Saya tidak tahu siapa kamu' (belum autentikasi), 403 = 'Saya tahu siapa kamu, tapi kamu tidak punya izin' (sudah autentikasi tapi role tidak cukup)."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "5.6",
+      "pertanyaan": "Dalam sistem dual token (access token + refresh token), mengapa access token dibuat berlaku singkat (5-15 menit) sementara refresh token berlaku lebih lama (7 hari)?",
+      "opsi": {
+        "A": "Agar server tidak perlu menyimpan session di memory",
+        "B": "Untuk membatasi kerusakan jika access token dicuri — penyerang hanya punya waktu singkat untuk menggunakannya",
+        "C": "Karena refresh token lebih aman karena dienkripsi, sementara access token tidak",
+        "D": "Agar client harus login ulang setiap 15 menit untuk keamanan maksimal"
+      },
+      "jawaban": "B",
+      "penjelasan": "Access token yang berlaku singkat membatasi window of opportunity jika token dicuri — penyerang hanya punya 15 menit untuk menggunakannya sebelum expired. Refresh token yang lebih lama memungkinkan pengalaman user tetap nyaman (tidak perlu login ulang setiap 15 menit), tapi bisa di-revoke saat logout atau deteksi aktivitas mencurigakan. Access token dan refresh token sama-sama tidak dienkripsi — yang melindungi hanyalah signature dengan secret key."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "5.7",
+      "pertanyaan": "Perhatikan penggunaan Joi berikut:\n\nconst schema = Joi.object({\n  nama: Joi.string().min(3).required(),\n  role: Joi.string().valid('user', 'admin').default('user')\n});\n\nconst { error, value } = schema.validate(\n  { nama: 'Budi', role: 'superadmin', umur: 25 },\n  { abortEarly: false, stripUnknown: true }\n);\n\nApa hasil dari validasi tersebut?",
+      "opsi": {
+        "A": "Validasi berhasil — value berisi { nama: 'Budi', role: 'superadmin', umur: 25 }",
+        "B": "Validasi gagal karena 'superadmin' tidak ada dalam valid('user', 'admin')",
+        "C": "Validasi berhasil — value berisi { nama: 'Budi', role: 'user' } dengan umur dihapus",
+        "D": "Validasi gagal karena field umur tidak ada di schema"
+      },
+      "jawaban": "B",
+      "penjelasan": "Validasi akan gagal karena 'superadmin' tidak ada dalam daftar valid values ('user', 'admin') untuk field role. abortEarly: false memastikan semua error dikumpulkan, bukan hanya yang pertama. stripUnknown: true akan menghapus field umur (yang tidak ada di schema), tapi ini tidak menyelamatkan validasi dari error role. Jika role tidak diisi, default('user') akan diterapkan — tapi karena role diisi dengan nilai invalid, default tidak berlaku."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "5.8",
+      "pertanyaan": "Manakah konfigurasi middleware yang PALING TEPAT untuk mencegah brute force attack pada endpoint login?",
+      "opsi": {
+        "A": "app.use(helmet()) — menambahkan security headers",
+        "B": "app.use(cors({ origin: '*' })) — mengizinkan semua origin",
+        "C": "rateLimit({ windowMs: 15*60*1000, max: 5, skipSuccessfulRequests: true }) — membatasi 5 percobaan per 15 menit",
+        "D": "app.use(express.json({ limit: '10kb' })) — membatasi ukuran request body"
+      },
+      "jawaban": "C",
+      "penjelasan": "Rate limiting dengan max: 5 request per 15 menit secara spesifik membatasi percobaan login — mencegah brute force attack yang mencoba ribuan password dalam waktu singkat. skipSuccessfulRequests: true memastikan login yang berhasil tidak dihitung, sehingga user yang benar tidak terkena limit. Helmet (A) melindungi dari XSS/clickjacking tapi tidak dari brute force. CORS wildcard (B) justru membuka celah keamanan. Body parser limit (D) mencegah DoS via large payload tapi tidak mencegah brute force."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "5.9",
+      "pertanyaan": "Perhatikan kode berikut yang rentan terhadap serangan keamanan:\n\napp.post('/login', async (req, res) => {\n  const user = await User.findOne(req.body);\n  if (user) res.json({ token: generateToken(user) });\n});\n\nSerangan apa yang bisa dilakukan dengan mengirim payload { \"$gt\": \"\" } sebagai req.body?",
+      "opsi": {
+        "A": "XSS — script berbahaya akan dieksekusi di browser",
+        "B": "SQL Injection — query database akan dimanipulasi",
+        "C": "NoSQL Injection — query MongoDB akan selalu mengembalikan dokumen pertama",
+        "D": "CSRF — browser akan mengirim request tidak diinginkan ke endpoint lain"
+      },
+      "jawaban": "C",
+      "penjelasan": "Ini adalah contoh NoSQL Injection di MongoDB. Query User.findOne({ '$gt': '' }) akan mencocokkan dokumen mana pun karena operator $gt dengan string kosong selalu true — mengembalikan dokumen pertama di collection. Penyerang bisa mendapatkan token untuk user pertama (biasanya admin) tanpa mengetahui email/password. Solusinya: JANGAN pernah langsung memasukkan req.body ke query — selalu whitelist field yang diizinkan: User.findOne({ email: req.body.email })."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "5.10",
+      "pertanyaan": "Perhatikan praktik manajemen environment variables berikut. Manakah yang PALING TIDAK AMAN dan harus dihindari?",
+      "opsi": {
+        "A": "Menyimpan JWT_SECRET di file .env dan menambahkan .env ke .gitignore",
+        "B": "Membuat file .env.example tanpa nilai sensitif untuk referensi tim",
+        "C": "Menggunakan AWS Secrets Manager untuk menyimpan credential di production",
+        "D": "Menulis JWT_SECRET langsung di kode sumber controller: const JWT_SECRET = 'my-secret-key-123'"
+      },
+      "jawaban": "D",
+      "penjelasan": "Menulis secret langsung di kode sumber (hardcode) adalah praktik yang sangat berbahaya. Jika kode di-push ke GitHub — bahkan repo private — secret tersebut bisa bocor. GitHub memindai setiap commit untuk mendeteksi secret, tapi secret yang sudah di-commit tetap ada di history Git. Praktik yang benar: simpan secret di .env (A), buat .env.example untuk referensi (B), dan gunakan secret management service di production (C). Secret di kode sumber juga sulit diubah dan tidak bisa berbeda per environment."
+    }
+  ]
+}

@@ -1,0 +1,349 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 4,
+    "judul_bab": "Database NoSQL (MongoDB)",
+    "deskripsi": "Materi lengkap MongoDB dari konsep NoSQL, document model, CRUD, query operator, Mongoose ODM, schema & validasi, relasi antar dokumen, agregasi pipeline, hingga koneksi MongoDB Atlas.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "FullStackOpen – Part 3: Saving data to MongoDB",
+        "url": "https://fullstackopen.com/en/part3/saving_data_to_mongo_db",
+        "lisensi": "CC-BY-NC-SA 3.0"
+      },
+      {
+        "nama": "MDN Web Docs – Express Tutorial: Using a Database with Mongoose",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Express_Nodejs/mongoose",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "freeCodeCamp – MongoDB and Mongoose",
+        "url": "https://www.freecodecamp.org/learn/back-end-development-and-apis/#mongodb-and-mongoose",
+        "lisensi": "BSD-3-Clause"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+
+  "sub_bab": [
+
+    {
+      "id": "4.1",
+      "judul": "Apa itu NoSQL & Perbedaan dengan SQL",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Keterbatasan SQL dan Lahirnya NoSQL",
+          "isi": "Selama beberapa dekade, database relasional (SQL) mendominasi dunia penyimpanan data. Tapi di era modern dengan data yang tumbuh secara eksponensial — media sosial dengan miliaran posting, IoT dengan jutaan sensor, e-commerce dengan katalog produk yang sangat beragam — beberapa keterbatasan SQL mulai terasa:\n\n• Schema kaku — semua baris dalam satu tabel HARUS punya kolom yang sama. Bagaimana jika produk elektronik punya atribut 'watt' tapi produk pakaian punya 'ukuran'? Di SQL, kamu terpaksa membuat banyak kolom yang sebagian besar NULL, atau arsitektur EAV yang kompleks.\n• Scaling horizontal sulit — SQL secara tradisional di-scale secara vertikal (server lebih kuat). Membagi data ke banyak server (sharding) sangat rumit.\n• Join bisa lambat — untuk data yang sangat terdistribusi, JOIN antar tabel yang ada di server berbeda menjadi bottleneck.\n\nNoSQL (Not Only SQL) lahir sebagai alternatif yang mengorbankan beberapa fitur SQL (seperti relasi dan transaksi ACID penuh) demi fleksibilitas schema dan kemudahan horizontal scaling.\n\nEmpat model NoSQL utama:\n• Document Store — data disimpan sebagai dokumen JSON/BSON. Contoh: MongoDB, CouchDB. Paling populer.\n• Key-Value Store — pasangan kunci-nilai sederhana, sangat cepat. Contoh: Redis, DynamoDB.\n• Column-Family — data dikelompokkan per kolom, bukan per baris. Cocok untuk analitik besar. Contoh: Apache Cassandra.\n• Graph Database — data sebagai node dan edge, ideal untuk data yang sangat terhubung. Contoh: Neo4j."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Kapan Pilih MongoDB vs MySQL?",
+          "isi": "Tidak ada jawaban mutlak — keduanya punya kekuatan masing-masing. Gunakan sebagai panduan:\n\nPilih MongoDB jika:\n• Data memiliki struktur yang bervariasi dan sering berubah (produk e-commerce, profil pengguna)\n• Butuh development yang sangat cepat (schema tidak perlu didefinisikan dulu)\n• Data sudah dalam format JSON/nested dan relasi tidak terlalu kompleks\n• Perlu horizontal scaling dengan mudah\n• Konten seperti blog, CMS, katalog produk\n\nPilih MySQL/PostgreSQL jika:\n• Data sangat terstruktur dengan relasi yang jelas dan kompleks\n• Butuh transaksi ACID yang ketat (keuangan, perbankan, inventory)\n• Tim sudah familiar dan nyaman dengan SQL\n• Data integrity sangat kritis (tidak boleh ada inkonsistensi)\n• Laporan dan analitik kompleks dengan banyak JOIN"
+        },
+        {
+          "tipe": "gambar",
+          "judul": "MongoDB Document vs SQL Table",
+          "src": "/assets/backend/bab4/bab4_4.1.png",
+          "deskripsi_gambar": "Dua panel perbandingan cara penyimpanan data. Panel kiri 'SQL' menampilkan data dalam bentuk tabel dengan baris dan kolom tetap. Panel kanan 'MongoDB' menampilkan data dalam bentuk dokumen yang tersusun secara hierarkis di dalam collection. Diagram menunjukkan bahwa SQL menggunakan struktur tabel relasional, sedangkan MongoDB menggunakan struktur dokumen yang lebih fleksibel.",
+          "alt": "Perbandingan dokumen MongoDB yang fleksibel dengan tabel SQL yang kaku"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: SQL vs MongoDB seperti Form vs Catatan Bebas",
+          "isi": "Database SQL seperti formulir isian yang sudah tercetak — setiap pengisi harus mengisi kolom yang sama persis: nama, tanggal lahir, alamat, nomor telepon. Tidak ada kolom? Kosongkan. Butuh kolom baru? Cetak ulang semua form. MongoDB seperti buku catatan bebas — setiap orang bisa menulis apapun yang relevan untuk mereka. Satu orang menulis lebih detail, satu lagi lebih singkat. Tidak perlu format yang seragam."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "MongoDB Artinya 'Humongous'",
+          "isi": "Nama 'MongoDB' berasal dari kata 'humongous' (sangat besar) — mencerminkan tujuan awalnya untuk menangani data dalam skala sangat besar. MongoDB diciptakan oleh perusahaan 10gen (kini MongoDB Inc.) pada 2007 dan dirilis open source pada 2009. Saat ini MongoDB digunakan oleh lebih dari 35.000 perusahaan termasuk Adobe, eBay, LinkedIn, dan Uber. Ironisnya, popularitas MongoDB yang besar justru membuat banyak developer menggunakannya untuk proyek kecil yang sebenarnya lebih cocok pakai SQLite."
+        }
+      ]
+    },
+
+    {
+      "id": "4.2",
+      "judul": "Konsep MongoDB — Document, Collection, Database",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Hierarki Data di MongoDB",
+          "isi": "MongoDB mengorganisir data dalam tiga level hierarki yang memiliki padanan langsung dengan konsep SQL yang sudah kamu kenal:\n\n• Database — wadah paling atas, berisi satu atau lebih collection. Padanan: Database di SQL. Satu server MongoDB bisa menjalankan banyak database.\n• Collection — kumpulan dokumen yang sejenis. Padanan: Tabel di SQL. Berbeda dengan tabel SQL, collection tidak memaksakan schema — setiap dokumen bisa punya struktur berbeda.\n• Document — unit data tunggal, disimpan dalam format BSON (Binary JSON). Padanan: Row/Record di SQL. Setiap dokumen punya field _id yang unik secara otomatis.\n\nBSON (Binary JSON) adalah format penyimpanan internal MongoDB — mirip JSON tapi lebih efisien untuk penyimpanan dan lebih kaya tipe data. BSON mendukung tipe tambahan yang tidak ada di JSON standar: ObjectId, Date, Binary data, Decimal128, dll.\n\nField penting yang perlu dipahami:\n• _id — identifier unik setiap dokumen. Jika tidak diisi manual, MongoDB otomatis membuat ObjectId (12 bytes: 4 timestamp + 5 random + 3 counter). Menggunakan ObjectId membuat _id sudah mengandung informasi waktu pembuatan.\n• Embedded document — dokumen yang bersarang di dalam dokumen lain. Contoh: field 'alamat' berisi object { jalan, kota, provinsi }.\n• Array field — field yang berisi array nilai atau array dokumen. Contoh: field 'hobi' berisi ['coding', 'gaming', 'membaca']."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Anatomi Dokumen MongoDB",
+          "bahasa": "javascript",
+          "kode": "// Contoh dokumen mahasiswa di MongoDB\n// Satu dokumen = satu baris di SQL\n{\n  \"_id\": ObjectId(\"64f2a8b3c9e1234567890abc\"),  // auto-generated, unik\n\n  // Field sederhana\n  \"nim\":   \"2021001\",\n  \"nama\":  \"Budi Santoso\",\n  \"email\": \"budi@email.com\",\n  \"ipk\":   3.85,\n  \"aktif\": true,\n\n  // Embedded document: data alamat\n  \"alamat\": {\n    \"jalan\":    \"Jl. Merdeka No. 10\",\n    \"kelurahan\": \"Bukit Lama\",\n    \"kota\":     \"Palembang\",\n    \"provinsi\": \"Sumatera Selatan\",\n    \"kodePos\":  \"30128\"\n  },\n\n  // Array of strings\n  \"hobi\": [\"coding\", \"membaca\", \"hiking\"],\n\n  // Array of embedded documents\n  \"riwayat_nilai\": [\n    { \"matkul\": \"Algoritma\",    \"nilai\": 85, \"semester\": \"2021/1\" },\n    { \"matkul\": \"Basis Data\",   \"nilai\": 90, \"semester\": \"2021/2\" },\n    { \"matkul\": \"Jaringan Kom\", \"nilai\": 78, \"semester\": \"2022/1\" }\n  ],\n\n  // Reference ke dokumen lain (seperti FK di SQL)\n  \"jurusan_id\": ObjectId(\"64f2a8b3c9e1234567890def\"),\n\n  // Timestamp otomatis\n  \"createdAt\": ISODate(\"2024-01-15T08:30:00.000Z\"),\n  \"updatedAt\": ISODate(\"2024-03-20T14:22:10.000Z\")\n}\n\n// Dokumen lain dalam COLLECTION YANG SAMA\n// bisa punya STRUKTUR YANG BERBEDA!\n{\n  \"_id\": ObjectId(\"64f2a8b3c9e1234567890abd\"),\n  \"nim\":  \"2021002\",\n  \"nama\": \"Siti Rahayu\",\n  \"email\": \"siti@email.com\",\n  // Tidak ada field 'alamat' — valid di MongoDB!\n  // Tidak ada field 'hobi' — juga valid!\n  \"jurusan_id\": ObjectId(\"64f2a8b3c9e1234567890def\"),\n  \"beasiswa\": \"KIP-Kuliah\"  // field baru yang tidak ada di dokumen lain — tetap valid!\n}",
+          "penjelasan": "Fleksibilitas schema MongoDB ini sangat berguna saat development tapi bisa menjadi sumber bug jika tidak dikontrol. Di sinilah Mongoose (dibahas di sub-bab 4.5) berperan — menambahkan schema validation ke MongoDB."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Hierarki MongoDB: Database → Collection → Document",
+          "src": "/assets/backend/bab4/bab4_4.2.png",
+          "deskripsi_gambar": "Diagram hierarki MongoDB berbentuk lapisan bertingkat. Lingkaran terbesar berlabel 'MongoDB Database' yang berisi beberapa collection. Di dalamnya terdapat lapisan 'Collections' yang menyimpan kumpulan data. Pada bagian terdalam terdapat 'Document' yang merepresentasikan data dalam bentuk pasangan key-value. Diagram menunjukkan hubungan Database → Collection → Document sebagai struktur dasar penyimpanan data MongoDB.",
+          "alt": "Diagram hierarki MongoDB dari server hingga database, collection, dan document"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: MongoDB seperti Lemari Arsip Tanpa Formulir",
+          "isi": "Database MongoDB seperti lemari arsip besar. Setiap laci (collection) menyimpan dokumen sejenis — satu laci untuk mahasiswa, satu untuk mata kuliah. Tapi berbeda dengan lemari arsip konvensional yang memaksakan format formulir yang sama, lemari MongoDB membiarkan setiap dokumen memiliki formatnya sendiri. Dokumen 2021001 bisa berisi foto dan alamat lengkap, dokumen 2021002 cukup berisi nama dan email."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "ObjectId Mengandung Informasi Waktu",
+          "isi": "MongoDB ObjectId bukan sekadar ID acak. 12 byte-nya terdiri dari: 4 byte timestamp Unix (detik), 5 byte random (unik per mesin/proses), dan 3 byte counter. Artinya kamu bisa mengekstrak waktu pembuatan dokumen dari _id-nya tanpa kolom createdAt terpisah! Di JavaScript: new Date(parseInt(id.substring(0, 8), 16) * 1000). Ini juga berarti dokumen otomatis terurut berdasarkan waktu jika diurutkan by _id."
+        }
+      ]
+    },
+
+    {
+      "id": "4.3",
+      "judul": "CRUD di MongoDB — insertOne, find, updateOne, deleteOne",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Operasi CRUD di MongoDB Shell",
+          "isi": "MongoDB menyediakan shell interaktif (mongosh) untuk berinteraksi langsung dengan database menggunakan JavaScript. Memahami operasi CRUD di level shell penting sebelum menggunakan driver atau ORM, karena semua operasi di Mongoose pada dasarnya memanggil method yang sama.\n\nMethod CRUD utama MongoDB:\n\nInsert (Create):\n• db.collection.insertOne(doc) — sisipkan satu dokumen, kembalikan insertedId\n• db.collection.insertMany([doc1, doc2]) — sisipkan banyak dokumen sekaligus\n\nFind (Read):\n• db.collection.find(filter) — kembalikan semua dokumen yang cocok sebagai cursor\n• db.collection.findOne(filter) — kembalikan dokumen pertama yang cocok atau null\n• .count() / .countDocuments(filter) — hitung jumlah dokumen\n• .limit(n), .skip(n), .sort({field: 1/-1}) — modifikasi cursor\n\nUpdate:\n• db.collection.updateOne(filter, update) — update dokumen pertama yang cocok\n• db.collection.updateMany(filter, update) — update semua yang cocok\n• db.collection.findOneAndUpdate(filter, update, options) — update dan kembalikan dokumen\n• db.collection.replaceOne(filter, replacement) — ganti seluruh dokumen\n\nDelete:\n• db.collection.deleteOne(filter) — hapus dokumen pertama yang cocok\n• db.collection.deleteMany(filter) — hapus semua yang cocok\n• db.collection.findOneAndDelete(filter) — hapus dan kembalikan dokumen yang dihapus"
+        },
+        {
+          "tipe": "kode",
+          "judul": "CRUD di MongoDB Shell (mongosh)",
+          "bahasa": "javascript",
+          "kode": "// Buka mongosh di terminal: mongosh\n// Pilih/buat database\nuse web_belajar\n\n// ==========================================\n// INSERT\n// ==========================================\n\n// insertOne\ndb.mahasiswa.insertOne({\n  nim:   \"2021001\",\n  nama:  \"Budi Santoso\",\n  email: \"budi@email.com\",\n  ipk:   3.85,\n  aktif: true,\n  alamat: { kota: \"Palembang\", provinsi: \"Sumatera Selatan\" },\n  hobi:   [\"coding\", \"membaca\"]\n})\n// Output: { acknowledged: true, insertedId: ObjectId(\"...\") }\n\n// insertMany\ndb.mahasiswa.insertMany([\n  { nim: \"2021002\", nama: \"Siti Rahayu\",  email: \"siti@email.com\",  ipk: 3.70 },\n  { nim: \"2021003\", nama: \"Ahmad Fauzi\",  email: \"ahmad@email.com\", ipk: 3.55 },\n  { nim: \"2021004\", nama: \"Dewi Lestari\", email: \"dewi@email.com\",  ipk: 3.90 }\n])\n\n// ==========================================\n// FIND (READ)\n// ==========================================\n\n// Ambil semua\ndb.mahasiswa.find()\ndb.mahasiswa.find().pretty()  // format lebih rapi\n\n// Filter\ndb.mahasiswa.find({ aktif: true })\ndb.mahasiswa.find({ \"alamat.kota\": \"Palembang\" })  // dot notation untuk nested field\n\n// Projection: pilih kolom yang mau ditampilkan\ndb.mahasiswa.find(\n  { aktif: true },              // filter\n  { nama: 1, nim: 1, ipk: 1 }  // projection: 1=tampilkan, 0=sembunyikan\n)\ndb.mahasiswa.find({}, { _id: 0, nama: 1, email: 1 })  // _id: 0 untuk sembunyikan _id\n\n// findOne\ndb.mahasiswa.findOne({ nim: \"2021001\" })\n\n// Sort, limit, skip\ndb.mahasiswa.find({ aktif: true })\n  .sort({ ipk: -1, nama: 1 })  // -1 = descending, 1 = ascending\n  .limit(10)\n  .skip(0)\n\n// countDocuments\ndb.mahasiswa.countDocuments({ aktif: true })\n\n// ==========================================\n// UPDATE\n// ==========================================\n\n// updateOne: gunakan operator $set untuk update sebagian field\ndb.mahasiswa.updateOne(\n  { nim: \"2021001\" },          // filter\n  { $set: { ipk: 3.95 } }      // update: HANYA ubah field ipk\n)\n// JANGAN: { ipk: 3.95 } — ini akan MENGHAPUS semua field lain!\n\n// Update field nested\ndb.mahasiswa.updateOne(\n  { nim: \"2021001\" },\n  { $set: { \"alamat.kota\": \"Yogyakarta\" } }  // dot notation untuk nested\n)\n\n// Tambah/kurangi angka dengan $inc\ndb.mahasiswa.updateOne(\n  { nim: \"2021001\" },\n  { $inc: { poin_reward: 10 } }  // tambah 10 ke poin_reward\n)\n\n// Tambah elemen ke array dengan $push\ndb.mahasiswa.updateOne(\n  { nim: \"2021001\" },\n  { $push: { hobi: \"hiking\" } }\n)\n\n// updateMany\ndb.mahasiswa.updateMany(\n  { ipk: { $lt: 2.0 } },       // filter: IPK di bawah 2.0\n  { $set: { aktif: false } }   // nonaktifkan semua\n)\n\n// ==========================================\n// DELETE\n// ==========================================\n\n// deleteOne\ndb.mahasiswa.deleteOne({ nim: \"2021004\" })\n\n// deleteMany\ndb.mahasiswa.deleteMany({ aktif: false })\n\n// Hapus seluruh isi collection (tapi collection tetap ada)\ndb.mahasiswa.deleteMany({})",
+          "penjelasan": "SELALU gunakan operator seperti $set, $inc, $push saat update! Jika kamu updateOne({ nim: '...' }, { ipk: 3.95 }) tanpa $set, MongoDB akan MENGGANTI seluruh dokumen hanya dengan { ipk: 3.95 } — semua field lain hilang!"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Upsert: Insert atau Update Sekaligus",
+          "isi": "MongoDB punya operasi 'upsert' — update jika dokumen ada, insert jika tidak ada. Cukup tambahkan opsi { upsert: true } di updateOne(). Sangat berguna untuk operasi 'simpan pengaturan pengguna' — tidak perlu cek dulu apakah dokumen sudah ada atau belum. Satu operasi untuk dua kasus sekaligus."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: $set seperti Tip-Ex dan Pena Baru",
+          "isi": "Update tanpa $set seperti menghapus seluruh halaman dokumen dan menulis ulang dari awal hanya karena ingin mengubah satu kata. $set seperti tip-ex yang hanya mengoreksi kata yang salah saja — isi lainnya tetap utuh. Bayangkan betapa berbahayanya 'hapus seluruh halaman' di data production yang punya banyak field penting."
+        }
+      ]
+    },
+
+    {
+      "id": "4.4",
+      "judul": "Query & Filter — Operator Perbandingan & Logika",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Operator Query MongoDB",
+          "isi": "MongoDB memiliki sistem operator yang sangat kaya untuk membangun filter query yang kompleks. Operator selalu dimulai dengan tanda dollar ($).\n\nOperator Perbandingan (Comparison Operators):\n• $eq — sama dengan (sama seperti = di SQL)\n• $ne — tidak sama dengan (!= di SQL)\n• $gt — lebih besar (> di SQL)\n• $gte — lebih besar atau sama (>= di SQL)\n• $lt — lebih kecil (< di SQL)\n• $lte — lebih kecil atau sama (<= di SQL)\n• $in — nilai ada dalam array (IN di SQL)\n• $nin — nilai tidak ada dalam array (NOT IN di SQL)\n\nOperator Logika (Logical Operators):\n• $and — semua kondisi harus true (AND di SQL)\n• $or — minimal satu kondisi true (OR di SQL)\n• $not — negasi kondisi (NOT di SQL)\n• $nor — semua kondisi harus false\n\nOperator Elemen:\n• $exists: true/false — cek apakah field ada atau tidak\n• $type — cek tipe BSON dari field\n\nOperator Array:\n• $all — array mengandung semua nilai yang disebutkan\n• $elemMatch — minimal satu elemen array memenuhi semua kondisi\n• $size — array memiliki panjang tertentu\n\nOperator Teks:\n• $regex — pencarian dengan regular expression\n• $text — full-text search (butuh text index)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Operator Query dalam Aksi",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// OPERATOR PERBANDINGAN\n// ==========================================\n\n// IPK di atas 3.5\ndb.mahasiswa.find({ ipk: { $gt: 3.5 } })\n\n// IPK antara 3.0 dan 3.5 (inklusif)\ndb.mahasiswa.find({ ipk: { $gte: 3.0, $lte: 3.5 } })\n\n// Mahasiswa dari kota Palembang atau Yogyakarta\ndb.mahasiswa.find({ \"alamat.kota\": { $in: [\"Palembang\", \"Yogyakarta\", \"Bandung\"] } })\n\n// Bukan dari jurusan TI\ndb.mahasiswa.find({ jurusan: { $ne: \"Teknik Informatika\" } })\n\n// ==========================================\n// OPERATOR LOGIKA\n// ==========================================\n\n// $and: IPK di atas 3.5 DAN aktif\ndb.mahasiswa.find({\n  $and: [\n    { ipk:   { $gt: 3.5 } },\n    { aktif: true }\n  ]\n})\n// Shorthand $and yang lebih bersih:\ndb.mahasiswa.find({ ipk: { $gt: 3.5 }, aktif: true })\n\n// $or: IPK di atas 3.8 ATAU mendapat beasiswa\ndb.mahasiswa.find({\n  $or: [\n    { ipk: { $gte: 3.8 } },\n    { beasiswa: { $exists: true } }\n  ]\n})\n\n// Kombinasi $and dan $or\ndb.mahasiswa.find({\n  aktif: true,\n  $or: [\n    { ipk: { $gte: 3.8 } },\n    { beasiswa: \"KIP-Kuliah\" }\n  ]\n})\n\n// ==========================================\n// OPERATOR ELEMEN\n// ==========================================\n\n// Mahasiswa yang memiliki field 'beasiswa'\ndb.mahasiswa.find({ beasiswa: { $exists: true } })\n\n// Mahasiswa yang TIDAK memiliki field 'no_telepon'\ndb.mahasiswa.find({ no_telepon: { $exists: false } })\n\n// ==========================================\n// OPERATOR ARRAY\n// ==========================================\n\n// Memiliki hobi 'coding' (array contains)\ndb.mahasiswa.find({ hobi: \"coding\" })\n\n// Memiliki SEMUA hobi ini\ndb.mahasiswa.find({ hobi: { $all: [\"coding\", \"membaca\"] } })\n\n// Array hobi tepat 3 elemen\ndb.mahasiswa.find({ hobi: { $size: 3 } })\n\n// Cari di array of objects dengan $elemMatch\ndb.mahasiswa.find({\n  riwayat_nilai: {\n    $elemMatch: {\n      matkul: \"Basis Data\",\n      nilai: { $gte: 85 }\n    }\n  }\n})\n\n// ==========================================\n// REGEX: pencarian teks fleksibel\n// ==========================================\n\n// Nama yang diawali 'Budi'\ndb.mahasiswa.find({ nama: { $regex: /^Budi/i } })  // i = case insensitive\n\n// Email dari domain gmail\ndb.mahasiswa.find({ email: { $regex: /@gmail\\.com$/ } })",
+          "penjelasan": "Saat mencari dalam array of objects (embedded documents), $elemMatch sangat penting. Tanpanya, { 'riwayat_nilai.matkul': 'Basis Data', 'riwayat_nilai.nilai': { $gte: 85 } } akan mencocokkan dokumen di mana matkul dan nilai ada di ELEMEN BERBEDA dalam array — bukan yang sama."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Tabel Operator MongoDB vs SQL",
+          "src": "/assets/backend/bab4/bab4_4.4.png",
+          "deskripsi_gambar": "Tabel perbandingan dua kolom. Header: 'MongoDB Operator' dan 'SQL Equivalent'. Baris: $eq ↔ =, $ne ↔ !=, $gt ↔ >, $lt ↔ <, $in ↔ IN(...), $and ↔ AND, $or ↔ OR, $exists ↔ IS NOT NULL, $regex ↔ LIKE. Setiap baris diberi contoh kode singkat. Warna hijau untuk MongoDB, biru untuk SQL.",
+          "alt": "Tabel perbandingan operator query MongoDB dengan padanannya di SQL"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "MongoDB Atlas Search: Full-Text Search Canggih",
+          "isi": "MongoDB Atlas (versi cloud) memiliki fitur Atlas Search yang dibangun di atas Apache Lucene — mesin pencari yang sama yang digunakan Elasticsearch. Ini memungkinkan full-text search yang sangat canggih: pencarian fuzzy (toleran typo), pencarian berbobot (beberapa field lebih penting), highlight hasil pencarian, dan autocomplete. Jauh lebih powerful dari $regex yang sederhana."
+        }
+      ]
+    },
+
+    {
+      "id": "4.5",
+      "judul": "Mongoose — ODM untuk MongoDB",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu Mongoose?",
+          "isi": "Mongoose adalah library ODM (Object Document Mapper) untuk MongoDB dan Node.js. Perannya mirip dengan Sequelize untuk SQL — menjadi lapisan abstraksi antara kode JavaScript dan database.\n\nMasalah yang dipecahkan Mongoose:\n• MongoDB by default tidak punya schema — dokumen dalam koleksi yang sama bisa punya struktur apa saja. Ini fleksibel tapi bisa kacau di aplikasi besar.\n• Mongoose menambahkan schema ke MongoDB — mendefinisikan struktur, tipe data, dan validasi yang harus dipenuhi setiap dokumen.\n\nKomponen utama Mongoose:\n\n1. Schema — blueprint yang mendefinisikan struktur dokumen: field apa saja, tipe datanya apa, validasi apa yang diterapkan, nilai default, dll. Schema tidak tersimpan di MongoDB — hanya ada di kode Node.js.\n\n2. Model — class JavaScript yang di-compile dari Schema. Model merepresentasikan collection di MongoDB dan menyediakan semua method CRUD. Nama model (singular, PascalCase) otomatis diubah Mongoose menjadi nama collection (lowercase, plural): 'Mahasiswa' → 'mahasiswas'. Untuk kontrol penuh, gunakan opsi { collection: 'mahasiswa' }.\n\n3. Document — instance dari Model, merepresentasikan satu dokumen MongoDB. Punya method seperti .save(), .remove(), dan akses ke middleware.\n\nMongoose juga mendukung middleware (hooks) — fungsi yang dijalankan sebelum (pre) atau setelah (post) operasi tertentu: save, find, update, delete. Sangat berguna untuk otomatisasi seperti hash password sebelum disimpan, atau logging setelah update."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Setup Mongoose dan Koneksi ke MongoDB",
+          "bahasa": "javascript",
+          "kode": "// npm install mongoose dotenv\nconst mongoose = require('mongoose');\nrequire('dotenv').config();\n\n// ==========================================\n// KONEKSI\n// ==========================================\nasync function koneksiDB() {\n  try {\n    await mongoose.connect(process.env.MONGODB_URI, {\n      // Opsi koneksi modern (mongoose 6+)\n      // useNewUrlParser dan useUnifiedTopology tidak diperlukan lagi\n    });\n    console.log('✅ MongoDB terhubung:', mongoose.connection.host);\n  } catch (err) {\n    console.error('❌ Koneksi MongoDB gagal:', err.message);\n    process.exit(1);\n  }\n}\n\n// Event listeners untuk monitoring koneksi\nmongoose.connection.on('disconnected', () => {\n  console.warn('⚠️  MongoDB terputus');\n});\nmongoose.connection.on('reconnected', () => {\n  console.log('🔄 MongoDB tersambung kembali');\n});\n\n// Tutup koneksi saat aplikasi dihentikan\nprocess.on('SIGINT', async () => {\n  await mongoose.connection.close();\n  console.log('MongoDB koneksi ditutup');\n  process.exit(0);\n});\n\n// .env:\n// MONGODB_URI=mongodb://localhost:27017/web_belajar\n// Atau MongoDB Atlas:\n// MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/web_belajar\n\nmodule.exports = koneksiDB;",
+          "penjelasan": "Selalu panggil koneksiDB() di entry point aplikasi (index.js/app.js) sebelum route apapun dijalankan. Tanpa koneksi aktif, semua query Mongoose akan gagal dengan error 'Mongoose: Can't save() before opening connection'."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Mongoose seperti Manajer Toko",
+          "isi": "MongoDB murni seperti gudang besar tanpa label dan tata letak — kamu bisa taruh barang apapun di mana saja. Mongoose seperti manajer toko yang membuat aturan: 'Section mahasiswa hanya boleh ada produk dengan label nim, nama, dan email yang valid. Harga tidak boleh negatif. Tanggal kedaluwarsa wajib ada.' Aturan ini tidak mengubah gudang (MongoDB), tapi memastikan kamu tidak menaruh barang yang salah."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Mongoose Punya 20+ Juta Download Per Minggu",
+          "isi": "Per 2024, Mongoose diunduh lebih dari 20 juta kali per minggu di npm — menjadikannya salah satu library Node.js paling populer di dunia. Menariknya, Mongoose sudah ada sejak 2010 (hampir setua MongoDB itu sendiri) dan terus aktif dikembangkan hingga sekarang. Popularitasnya yang bertahan lama menunjukkan betapa kebutuhan akan schema validation di MongoDB memang sangat nyata."
+        }
+      ]
+    },
+
+    {
+      "id": "4.6",
+      "judul": "Schema & Model di Mongoose",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mendefinisikan Schema yang Kuat",
+          "isi": "Schema Mongoose mendefinisikan 'kontrak' data yang harus dipenuhi setiap dokumen. Mendefinisikan schema yang baik di awal project adalah investasi — mencegah puluhan bug data yang sulit dilacak di kemudian hari.\n\nTipe data yang didukung Mongoose Schema:\n• String — teks\n• Number — angka (integer dan float)\n• Boolean — true/false\n• Date — tanggal dan waktu\n• Buffer — data biner\n• ObjectId — referensi ke dokumen lain (mongoose.Schema.Types.ObjectId)\n• Array — kumpulan nilai atau subdokumen\n• Map — key-value pairs dengan key dinamis\n• Mixed — tipe apapun (hindari jika bisa — hilangkan keunggulan schema)\n\nOpsi yang bisa ditambahkan per field:\n• required — field wajib ada\n• unique — nilai harus unik di seluruh collection\n• default — nilai default jika tidak diisi\n• min / max — batas nilai numerik\n• minlength / maxlength — batas panjang string\n• enum — hanya nilai tertentu yang diizinkan\n• trim — otomatis hapus spasi di awal/akhir string\n• lowercase / uppercase — otomatis konversi case\n• match — validasi dengan regex\n• validate — fungsi validasi kustom\n• index — buat index pada field ini\n• ref — nama model yang direferensi (untuk populate)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Schema dan Model Lengkap",
+          "bahasa": "javascript",
+          "kode": "const mongoose = require('mongoose');\nconst { Schema, model } = mongoose;\n\n// ==========================================\n// SCHEMA JURUSAN\n// ==========================================\nconst jurusanSchema = new Schema({\n  kode: {\n    type:      String,\n    required:  [true, 'Kode jurusan wajib diisi'],\n    unique:    true,\n    uppercase: true,\n    trim:      true,\n    maxlength: [5, 'Kode jurusan maksimal 5 karakter']\n  },\n  nama: {\n    type:     String,\n    required: [true, 'Nama jurusan wajib diisi'],\n    trim:     true\n  },\n  aktif: {\n    type:    Boolean,\n    default: true\n  }\n}, { timestamps: true }); // otomatis tambah createdAt dan updatedAt\n\nconst Jurusan = model('Jurusan', jurusanSchema);\n\n// ==========================================\n// SCHEMA MAHASISWA — lebih kompleks\n// ==========================================\nconst alamatSchema = new Schema({\n  jalan:    { type: String, trim: true },\n  kota:     { type: String, trim: true },\n  provinsi: { type: String, trim: true },\n  kodePos:  { type: String, match: [/^\\d{5}$/, 'Kode pos harus 5 digit'] }\n}, { _id: false }); // subdokumen tanpa _id sendiri\n\nconst mahasiswaSchema = new Schema({\n  nim: {\n    type:     String,\n    required: [true, 'NIM wajib diisi'],\n    unique:   true,\n    trim:     true,\n    match:    [/^\\d{7}$/, 'NIM harus 7 digit angka']\n  },\n  nama: {\n    type:      String,\n    required:  [true, 'Nama wajib diisi'],\n    trim:      true,\n    minlength: [3, 'Nama minimal 3 karakter'],\n    maxlength: [100, 'Nama maksimal 100 karakter']\n  },\n  email: {\n    type:     String,\n    required: [true, 'Email wajib diisi'],\n    unique:   true,\n    lowercase: true,\n    trim:      true,\n    match:     [/^\\S+@\\S+\\.\\S+$/, 'Format email tidak valid']\n  },\n  ipk: {\n    type:    Number,\n    default: 0,\n    min:     [0, 'IPK tidak boleh negatif'],\n    max:     [4, 'IPK maksimal 4.00']\n  },\n  jenisKelamin: {\n    type:  String,\n    enum:  {\n      values: ['L', 'P'],\n      message: 'Jenis kelamin harus L atau P'\n    }\n  },\n  jurusan: {\n    type: Schema.Types.ObjectId,\n    ref:  'Jurusan',  // nama model yang direferensi\n    required: [true, 'Jurusan wajib diisi']\n  },\n  alamat:  { type: alamatSchema },\n  hobi:    [{ type: String, trim: true }],\n  aktif:   { type: Boolean, default: true },\n\n  // Validasi kustom\n  tanggalLahir: {\n    type:     Date,\n    validate: {\n      validator: function(val) {\n        return val < new Date(); // tanggal lahir tidak boleh di masa depan\n      },\n      message: 'Tanggal lahir tidak valid'\n    }\n  }\n}, {\n  timestamps: true,         // createdAt dan updatedAt otomatis\n  collection: 'mahasiswa'   // nama collection eksplisit\n});\n\n// Computed property (virtual) — tidak tersimpan di DB\nmahasiswaSchema.virtual('umur').get(function() {\n  if (!this.tanggalLahir) return null;\n  return new Date().getFullYear() - this.tanggalLahir.getFullYear();\n});\n\n// Index compound: kombinasi field\nmahasiswaSchema.index({ jurusan: 1, ipk: -1 });\n\nconst Mahasiswa = model('Mahasiswa', mahasiswaSchema);\n\nmodule.exports = { Mahasiswa, Jurusan };",
+          "penjelasan": "Virtual properties seperti 'umur' tidak tersimpan di database tapi bisa diakses seperti field biasa. Untuk menyertakan virtual di res.json(), tambahkan { toJSON: { virtuals: true } } ke opsi schema."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "timestamps: true — Dua Field Gratis",
+          "isi": "Opsi { timestamps: true } di Mongoose schema otomatis menambahkan dua field ke setiap dokumen: createdAt (waktu dokumen dibuat) dan updatedAt (waktu terakhir diubah). Keduanya diisi dan diperbarui otomatis oleh Mongoose — kamu tidak perlu menulisnya secara manual. Ini adalah best practice yang hampir selalu diaktifkan di setiap schema production."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Schema seperti KTP",
+          "isi": "Schema Mongoose seperti template KTP resmi yang harus diisi dengan benar: NIK wajib 16 digit, nama tidak boleh kosong, tanggal lahir tidak boleh di masa depan, jenis kelamin hanya L atau P. Siapapun yang mencoba membuat KTP dengan NIK 3 digit atau tanpa nama akan langsung ditolak — sebelum KTP dicetak (sebelum data masuk ke database)."
+        }
+      ]
+    },
+
+    {
+      "id": "4.7",
+      "judul": "Validasi Data dengan Mongoose",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Validasi di Level ODM",
+          "isi": "Validasi Mongoose dijalankan sebelum data disimpan ke MongoDB, sehingga data yang tidak valid tidak akan pernah menyentuh database. Ini adalah lapisan pertahanan kedua — setelah validasi di level API (request body), sebelum data masuk database.\n\nMongoose menjalankan validasi saat:\n• doc.save() — menyimpan dokumen baru atau yang sudah dimodifikasi\n• Model.create(data) — shortcut untuk new Model + save\n• Model.validate(data) — validasi tanpa menyimpan (berguna untuk testing)\n\nPerhatian penting: secara default, validasi Mongoose TIDAK dijalankan pada operasi update seperti updateOne(), updateMany(), findByIdAndUpdate(). Harus secara eksplisit menambahkan { runValidators: true } di opsi.\n\nKetika validasi gagal, Mongoose melempar ValidationError — object error khusus yang berisi detail error per field. Sangat berguna untuk mengirim pesan error yang spesifik ke client.\n\nStrategi validasi yang lengkap di aplikasi Express + Mongoose:\n1. Validasi input di middleware Express (format dasar, field wajib)\n2. Validasi di Mongoose schema (aturan bisnis, uniqueness)\n3. Validasi di service layer (aturan bisnis kompleks yang butuh query database)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Menangani ValidationError Mongoose",
+          "bahasa": "javascript",
+          "kode": "const { Mahasiswa } = require('../models/Mahasiswa');\n\n// ==========================================\n// VALIDASI SAAT CREATE\n// ==========================================\nasync function buatMahasiswa(data) {\n  try {\n    const mahasiswaBaru = await Mahasiswa.create(data);\n    return mahasiswaBaru;\n  } catch (err) {\n    // Cek apakah ini ValidationError\n    if (err.name === 'ValidationError') {\n      // Ekstrak pesan error per field\n      const errors = Object.keys(err.errors).reduce((acc, field) => {\n        acc[field] = err.errors[field].message;\n        return acc;\n      }, {});\n\n      // Lempar error yang sudah diformat\n      const formatted = new Error('Validasi gagal');\n      formatted.statusCode = 400;\n      formatted.errors = errors;\n      throw formatted;\n    }\n\n    // Cek duplicate key error (unique constraint)\n    if (err.code === 11000) {\n      const field = Object.keys(err.keyValue)[0];\n      const value = err.keyValue[field];\n      const error = new Error(`${field} '${value}' sudah digunakan`);\n      error.statusCode = 409; // Conflict\n      throw error;\n    }\n\n    throw err; // error lain, lempar ulang\n  }\n}\n\n// ==========================================\n// VALIDASI SAAT UPDATE — runValidators wajib!\n// ==========================================\nasync function updateIPK(id, ipkBaru) {\n  const mhs = await Mahasiswa.findByIdAndUpdate(\n    id,\n    { $set: { ipk: ipkBaru } },\n    {\n      new:           true,   // kembalikan dokumen setelah update\n      runValidators: true,   // WAJIB agar validasi schema berjalan\n      context:       'query' // diperlukan untuk beberapa validator\n    }\n  );\n\n  if (!mhs) throw new Error('Mahasiswa tidak ditemukan');\n  return mhs;\n}\n\n// ==========================================\n// MIDDLEWARE MONGOOSE (pre/post hooks)\n// ==========================================\nconst bcrypt = require('bcryptjs');\n\n// Hash password sebelum disimpan\nuserSchema.pre('save', async function(next) {\n  // 'this' adalah dokumen yang akan disimpan\n  if (!this.isModified('password')) return next(); // skip jika password tidak berubah\n  this.password = await bcrypt.hash(this.password, 12);\n  next();\n});\n\n// Set updatedAt sebelum setiap update\nmahasiswaSchema.pre(['updateOne', 'findOneAndUpdate'], function(next) {\n  this.set({ updatedAt: new Date() });\n  next();\n});\n\n// Log setelah setiap dokumen dihapus\nmahasiswaSchema.post('findOneAndDelete', function(doc) {\n  if (doc) {\n    console.log(`Mahasiswa ${doc.nama} (${doc.nim}) telah dihapus`);\n  }\n});",
+          "penjelasan": "Error code 11000 adalah kode MongoDB untuk duplicate key — ketika ada dokumen dengan nilai yang sama di field yang punya constraint unique. Selalu tangani error ini secara terpisah agar bisa mengirim pesan yang lebih informatif daripada pesan error MongoDB mentah."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Mongoose Middleware adalah Aspek dari AOP",
+          "isi": "Mongoose pre/post hooks mengimplementasikan konsep AOP (Aspect-Oriented Programming) — menambahkan logika lintas-cutting seperti logging, hashing, atau auditing tanpa mengubah kode utama. Ini membuat kode lebih bersih dan prinsip DRY (Don't Repeat Yourself) terjaga. Contoh nyata: daripada hash password di setiap controller yang membuat atau mengupdate user, cukup definisikan satu pre-save hook di model — otomatis berjalan setiap kali."
+        }
+      ]
+    },
+
+    {
+      "id": "4.8",
+      "judul": "Relasi antar Dokumen — Populate & Reference",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Dua Pendekatan Relasi di MongoDB",
+          "isi": "MongoDB mendukung dua strategi untuk merelasikan data, masing-masing dengan trade-off yang berbeda:\n\nPendekatan 1 — Embedding (Denormalization):\nSimpan dokumen terkait langsung di dalam dokumen utama sebagai embedded document atau array. Contoh: simpan array nilai langsung di dokumen mahasiswa.\n\nKelebihan embedding:\n• Satu query untuk semua data (tidak perlu JOIN/populate)\n• Operasi baca sangat cepat\n• Data yang saling terkait tersimpan bersama (locality)\n\nKekurangan embedding:\n• Data bisa duplikat di banyak tempat\n• Dokumen bisa sangat besar (MongoDB membatasi ukuran dokumen 16MB)\n• Sulit mengupdate data yang ter-embed di banyak dokumen\n\nPendekatan 2 — Referencing (Normalization):\nSimpan hanya ObjectId dari dokumen lain. Mirip dengan Foreign Key di SQL.\n\nKelebihan referencing:\n• Tidak ada duplikasi data\n• Lebih mudah mengupdate data (update di satu tempat)\n• Dokumen lebih kecil dan terstruktur\n\nKekurangan referencing:\n• Butuh populate (query tambahan) untuk mendapatkan data lengkap\n• Lebih lambat dari embedding untuk operasi baca\n\nAturan praktis:\n• Embed jika data sering dibaca bersama, tidak berubah sering, dan tidak dibagikan ke banyak tempat\n• Referensi jika data dipakai banyak dokumen berbeda, sering diupdate, atau ukurannya tidak terbatas"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Reference dan Populate di Mongoose",
+          "bahasa": "javascript",
+          "kode": "const mongoose = require('mongoose');\nconst { Schema, model } = mongoose;\n\n// ==========================================\n// SCHEMA DENGAN REFERENCE\n// ==========================================\nconst mahasiswaSchema = new Schema({\n  nim:  String,\n  nama: String,\n  // Reference ke model Jurusan\n  jurusan: {\n    type: Schema.Types.ObjectId,\n    ref:  'Jurusan',  // nama model yang direferensi\n    required: true\n  },\n  // Reference ke banyak mata kuliah\n  mataKuliah: [{\n    type: Schema.Types.ObjectId,\n    ref:  'MataKuliah'\n  }]\n}, { timestamps: true });\n\nconst Mahasiswa = model('Mahasiswa', mahasiswaSchema);\n\n// ==========================================\n// POPULATE: isi referensi dengan data asli\n// ==========================================\n\n// Populate satu field\nasync function getMahasiswaWithJurusan(id) {\n  return await Mahasiswa.findById(id)\n    .populate('jurusan');  // ganti ObjectId dengan dokumen Jurusan lengkap\n}\n\n// Populate dengan projection: hanya ambil field tertentu\nasync function getMahasiswaDetails(id) {\n  return await Mahasiswa.findById(id)\n    .populate('jurusan',     'kode nama -_id')  // hanya kode dan nama\n    .populate('mataKuliah',  'kode nama sks');  // populate array reference\n}\n\n// Nested populate: populate dalam populate\nasync function getMahasiswaFullDetails(id) {\n  return await Mahasiswa.findById(id).populate({\n    path: 'jurusan',\n    populate: {\n      path:   'fakultas',  // populate field 'fakultas' di dalam dokumen Jurusan\n      select: 'nama'\n    }\n  });\n}\n\n// Populate semua mahasiswa\nasync function getAllMahasiswaWithJurusan() {\n  return await Mahasiswa.find({ aktif: true })\n    .populate('jurusan', 'kode nama')\n    .sort({ nama: 1 })\n    .lean(); // kembalikan plain JS object, bukan Mongoose Document (lebih cepat)\n}\n\n// ==========================================\n// EMBEDDING vs REFERENCING dalam satu schema\n// ==========================================\nconst orderSchema = new Schema({\n  // Reference: customer bisa ada di banyak order\n  pelanggan: { type: Schema.Types.ObjectId, ref: 'User' },\n\n  // Embedding: detail produk di-embed karena harga bisa berubah\n  // (kita ingin simpan harga saat pembelian, bukan harga saat ini)\n  items: [{\n    produktId:   { type: Schema.Types.ObjectId, ref: 'Produk' },\n    nama:        String,   // di-embed karena nama saat beli mungkin berubah\n    hargaSaatBeli: Number, // di-embed agar tidak berubah jika harga update\n    jumlah:      Number\n  }],\n\n  totalHarga:  Number,\n  status:      { type: String, enum: ['pending', 'proses', 'selesai', 'batal'] },\n  alamatKirim: {            // di-embed karena alamat bisa berubah di kemudian hari\n    jalan:    String,\n    kota:     String,\n    kodePos:  String\n  }\n});",
+          "penjelasan": ".lean() di akhir query Mongoose mengembalikan plain JavaScript object biasa, bukan Mongoose Document object yang lebih berat. Untuk endpoint GET yang hanya membaca data, .lean() bisa meningkatkan performa secara signifikan."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Embed vs Referensi seperti Buku vs Katalog",
+          "isi": "Embed seperti buku ensiklopedia yang menyertakan foto dan detail lengkap setiap topik langsung di halaman yang relevan — buka satu halaman, dapat semua info. Referensi seperti katalog perpustakaan yang hanya menyimpan nomor rak — dapat info lebih sedikit tapi akurat, dan ketika data di rak berubah (harga diupdate), semua referensi otomatis menunjuk ke informasi terbaru."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Batas 16MB Dokumen MongoDB",
+          "isi": "MongoDB membatasi ukuran satu dokumen maksimal 16MB. Ini terdengar besar, tapi jika kamu embed terlalu banyak data — misalnya menyimpan seluruh riwayat chat dalam satu dokumen — batas ini bisa tercapai. Untuk data yang tumbuh tak terbatas (komentar, log, riwayat transaksi), selalu gunakan referencing daripada embedding. MongoDB juga punya GridFS untuk menyimpan file di atas 16MB dengan memecahnya menjadi chunk-chunk."
+        }
+      ]
+    },
+
+    {
+      "id": "4.9",
+      "judul": "Agregasi MongoDB — Pipeline & Operator",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Aggregation Pipeline: Transformasi Data yang Powerful",
+          "isi": "Aggregation Pipeline adalah mekanisme MongoDB untuk memproses dan mentransformasi dokumen melalui serangkaian tahapan (stages). Setiap stage menerima output dari stage sebelumnya, memprosesnya, lalu mengoper hasilnya ke stage berikutnya — seperti ban berjalan di pabrik.\n\nIni setara dengan kombinasi GROUP BY, JOIN, WHERE, dan berbagai fungsi analitik di SQL — tapi jauh lebih fleksibel dan bisa menangani data nested yang kompleks.\n\nStage pipeline yang paling sering digunakan:\n• $match — filter dokumen (setara WHERE di SQL). Letakkan di awal pipeline untuk efisiensi!\n• $group — kelompokkan dokumen dan hitung agregasi (setara GROUP BY + fungsi agregasi)\n• $project — pilih, rename, atau hitung field baru (setara SELECT column1, func(col2) AS alias)\n• $sort — urutkan dokumen (setara ORDER BY)\n• $limit dan $skip — batasi hasil (setara LIMIT dan OFFSET)\n• $lookup — gabungkan dengan collection lain (setara LEFT JOIN)\n• $unwind — pecah array menjadi dokumen terpisah per elemen\n• $addFields — tambahkan field baru ke dokumen\n• $count — hitung total dokumen\n• $facet — jalankan beberapa sub-pipeline paralel dalam satu query\n\nOperator ekspresi dalam stage:\n• $sum, $avg, $min, $max, $count — kalkulasi agregasi\n• $concat, $toUpper, $toLower — manipulasi string\n• $dateToString, $year, $month — manipulasi tanggal\n• $cond, $switch — kondisional\n• $multiply, $divide, $add, $subtract — aritmatika"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Aggregation Pipeline dalam Mongoose",
+          "bahasa": "javascript",
+          "kode": "const { Mahasiswa } = require('../models/Mahasiswa');\n\n// ==========================================\n// CONTOH 1: Statistik IPK per Jurusan\n// ==========================================\nasync function statistikPerJurusan() {\n  return await Mahasiswa.aggregate([\n    // Stage 1: filter hanya mahasiswa aktif\n    { $match: { aktif: true } },\n\n    // Stage 2: join dengan collection jurusan\n    {\n      $lookup: {\n        from:         'jurusan',        // nama collection di MongoDB\n        localField:   'jurusan',        // field di Mahasiswa\n        foreignField: '_id',            // field di Jurusan\n        as:           'data_jurusan'    // nama field hasil join\n      }\n    },\n\n    // Stage 3: pecah array hasil lookup (karena $lookup menghasilkan array)\n    { $unwind: '$data_jurusan' },\n\n    // Stage 4: kelompokkan per jurusan dan hitung statistik\n    {\n      $group: {\n        _id:           '$data_jurusan._id',\n        namaJurusan:   { $first: '$data_jurusan.nama' },\n        totalMahasiswa:{ $sum: 1 },\n        rataIPK:       { $avg: '$ipk' },\n        ipkTertinggi:  { $max: '$ipk' },\n        ipkTerendah:   { $min: '$ipk' }\n      }\n    },\n\n    // Stage 5: tambah field perhitungan\n    {\n      $addFields: {\n        rataIPK: { $round: ['$rataIPK', 2] }\n      }\n    },\n\n    // Stage 6: urutkan berdasarkan total mahasiswa\n    { $sort: { totalMahasiswa: -1 } }\n  ]);\n}\n\n// ==========================================\n// CONTOH 2: Distribusi Mahasiswa per Kategori IPK\n// ==========================================\nasync function distribusiIPK() {\n  return await Mahasiswa.aggregate([\n    { $match: { aktif: true } },\n    {\n      $group: {\n        _id: {\n          $switch: {\n            branches: [\n              { case: { $gte: ['$ipk', 3.5] }, then: 'Cumlaude (>= 3.5)' },\n              { case: { $gte: ['$ipk', 3.0] }, then: 'Memuaskan (3.0-3.49)' },\n              { case: { $gte: ['$ipk', 2.5] }, then: 'Cukup (2.5-2.99)' }\n            ],\n            default: 'Kurang (< 2.5)'\n          }\n        },\n        jumlah: { $sum: 1 }\n      }\n    },\n    { $sort: { jumlah: -1 } }\n  ]);\n}\n\n// ==========================================\n// CONTOH 3: Pagination dengan total count (satu query!)\n// ==========================================\nasync function getMahasiswaPaginated(halaman = 1, limit = 10) {\n  const skip = (halaman - 1) * limit;\n\n  const [hasil] = await Mahasiswa.aggregate([\n    { $match: { aktif: true } },\n    {\n      $facet: {  // dua sub-pipeline paralel\n        data: [\n          { $sort: { nama: 1 } },\n          { $skip: skip },\n          { $limit: limit },\n          { $project: { nim: 1, nama: 1, ipk: 1 } }\n        ],\n        total: [\n          { $count: 'jumlah' }\n        ]\n      }\n    }\n  ]);\n\n  return {\n    data:  hasil.data,\n    total: hasil.total[0]?.jumlah ?? 0,\n    halaman,\n    limit,\n    totalHalaman: Math.ceil((hasil.total[0]?.jumlah ?? 0) / limit)\n  };\n}",
+          "penjelasan": "Letakkan $match sedini mungkin di pipeline — idealnya sebagai stage pertama. Ini memungkinkan MongoDB menggunakan index dan mengurangi jumlah dokumen yang diproses oleh stage selanjutnya. $match di akhir pipeline tidak memberi keuntungan performa."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Aggregation Pipeline: Stage demi Stage",
+          "src": "/assets/backend/bab4/bab4_4.9.png",
+          "deskripsi_gambar": "Diagram alur MongoDB Aggregation Pipeline. Data dari Database Collection mengalir melalui beberapa stage pemrosesan secara berurutan: $project, $match, $group, dan $sort. Setiap stage memodifikasi atau memfilter data sebelum meneruskannya ke stage berikutnya hingga menghasilkan Result sebagai output akhir.",
+          "alt": "Diagram aggregation pipeline MongoDB menampilkan alur dokumen melalui setiap stage"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "$facet: Dua Query dalam Satu",
+          "isi": "Stage $facet memungkinkan menjalankan beberapa sub-pipeline paralel dalam satu aggregation pipeline. Ini sangat berguna untuk pagination yang butuh data DAN total count sekaligus — biasanya butuh dua query terpisah. Dengan $facet, cukup satu round-trip ke database, menghemat latensi network secara signifikan terutama untuk API yang dipanggil ratusan kali per menit."
+        }
+      ]
+    },
+
+    {
+      "id": "4.10",
+      "judul": "Koneksi MongoDB Atlas (Cloud)",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "MongoDB Atlas: Database di Cloud",
+          "isi": "MongoDB Atlas adalah layanan Database-as-a-Service (DBaaS) resmi dari MongoDB Inc. — MongoDB yang berjalan di cloud tanpa perlu mengurus instalasi, konfigurasi, backup, dan scaling server sendiri. Atlas tersedia di AWS, Google Cloud, dan Azure.\n\nMengapa Atlas untuk development dan production?\n• Free tier tersedia — cluster M0 gratis dengan 512MB storage, cukup untuk project mahasiswa dan side project kecil\n• Zero setup — tidak perlu install MongoDB di komputer atau server\n• Built-in monitoring — dashboard untuk melihat query lambat, penggunaan storage, koneksi aktif\n• Automatic backups — backup otomatis tanpa konfigurasi tambahan\n• Horizontal scaling mudah — tambah shard dengan klik\n• Atlas Search — full-text search bawaan\n• Global clusters — replikasi data ke banyak region\n\nLangkah setup MongoDB Atlas (Free Tier):\n1. Buat akun di cloud.mongodb.com\n2. Buat Organization dan Project baru\n3. Build a Cluster → pilih M0 Free Tier\n4. Pilih provider (AWS/GCP/Azure) dan region terdekat\n5. Buat Database User dengan username dan password\n6. Network Access → Add IP Address → tambah IP kamu (atau 0.0.0.0/0 untuk development)\n7. Connect → Connect your application → copy connection string\n\nFormat connection string Atlas:\nmongodb+srv://username:password@cluster0.xxxxx.mongodb.net/nama_database?retryWrites=true&w=majority\n\nParameter penting di connection string:\n• retryWrites=true — otomatis retry write yang gagal karena network transient error\n• w=majority — write concern: data dianggap tersimpan setelah mayoritas replica mengkonfirmasi"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Koneksi Atlas dan Best Practices",
+          "bahasa": "javascript",
+          "kode": "// .env\n// MONGODB_URI=mongodb+srv://user:pass@cluster0.abc123.mongodb.net/web_belajar?retryWrites=true&w=majority\n// MONGODB_URI_DEV=mongodb://localhost:27017/web_belajar_dev\n\nconst mongoose = require('mongoose');\n\n// ==========================================\n// KONFIGURASI KONEKSI YANG ROBUST\n// ==========================================\nconst koneksiOptions = {\n  // Timeout settings\n  serverSelectionTimeoutMS: 5000,  // gagal setelah 5 detik jika tidak bisa connect\n  socketTimeoutMS:          45000, // timeout socket setelah 45 detik idle\n\n  // Connection pool\n  maxPoolSize:  10,  // maksimal 10 koneksi bersamaan\n  minPoolSize:  2,   // minimal 2 koneksi selalu tersedia\n\n  // Heartbeat: cek koneksi secara berkala\n  heartbeatFrequencyMS: 10000  // cek setiap 10 detik\n};\n\nconst MONGODB_URI = process.env.NODE_ENV === 'production'\n  ? process.env.MONGODB_URI          // Atlas di production\n  : process.env.MONGODB_URI_DEV;     // lokal di development\n\nasync function connectDB() {\n  try {\n    const conn = await mongoose.connect(MONGODB_URI, koneksiOptions);\n\n    console.log(`✅ MongoDB Atlas terhubung: ${conn.connection.host}`);\n    console.log(`📦 Database: ${conn.connection.name}`);\n\n  } catch (err) {\n    console.error('❌ Koneksi MongoDB gagal:', err.message);\n    process.exit(1); // hentikan aplikasi jika DB tidak bisa diakses\n  }\n}\n\n// Handle disconnection\nmongoose.connection.on('error', (err) => {\n  console.error('MongoDB error:', err);\n});\n\nmongoose.connection.on('disconnected', () => {\n  console.warn('MongoDB terputus — mencoba reconnect...');\n});\n\n// Graceful shutdown\nconst gracefulShutdown = async (signal) => {\n  console.log(`${signal} diterima — menutup koneksi MongoDB...`);\n  await mongoose.connection.close();\n  process.exit(0);\n};\n\nprocess.on('SIGTERM', () => gracefulShutdown('SIGTERM'));\nprocess.on('SIGINT',  () => gracefulShutdown('SIGINT'));\n\nmodule.exports = connectDB;\n\n// ==========================================\n// index.js — entry point\n// ==========================================\nconst express = require('express');\nconst connectDB = require('./config/database');\n\nconst app = express();\n\n// Hubungkan ke database SEBELUM menjalankan server\nconnectDB().then(() => {\n  app.listen(process.env.PORT || 3000, () => {\n    console.log(`🚀 Server berjalan di port ${process.env.PORT || 3000}`);\n  });\n});",
+          "penjelasan": "Selalu gunakan URI berbeda untuk development (local) dan production (Atlas). Jangan pernah hardcode connection string — gunakan environment variable. Di Atlas, whitelist IP yang spesifik di production untuk keamanan, bukan 0.0.0.0/0."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Arsitektur MongoDB Atlas: App → Atlas Cluster",
+          "src": "/assets/backend/bab4/bab4_4.10.png",
+          "deskripsi_gambar": "Diagram konsep replica set yang digunakan oleh MongoDB Atlas. Aplikasi terhubung ke cluster database melalui driver MongoDB. Seluruh operasi write dilakukan pada node Primary, kemudian direplikasi ke node Secondary untuk menjaga ketersediaan data dan mendukung high availability.",
+          "alt": "Diagram arsitektur MongoDB Atlas dengan replica set dan koneksi dari aplikasi Node.js"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Atlas seperti Cloud Kitchen",
+          "isi": "Mengelola MongoDB sendiri di server seperti punya restoran lengkap — harus urus dapur, staf, peralatan, kebersihan, listrik, keamanan. MongoDB Atlas seperti cloud kitchen — kamu tinggal pesan menu (kirim query), pihak Atlas yang urus semua operasional dapur. Kamu fokus ke resep (kode aplikasi), bukan operasional dapur (server management)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Atlas Free Tier Tidak Kedaluwarsa",
+          "isi": "Berbeda dengan free trial yang habis setelah 30 hari, MongoDB Atlas M0 Free Tier tidak pernah kedaluwarsa — bisa digunakan selamanya selama ada aktivitas. Batasannya: 512MB storage, shared CPU dan RAM, tidak ada backup otomatis, dan terbatas pada beberapa region. Lebih dari cukup untuk project mahasiswa, portfolio, dan side project kecil. Upgrade ke M10 ($57/bulan) saat sudah butuh performa lebih baik dan backup otomatis."
+        }
+      ]
+    }
+
+  ]
+}

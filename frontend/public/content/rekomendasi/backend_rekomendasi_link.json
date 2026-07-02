@@ -1,0 +1,204 @@
+{
+  "meta": {
+    "path": "Back End",
+    "deskripsi": "Rekomendasi link belajar tambahan untuk pengguna web belajar — Back End Development. Dibagi menjadi tiga level: Beginner, Intermediate, dan Advanced. Setiap level berisi 5 link dari berbagai sumber (website, YouTube, GitHub, dokumentasi resmi, dll).",
+    "catatan": "Link ini ditampilkan sebagai rekomendasi lanjutan setelah user menyelesaikan materi backend di web belajar. Semua link sudah diverifikasi valid dan berkaitan langsung dengan materi Node.js, Express, SQL, MongoDB, dan Autentikasi & Keamanan."
+  },
+  "rekomendasi": {
+    "beginner": {
+      "label": "Beginner",
+      "deskripsi": "Untuk kamu yang baru mulai belajar backend development. Materi ringan, interaktif, dan langsung bisa dicoba — berfokus pada Node.js dasar, REST API sederhana, dan pengenalan database.",
+      "link": [
+        {
+          "id": "b1",
+          "judul": "Node.js Official Documentation — Introduction to Node.js",
+          "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 1 – Dasar Node.js (1.1–1.5)"
+          ],
+          "deskripsi": "Dokumentasi resmi Node.js untuk pemula. Memandu instalasi, REPL, module system, dan event loop dari sumber yang paling otoritatif. Paduan sempurna untuk memahami fondasi Node.js sebelum masuk Express."
+        },
+        {
+          "id": "b2",
+          "judul": "freeCodeCamp — Back End Development and APIs Certification",
+          "url": "https://www.freecodecamp.org/learn/back-end-development-and-apis/",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 1 – Dasar Node.js",
+            "Bab 2 – Express.js & REST API (2.1–2.4)"
+          ],
+          "deskripsi": "Kurikulum interaktif gratis dari freeCodeCamp yang mencakup Node.js, Express, MongoDB, dan API development. Ada proyek nyata di akhir dan sertifikat resmi. Cocok untuk pemula yang ingin belajar sambil praktik."
+        },
+        {
+          "id": "b3",
+          "judul": "YouTube — Node.js Tutorial for Beginners: Learn Node in 1 Hour (Programming with Mosh)",
+          "url": "https://www.youtube.com/watch?v=TlB_eWDSMt4",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 1 – Dasar Node.js (1.1–1.6)"
+          ],
+          "deskripsi": "Tutorial Node.js 1 jam dari Mosh Hamedani yang mencakup module system, file system, events, path, OS, dan HTTP module. Penjelasan sangat jelas dan to the point — ideal untuk pemula yang ingin memahami inti Node.js tanpa kebingungan."
+        },
+        {
+          "id": "b4",
+          "judul": "W3Schools — SQL Tutorial",
+          "url": "https://www.w3schools.com/sql/",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 3 – Database SQL (3.1–3.4)"
+          ],
+          "deskripsi": "Referensi interaktif SQL yang mencakup SELECT, INSERT, UPDATE, DELETE, dan JOIN. Tersedia editor online Try It Yourself sehingga bisa langsung mencoba query SQL di browser tanpa install database."
+        },
+        {
+          "id": "b5",
+          "judul": "YouTube — Express JS Crash Course (Traversy Media)",
+          "url": "https://www.youtube.com/watch?v=L72fhGm1tfE",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 2 – Express.js & REST API (2.1–2.3)"
+          ],
+          "deskripsi": "Crash course Express.js dari Brad Traversy yang mencakup routing, middleware, dan membuat REST API sederhana dalam satu video. Sangat populer dan sering direkomendasikan sebagai pengantar Express pertama."
+        }
+      ]
+    },
+    "intermediate": {
+      "label": "Intermediate",
+      "deskripsi": "Untuk kamu yang sudah paham dasar Node.js dan Express, ingin mendalami middleware, error handling, database integration, dan mulai memahami autentikasi.",
+      "link": [
+        {
+          "id": "i1",
+          "judul": "FullStackOpen — Part 3: Node.js and Express",
+          "url": "https://fullstackopen.com/en/part3",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 1 – Dasar Node.js",
+            "Bab 2 – Express.js & REST API",
+            "Bab 4 – Database NoSQL MongoDB (4.1–4.5)"
+          ],
+          "deskripsi": "Kurikulum open source dari University of Helsinki yang sangat terstruktur. Mencakup Node.js, Express, REST API design, testing, dan deployment. Menggunakan MongoDB dengan Mongoose — sangat relevan untuk memahami integrasi database NoSQL dengan Node.js."
+        },
+        {
+          "id": "i2",
+          "judul": "SQLZoo — Interactive SQL Tutorial",
+          "url": "https://sqlzoo.net/wiki/SQL_Tutorial",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 3 – Database SQL (3.5–3.7)"
+          ],
+          "deskripsi": "Tutorial SQL interaktif dengan latihan hands-on langsung di browser. Mencakup JOIN, agregasi, GROUP BY, dan subquery dengan database live. Sangat efektif untuk memperkuat pemahaman query SQL kompleks."
+        },
+        {
+          "id": "i3",
+          "judul": "YouTube — Node.js and Express.js Full Course (freeCodeCamp)",
+          "url": "https://www.youtube.com/watch?v=Oe421EPjeBE",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 1 – Dasar Node.js",
+            "Bab 2 – Express.js & REST API (2.1–2.6)",
+            "Bab 4 – Database NoSQL MongoDB (4.5)"
+          ],
+          "deskripsi": "Full course gratis dari freeCodeCamp yang mencakup Node.js fundamentals, Express framework, REST API lengkap, dan integrasi MongoDB dengan Mongoose. Durasi panjang dan sangat komprehensif untuk level menengah."
+        },
+        {
+          "id": "i4",
+          "judul": "MDN Web Docs — Express/Node Introduction & Tutorial",
+          "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Express_Nodejs/Introduction",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 2 – Express.js & REST API (2.6–2.10)",
+            "Bab 4 – Database NoSQL MongoDB (4.5–4.8)"
+          ],
+          "deskripsi": "Tutorial lengkap MDN untuk membangun aplikasi Express nyata dengan MongoDB (Mongoose). Mencakup MVC architecture, form handling, template engine, deployment, dan best practice struktur folder. Sumber yang sangat otoritatif."
+        },
+        {
+          "id": "i5",
+          "judul": "YouTube — JWT Authentication Tutorial with Refresh Tokens (Web Dev Simplified)",
+          "url": "https://www.youtube.com/watch?v=mbsmsi7l3r4",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 5 – Autentikasi & Keamanan (5.1–5.6)"
+          ],
+          "deskripsi": "Tutorial praktis JWT authentication dari Web Dev Simplified yang mencakup login, register, protected routes, refresh tokens, dan invalidasi token saat logout. Penjelasan singkat tapi lengkap — ideal untuk memahami konsep token-based auth."
+        }
+      ]
+    },
+    "advanced": {
+      "label": "Advanced",
+      "deskripsi": "Untuk kamu yang sudah menguasai dasar dan ingin mendalami arsitektur profesional, keamanan API, ORM/ODM advanced, performance, dan praktik production-ready.",
+      "link": [
+        {
+          "id": "a1",
+          "judul": "Node.js Best Practices — GitHub Repository (Goldbergyoni)",
+          "url": "https://github.com/goldbergyoni/nodebestpractices",
+          "tipe": "github",
+          "ikon": "🐙",
+          "bab_relevan": [
+            "Bab 1 – Dasar Node.js (1.6–1.8)",
+            "Bab 2 – Express.js & REST API (2.3, 2.7, 2.10)",
+            "Bab 5 – Autentikasi & Keamanan (5.8–5.10)"
+          ],
+          "deskripsi": "Repository komunitas berisi 80+ best practices Node.js yang dikurasi oleh ribuan developer. Mencakup project structure, error handling, testing, security, performance, dan deployment. Wajib dibaca untuk menulis kode Node.js production-grade."
+        },
+        {
+          "id": "a2",
+          "judul": "OWASP Cheat Sheet Series — Authentication & Session Management",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 5 – Autentikasi & Keamanan (5.5–5.9)"
+          ],
+          "deskripsi": "Cheat sheet keamanan autentikasi dari OWASP — organisasi keamanan web paling otoritatif di dunia. Mencakup best practice password storage, session management, MFA, rate limiting, dan protection against brute force. Dokumen yang wajib dibaca setiap backend developer."
+        },
+        {
+          "id": "a3",
+          "judul": "YouTube — What the heck is the event loop anyway? (Philip Roberts | JSConf EU)",
+          "url": "https://www.youtube.com/watch?v=8aGhZQkoFbQ",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 1 – Dasar Node.js (1.1, 1.8)"
+          ],
+          "deskripsi": "Talk legendaris Philip Roberts di JSConf EU yang menjelaskan Event Loop, call stack, callback queue, dan bagaimana JavaScript menangani concurrency secara visual. Membantu memahami mengapa Node.js cepat dan asinkron — fundamental yang sering diabaikan developer."
+        },
+        {
+          "id": "a4",
+          "judul": "Sequelize Official Documentation — Core Concepts & Model Basics",
+          "url": "https://sequelize.org/docs/v6/core-concepts/model-basics/",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 3 – Database SQL (3.10)"
+          ],
+          "deskripsi": "Dokumentasi resmi Sequelize yang mencakup model definition, CRUD operations, associations (1:1, 1:N, M:N), transactions, hooks, dan scopes. Pelengkap sempurna untuk memahami ORM SQL secara mendalam setelah menguasai dasar SQL."
+        },
+        {
+          "id": "a5",
+          "judul": "GitHub — Awesome Node.js (Repository Komunitas)",
+          "url": "https://github.com/sindresorhus/awesome-nodejs",
+          "tipe": "github",
+          "ikon": "🐙",
+          "bab_relevan": [
+            "Bab 1 – Dasar Node.js",
+            "Bab 2 – Express.js & REST API",
+            "Bab 3 – Database SQL",
+            "Bab 4 – Database NoSQL MongoDB",
+            "Bab 5 – Autentikasi & Keamanan"
+          ],
+          "deskripsi": "Kumpulan resource Node.js terbaik yang dikurasi komunitas: library, frameworks, tools, tutorial, dan proyek open source. Dari package manager hingga monitoring tools — jadikan referensi untuk memperluas ekosistem Node.js dan menemukan tools terbaik untuk setiap kebutuhan."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 5,
+    "judul_bab": "Framework Modern (React)",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "5.1",
+      "pertanyaan": "Apa yang dimaksud dengan Virtual DOM di React dan mengapa ia meningkatkan performa?",
+      "opsi": {
+        "A": "Virtual DOM adalah versi HTML yang disimpan di server untuk mempercepat loading halaman",
+        "B": "Virtual DOM adalah representasi ringan DOM nyata di memori JavaScript — React membandingkan versi lama dan baru (diffing) lalu hanya memperbarui bagian yang benar-benar berubah ke DOM nyata",
+        "C": "Virtual DOM menggantikan DOM nyata sepenuhnya sehingga browser tidak perlu memproses HTML",
+        "D": "Virtual DOM adalah fitur CSS yang membuat animasi lebih halus tanpa JavaScript"
+      },
+      "jawaban": "B",
+      "penjelasan": "Virtual DOM bekerja dalam tiga langkah: (1) saat state berubah, React membangun Virtual DOM baru, (2) membandingkan dengan Virtual DOM lama (diffing/reconciliation), (3) hanya menerapkan perubahan minimal ke DOM nyata. Hasilnya jauh lebih efisien dari menimpa seluruh DOM setiap ada perubahan kecil."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "5.2",
+      "pertanyaan": "Perhatikan kode JSX berikut:\n\n<div class=\"kontainer\" for=\"input-nama\">\n  <label>Nama</label>\n</div>\n\nApa yang salah dari kode ini?",
+      "opsi": {
+        "A": "Tidak ada yang salah, kode sudah benar",
+        "B": "Tag div tidak boleh memiliki atribut for",
+        "C": "JSX menggunakan className bukan class, dan htmlFor bukan for — karena class dan for adalah reserved words di JavaScript",
+        "D": "Label tidak boleh berada di dalam div di JSX"
+      },
+      "jawaban": "C",
+      "penjelasan": "JSX dikompilasi menjadi JavaScript, sehingga menggunakan konvensi JavaScript bukan HTML. Atribut class harus ditulis className (class adalah reserved word untuk deklarasi class di JS), dan atribut for pada label harus ditulis htmlFor (for adalah reserved word untuk loop di JS). Kesalahan ini adalah yang paling umum dilakukan pemula React."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "5.3",
+      "pertanyaan": "Manakah definisi function component React yang BENAR?",
+      "opsi": {
+        "A": "function kartuProduk({ nama, harga }) { return <div>{nama}</div>; }",
+        "B": "function KartuProduk({ nama, harga }) { return <div>{nama}</div>; }",
+        "C": "Function KartuProduk({ nama, harga }) { return <div>{nama}</div>; }",
+        "D": "function KartuProduk({ nama, harga }) { render(<div>{nama}</div>); }"
+      },
+      "jawaban": "B",
+      "penjelasan": "Nama component React WAJIB diawali huruf kapital (PascalCase) — ini bukan sekadar konvensi, tapi aturan teknis. React membedakan antara HTML tag (huruf kecil, seperti <div>) dan React component (huruf kapital, seperti <KartuProduk>). Jika ditulis huruf kecil seperti pilihan A, React akan memperlakukannya sebagai HTML tag yang tidak dikenal. Component juga harus return JSX, bukan memanggil render()."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "5.4",
+      "pertanyaan": "Sebuah component anak menerima props dari parent. Apa yang terjadi jika component anak mencoba mengubah nilai props tersebut secara langsung?",
+      "opsi": {
+        "A": "Props akan berhasil diubah dan parent juga ikut melihat perubahan tersebut",
+        "B": "Props akan berhasil diubah tapi hanya berlaku lokal di component anak",
+        "C": "React akan melempar error karena props bersifat read-only dan tidak boleh diubah langsung oleh component penerima",
+        "D": "Props bisa diubah selama menggunakan assignment operator biasa (=)"
+      },
+      "jawaban": "C",
+      "penjelasan": "Props bersifat read-only (immutable) — component anak TIDAK BOLEH mengubah props yang diterimanya. Ini adalah prinsip one-way data flow React. Jika anak perlu mengubah data, parent harus mengirimkan fungsi setter via props (misalnya onUpdate={handleUpdate}), lalu anak memanggil fungsi tersebut. Parent yang kemudian memperbarui state-nya, yang kemudian mengalir kembali ke anak sebagai props baru."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "5.5",
+      "pertanyaan": "Perhatikan kode berikut:\n\nconst [hitung, setHitung] = useState(0);\n\nfunction tambah() {\n  setHitung(hitung + 1);\n  setHitung(hitung + 1);\n  setHitung(hitung + 1);\n}\n\nJika tambah() dipanggil dan hitung awalnya 0, berapa nilai hitung setelahnya?",
+      "opsi": {
+        "A": "3",
+        "B": "1",
+        "C": "0",
+        "D": "Tidak bisa diprediksi"
+      },
+      "jawaban": "B",
+      "penjelasan": "React menggabungkan (batch) semua setState dalam satu event handler. Karena hitung masih 0 saat fungsi tambah() berjalan, ketiga setHitung(hitung + 1) semuanya berarti setHitung(0 + 1) = setHitung(1). Hasilnya hanya 1, bukan 3. Untuk mendapat hasil 3, gunakan functional update form: setHitung(h => h + 1) — ini selalu menggunakan nilai terbaru state, bukan nilai pada saat fungsi dipanggil."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "5.6",
+      "pertanyaan": "Mengapa penggunaan indeks array sebagai key pada list yang bisa dihapus atau diurutkan ulang adalah praktik yang BURUK?",
+      "opsi": {
+        "A": "Indeks array tidak bisa digunakan sebagai key sama sekali, React akan melempar error",
+        "B": "Ketika item dihapus atau diurutkan ulang, indeks bergeser sehingga React salah mengidentifikasi elemen mana yang berubah, menyebabkan bug seperti state component yang salah posisi",
+        "C": "Indeks array terlalu lambat diproses React dibandingkan ID unik",
+        "D": "Indeks array hanya bisa dipakai jika list berisi string, tidak bisa untuk object"
+      },
+      "jawaban": "B",
+      "penjelasan": "Key digunakan React untuk melacak identitas setiap elemen. Jika item ke-2 dari list [A, B, C] dihapus, item C yang tadinya di indeks 2 kini pindah ke indeks 1. React melihat key=1 masih ada (tapi kini isinya C), mengira tidak ada yang berubah, dan bisa salah mempertahankan state lokal component (misalnya nilai input yang sedang diketik) untuk item yang sebenarnya sudah diganti. Selalu gunakan ID unik dari data sebagai key."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "5.7",
+      "pertanyaan": "Perhatikan kode useEffect berikut:\n\nuseEffect(() => {\n  const interval = setInterval(() => {\n    setWaktu(new Date());\n  }, 1000);\n}, []);\n\nApa masalah dari kode ini dan bagaimana memperbaikinya?",
+      "opsi": {
+        "A": "Tidak ada masalah, kode sudah benar",
+        "B": "setInterval seharusnya menggunakan setTimeout agar tidak berulang",
+        "C": "Tidak ada cleanup function — interval terus berjalan meski component dihapus dari DOM, menyebabkan memory leak. Perbaiki dengan return () => clearInterval(interval) di dalam useEffect",
+        "D": "Dependency array harus berisi setWaktu agar interval berjalan dengan benar"
+      },
+      "jawaban": "C",
+      "penjelasan": "Tanpa cleanup function, setInterval terus memanggil setWaktu setiap detik meski component sudah unmount (dihapus dari DOM). Ini menyebabkan memory leak dan error 'Cannot update state on unmounted component'. Solusinya: tambahkan return () => clearInterval(interval) di dalam useEffect — fungsi ini dijalankan sebelum component unmount atau sebelum effect berikutnya berjalan."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "5.8",
+      "pertanyaan": "Apa perbedaan utama antara controlled component dan uncontrolled component dalam penanganan form di React?",
+      "opsi": {
+        "A": "Controlled component hanya untuk input teks, uncontrolled untuk checkbox dan radio",
+        "B": "Pada controlled component, nilai input dikontrol oleh React state via onChange dan value prop; pada uncontrolled, nilai dikelola DOM langsung dan dibaca via ref saat dibutuhkan",
+        "C": "Controlled component memerlukan library eksternal, uncontrolled adalah bawaan React",
+        "D": "Keduanya identik, hanya berbeda cara penulisan sintaksnya"
+      },
+      "jawaban": "B",
+      "penjelasan": "Controlled component: nilai input selalu berasal dari state React (value={state}), setiap perubahan memperbarui state (onChange={e => setState(e.target.value)}). State dan input selalu sinkron. Uncontrolled component: nilai dikelola DOM, JavaScript hanya membaca nilainya via ref.current.value saat dibutuhkan (misal saat submit). Controlled lebih direkomendasikan karena memudahkan validasi real-time dan manipulasi nilai."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "5.9",
+      "pertanyaan": "Apa perbedaan antara komponen Link dan tag <a> biasa dalam React Router, dan mengapa Link lebih direkomendasikan?",
+      "opsi": {
+        "A": "Tidak ada perbedaan, keduanya menghasilkan output HTML yang sama",
+        "B": "Link hanya bisa digunakan untuk navigasi internal, <a> bisa untuk eksternal — itulah satu-satunya perbedaan",
+        "C": "Link dari React Router melakukan navigasi tanpa reload halaman (client-side routing) sehingga state React tetap terjaga; <a> biasa menyebabkan full page reload yang menghancurkan seluruh state aplikasi",
+        "D": "Link secara otomatis menambahkan class 'active' saat URL cocok, <a> tidak"
+      },
+      "jawaban": "C",
+      "penjelasan": "Inilah inti dari Single Page Application: Link mencegat klik, memperbarui URL menggunakan History API, dan merender component yang sesuai — tanpa reload. Seluruh state React (data yang sudah diambil, posisi scroll, dll.) tetap terjaga. Tag <a> biasa menyebabkan browser memuat ulang halaman dari awal, menghancurkan semua state. Untuk navigasi ke URL eksternal, tetap gunakan <a> karena memang butuh full reload ke domain lain. NavLink adalah varian Link yang menambah class 'active' otomatis."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "5.10",
+      "pertanyaan": "Kapan Context API TIDAK cocok digunakan sebagai solusi state management?",
+      "opsi": {
+        "A": "Untuk menyimpan data user yang sedang login",
+        "B": "Untuk menyimpan preferensi tema (dark/light mode)",
+        "C": "Untuk state yang sering berubah seperti daftar produk yang difilter, hasil pencarian real-time, atau data yang diperbarui setiap detik — karena semua consumer Context akan re-render setiap value berubah",
+        "D": "Untuk menyimpan bahasa aplikasi (Bahasa Indonesia / Bahasa Inggris)"
+      },
+      "jawaban": "C",
+      "penjelasan": "Context menyebabkan semua component yang menggunakan useContext() re-render setiap kali value Provider berubah — bahkan jika mereka hanya menggunakan sebagian kecil dari data. Untuk data yang jarang berubah (user, tema, bahasa), ini tidak masalah. Tapi untuk state yang sering berubah (daftar produk, search results, cart items yang terus diupdate), ini menyebabkan re-render berlebihan yang menurunkan performa. Gunakan Zustand, Jotai, atau Redux Toolkit untuk kasus tersebut."
+    }
+  ]
+}

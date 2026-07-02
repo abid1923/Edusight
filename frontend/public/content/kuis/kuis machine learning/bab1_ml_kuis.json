@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "bab": 1,
+    "judul_bab": "Dasar Machine Learning",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "1.1",
+      "pertanyaan": "Perhatikan perbandingan berikut antara pemrograman tradisional dan Machine Learning:\n\n1. Pemrograman tradisional: manusia menulis aturan eksplisit, komputer mengeksekusi\n2. Machine Learning: manusia memberikan data dan jawaban, komputer menemukan aturan sendiri\n3. Pemrograman tradisional lebih cocok untuk masalah yang aturannya terus berubah\n4. Machine Learning lebih cocok untuk masalah yang terlalu kompleks untuk aturan manual\n\nPernyataan mana yang BENAR?",
+      "opsi": {
+        "A": "Hanya 1 dan 2",
+        "B": "Hanya 1, 2, dan 4",
+        "C": "Hanya 3 dan 4",
+        "D": "Semua pernyataan benar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pernyataan 3 salah: pemrograman tradisional kurang cocok untuk masalah dengan aturan yang terus berubah — setiap perubahan memerlukan modifikasi kode manual. Machine Learning justru unggul di situasi ini karena model bisa beradaptasi dengan data baru. Pernyataan 1, 2, dan 4 benar: tradisional menggunakan rules eksplisit, ML menemukan rules dari data, dan ML cocok untuk masalah kompleks seperti pengenalan wajah atau terjemahan bahasa."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "1.2",
+      "pertanyaan": "Sebuah perusahaan e-commerce ingin mengelompokkan pelanggan berdasarkan pola pembelian tanpa mengetahui kategori sebelumnya. Pendekatan Machine Learning manakah yang paling tepat?",
+      "opsi": {
+        "A": "Supervised Learning — karena perusahaan punya data historis pembelian",
+        "B": "Unsupervised Learning — karena tidak ada label kategori yang sudah diketahui",
+        "C": "Reinforcement Learning — karena perusahaan perlu memberikan reward pada pelanggan",
+        "D": "Self-Supervised Learning — karena data tidak berlabel dan model harus membuat label sendiri"
+      },
+      "jawaban": "B",
+      "penjelasan": "Unsupervised Learning adalah paradigma yang menemukan struktur atau pola tersembunyi dalam data tanpa label. Clustering (K-Means, DBSCAN) cocok untuk segmentasi pelanggan — model mengelompokkan pelanggan berdasarkan kemiripan pola pembelian secara otomatis. Supervised Learning memerlukan label yang sudah diketahui (tidak ada di kasus ini). Reinforcement Learning berinteraksi dengan lingkungan melalui reward/penalty (tidak relevan). Self-Supervised Learning membuat label dari data tak berlabel (lebih umum untuk NLP/vision, bukan clustering bisnis)."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "1.3",
+      "pertanyaan": "Perhatikan pembagian dataset berikut:\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\nApa fungsi dari parameter stratify=y dalam kode tersebut?",
+      "opsi": {
+        "A": "Membagi data secara acak tanpa memperhatikan proporsi kelas",
+        "B": "Memastikan proporsi kelas di training set dan test set sama dengan dataset asli",
+        "C": "Mengurutkan data berdasarkan label y sebelum pembagian",
+        "D": "Membatasi jumlah sampel maksimal yang diambil dari setiap kelas"
+      },
+      "jawaban": "B",
+      "penjelasan": "stratify=y memastikan proporsi kelas (class distribution) di training set dan test set sama dengan dataset asli. Misalnya jika dataset asli 60% positif dan 40% negatif, maka train dan test juga akan memiliki proporsi serupa. Tanpa stratify, bisa saja test set kebetulan berisi 90% satu kelas — membuat evaluasi tidak representatif. Ini sangat penting untuk dataset imbalanced. random_state=42 memastikan pembagian reproducible (bisa diulang hasilnya sama)."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "1.4",
+      "pertanyaan": "Perhatikan pipeline preprocessing berikut:\n\nnumerical_pipeline = Pipeline([\n    ('imputer', SimpleImputer(strategy='median')),\n    ('scaler',  StandardScaler())\n])\n\nMengapa StandardScaler harus dilakukan SETELAH imputasi missing values, bukan sebelumnya?",
+      "opsi": {
+        "A": "Karena StandardScaler tidak bisa menangani nilai NaN (missing values)",
+        "B": "Karena urutan tidak penting — hasilnya akan sama",
+        "C": "Karena imputasi dengan median menghasilkan nilai yang sudah terstandardisasi",
+        "D": "Karena StandardScaler hanya bisa bekerja pada data dengan tipe integer"
+      },
+      "jawaban": "A",
+      "penjelasan": "StandardScaler menghitung mean dan standard deviation dari data untuk melakukan transformasi (x - mean) / std. Jika data masih mengandung NaN, perhitungan mean dan std akan gagal atau menghasilkan NaN — sehingga scaling tidak berfungsi dengan benar. Oleh karena itu, langkah imputasi (mengisi missing values) harus dilakukan terlebih dahulu. Pipeline scikit-learn menjamin urutan ini dieksekusi secara konsisten dan parameter yang dipelajari (mean, std dari training) diterapkan ke validation/test data."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "1.5",
+      "pertanyaan": "Sebuah model deteksi penyakit langka (hanya 1% populasi terkena) mencapai accuracy 99%. Namun saat diperiksa lebih lanjut, model hanya memprediksi 'tidak sakit' untuk semua pasien. Mengapa accuracy 99% di sini menyesatkan?",
+      "opsi": {
+        "A": "Karena accuracy tidak cocok untuk dataset imbalanced — model bisa mencapai skor tinggi dengan selalu memprediksi kelas mayoritas",
+        "B": "Karena accuracy seharusnya dihitung dari validation set, bukan test set",
+        "C": "Karena accuracy 99% terlalu tinggi dan mencurigakan",
+        "D": "Karena model seharusnya menggunakan metrik MAE, bukan accuracy"
+      },
+      "jawaban": "A",
+      "penjelasan": "Ini adalah contoh classic 'accuracy paradox' pada imbalanced dataset. Jika 99% data adalah kelas negatif (tidak sakit), model yang selalu memprediksi negatif akan mencapai accuracy 99% — padahal sama sekali tidak berguna karena gagal mendeteksi satu pun pasien yang sakit. Untuk kasus seperti ini, Recall (sensitivitas) dan F1-Score jauh lebih informatif. Recall mengukur berapa pasien sakit yang berhasil ditemukan, sementara F1-Score menggabungkan Precision dan Recall."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "1.6",
+      "pertanyaan": "Perhatikan grafik training error dan validation error berikut:\n\n• Training error: 0.05 (sangat rendah)\n• Validation error: 0.45 (jauh lebih tinggi)\n\nKondisi apa yang menggambarkan model tersebut?",
+      "opsi": {
+        "A": "Underfitting — model terlalu sederhana untuk menangkap pola data",
+        "B": "Good Fit — model dengan bias dan variance yang seimbang",
+        "C": "Overfitting — model menghafal training data termasuk noise",
+        "D": "Normal Fit — gap antara training dan validation error adalah hal yang wajar"
+      },
+      "jawaban": "C",
+      "penjelasan": "Gap yang sangat besar antara training error rendah (0.05) dan validation error tinggi (0.45) adalah tanda khas overfitting. Model terlalu kompleks sehingga 'menghafal' training data — termasuk noise dan anomali — sehingga tidak bisa generalisasi ke data baru. Underfitting ditandai dengan training error DAN validation error keduanya tinggi. Good Fit ditandai dengan keduanya rendah dan berdekatan. Solusi overfitting: regularisasi (L1/L2), dropout, early stopping, augmentasi data, atau model yang lebih sederhana."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "1.7",
+      "pertanyaan": "Dalam hyperparameter tuning, mengapa RandomizedSearchCV sering lebih dipilih daripada GridSearchCV untuk ruang parameter yang besar?",
+      "opsi": {
+        "A": "Karena RandomizedSearchCV selalu menemukan parameter optimal, sementara GridSearchCV tidak",
+        "B": "Karena RandomizedSearchCV mencoba subset kombinasi acak — lebih cepat dan biasanya cukup baik, sementara GridSearchCV mencoba semua kombinasi yang bisa sangat lambat",
+        "C": "Karena GridSearchCV tidak mendukung cross-validation",
+        "D": "Karena RandomizedSearchCV menggunakan algoritma yang lebih canggih dari GridSearchCV"
+      },
+      "jawaban": "B",
+      "penjelasan": "GridSearchCV mencoba SEMUA kombinasi parameter secara exhaustive — jika ada 3 parameter dengan 3 nilai masing-masing, ada 3³ = 27 kombinasi. Untuk 5 parameter dengan 5 nilai, ada 3.125 kombinasi. Ini sangat lambat. RandomizedSearchCV mencoba n_iter kombinasi acak (misal 50) dari ruang parameter — jauh lebih cepat dan dalam praktik sering menemukan kombinasi yang hampir optimal. GridSearchCV lebih cocok untuk ruang parameter kecil (<100 kombinasi). Untuk ruang besar, gunakan RandomizedSearchCV atau library canggih seperti Optuna."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "1.8",
+      "pertanyaan": "Perhatikan kode NumPy berikut:\n\na = np.array([1, 2, 3, 4, 5])\nb = np.array([2, 3, 4, 5, 6])\n\nprint(a * 2)       # Output: [2, 4, 6, 8, 10]\nprint(a + b)       # Output: [3, 5, 7, 9, 11]\n\nMengapa operasi a * 2 dan a + b pada NumPy array jauh lebih cepat daripada operasi yang sama pada Python list biasa?",
+      "opsi": {
+        "A": "Karena NumPy array menggunakan memori yang lebih kecil dari Python list",
+        "B": "Karena operasi NumPy dilakukan di level C (vectorized), bukan loop Python per elemen",
+        "C": "Karena NumPy array hanya bisa menyimpan angka integer, sementara Python list bisa menyimpan tipe apa saja",
+        "D": "Karena NumPy menggunakan algoritma matematika yang berbeda dari Python"
+      },
+      "jawaban": "B",
+      "penjelasan": "NumPy menggunakan vectorization — operasi matematis dilakukan di level C dengan SIMD (Single Instruction Multiple Data), memproses banyak elemen secara paralel dalam satu instruksi. Python list menggunakan loop Python per elemen yang sangat lambat karena overhead interpreter Python. a * 2 pada NumPy array melakukan operasi vektor dalam satu langkah C, sementara pada Python list harus membuat list baru dengan loop per elemen. Ini adalah alasan utama mengapa NumPy 100-1000x lebih cepat untuk komputasi numerik."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "1.9",
+      "pertanyaan": "Mengapa scikit-learn Pipeline sangat direkomendasikan untuk workflow Machine Learning?",
+      "opsi": {
+        "A": "Karena Pipeline membuat kode lebih pendek dan mudah dibaca",
+        "B": "Karena Pipeline mencegah data leakage dengan memastikan preprocessing hanya di-fit pada training data",
+        "C": "Karena Pipeline otomatis memilih algoritma terbaik untuk data",
+        "D": "Karena Pipeline mengurangi jumlah baris kode yang perlu ditulis"
+      },
+      "jawaban": "B",
+      "penjelasan": "Data leakage adalah masalah serius di mana informasi dari test/validation set 'bocor' ke training set. Contoh: jika StandardScaler di-fit pada SELURUH dataset (termasuk test) sebelum split, maka mean dan std yang digunakan sudah mengandung informasi test set. Pipeline menjamin preprocessing step (seperti StandardScaler) hanya di-fit pada training data, lalu transform diterapkan ke validation/test. Ini adalah best practice yang wajib. Meski Pipeline juga membuat kode lebih bersih (A), alasan UTAMANYA adalah mencegah data leakage. Pipeline tidak memilih algoritma otomatis (C)."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "1.10",
+      "pertanyaan": "Perhatikan perintah magic di Jupyter Notebook berikut:\n\n%matplotlib inline\n\nApa fungsi dari perintah tersebut?",
+      "opsi": {
+        "A": "Menginstall library Matplotlib ke kernel Jupyter",
+        "B": "Menampilkan grafik Matplotlib langsung di bawah cell notebook, bukan di window terpisah",
+        "C": "Mengimpor semua fungsi dari Matplotlib secara otomatis",
+        "D": "Mengaktifkan mode interaktif untuk grafik 3D"
+      },
+      "jawaban": "B",
+      "penjelasan": "%matplotlib inline adalah IPython magic command yang mengkonfigurasi backend Matplotlib untuk menampilkan grafik secara inline — langsung di bawah cell yang mengeksekusinya, sebagai output cell. Tanpa ini, grafik mungkin muncul di window terpisah (tergantung environment). Ini sangat berguna untuk workflow eksplorasi data di notebook. Magic command %matplotlib widget menampilkan grafik interaktif yang bisa di-zoom dan di-pan. Perintah ini tidak menginstall (A) atau mengimpor (C) Matplotlib — library harus sudah diimport dengan import matplotlib.pyplot as plt."
+    }
+  ]
+}

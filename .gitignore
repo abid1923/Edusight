@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Database & Local Env
+learning_insight.db
+*.db
+backend/learning_insight.db
+backend/learning_insight.db.bak
+backend/.env
+
+# Node
+node_modules/
+frontend/dist/

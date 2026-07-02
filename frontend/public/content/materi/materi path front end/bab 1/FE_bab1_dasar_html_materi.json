@@ -1,0 +1,358 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 1,
+    "judul_bab": "Dasar HTML",
+    "deskripsi": "Materi lengkap pengenalan HTML dari nol hingga siap membuat halaman web sederhana.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "MDN Web Docs – Structuring content with HTML",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Structuring_content",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "web.dev – Learn HTML (Google)",
+        "url": "https://web.dev/learn/html",
+        "lisensi": "CC-BY 4.0"
+      },
+      {
+        "nama": "The Odin Project – Foundations: HTML",
+        "url": "https://www.theodinproject.com/paths/foundations/courses/foundations",
+        "lisensi": "CC-BY-NC-SA 4.0"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+
+  "sub_bab": [
+
+    {
+      "id": "1.1",
+      "judul": "Apa itu HTML?",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Pengertian HTML",
+          "isi": "HTML singkatan dari HyperText Markup Language — bahasa standar untuk membangun struktur halaman web. Penting dipahami sejak awal: HTML bukan bahasa pemrograman. Tidak ada logika, tidak ada kondisi if-else, tidak ada perulangan. HTML adalah bahasa markah — kamu memberi label pada setiap bagian konten agar browser tahu cara menampilkannya.\n\nKata HyperText merujuk pada teks yang bisa menautkan ke dokumen lain. Inilah yang membuat web bisa saling terhubung. Tanpanya, web hanyalah kumpulan file teks terisolasi. Kata Markup menggambarkan cara kerjanya: kamu memberi tanda pada konten — mana yang judul, mana yang paragraf, mana yang gambar.\n\nHTML bekerja bersama dua teknologi lain: CSS untuk tampilan visual, dan JavaScript untuk interaktivitas. Tapi HTML adalah pondasi dari semuanya — tanpa HTML, CSS dan JavaScript tidak punya tempat untuk bekerja."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Tiga Lapisan Teknologi Web",
+          "src": "/assets/frontend/bab1/bab1_1.1.png",
+          "deskripsi_gambar": "Diagram tiga lapisan bertumpuk. Lapisan bawah bertuliskan 'Content (HTML)', lapisan tengah 'Presentation (CSS)', dan lapisan atas 'Behavior (JavaScript)'. Panah di sisi kanan menunjukkan peningkatan richness of the user experience dari bawah ke atas.",
+          "alt": "Diagram tiga lapisan teknologi web: HTML, CSS, dan JavaScript"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Gedung",
+          "isi": "HTML = kerangka gedung. CSS = cat dan furnitur. JavaScript = sistem listrik dan elevator. Tanpa kerangka, semewah apapun furniturnya, gedung itu runtuh."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Fakta: Halaman Web Pertama",
+          "isi": "Halaman web pertama di dunia masih online hingga sekarang di http://info.cern.ch — dibuat Tim Berners-Lee tahun 1991. Tidak ada gambar, tidak ada warna, hanya teks biasa. Dari situlah miliaran halaman web lahir."
+        }
+      ]
+    },
+
+    {
+      "id": "1.2",
+      "judul": "Struktur Dokumen HTML",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "HTML Boilerplate",
+          "isi": "Setiap dokumen HTML yang valid punya kerangka wajib yang sama — disebut boilerplate. Ini harus ada sebelum kamu menulis konten apapun. Strukturnya terdiri dari empat bagian utama:\n\n• DOCTYPE — memberitahu browser versi HTML yang digunakan\n• <html> — pembungkus seluruh dokumen\n• <head> — berisi informasi tentang halaman, tidak tampil di layar\n• <body> — semua konten yang tampil ke pengguna"
+        },
+        {
+          "tipe": "kode",
+          "judul": "HTML Boilerplate Lengkap",
+          "bahasa": "html",
+          "kode": "<!DOCTYPE html>\n<html lang=\"id\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Judul Halaman</title>\n  </head>\n  <body>\n    <h1>Halo, Dunia!</h1>\n    <p>Ini halaman web pertama saya.</p>\n  </body>\n</html>",
+          "penjelasan": "Simpan file ini dengan ekstensi .html, buka di browser — itulah halaman webmu."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Penjelasan Setiap Baris",
+          "isi": "Masing-masing baris di boilerplate punya peran spesifik yang tidak boleh diabaikan:\n\n• <!DOCTYPE html> — bukan tag HTML biasa. Ini deklarasi yang mencegah browser masuk ke 'quirks mode' (mode kompatibilitas lama yang menyebabkan tampilan tidak konsisten).\n• lang=\"id\" — memberitahu screen reader dan mesin pencari bahwa bahasa halaman ini adalah Bahasa Indonesia.\n• charset=\"UTF-8\" — mendukung semua karakter dunia termasuk huruf Arab, emoji, dan karakter khusus Bahasa Indonesia.\n• viewport meta — tanpa ini, halaman webmu akan terlihat sangat kecil di smartphone.\n• <title> — teks yang muncul di tab browser dan digunakan Google sebagai judul hasil pencarian."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Visualisasi Struktur Dokumen HTML",
+          "src": "/assets/frontend/bab1/bab1_1.2.png",
+          "deskripsi_gambar": "Diagram pohon hierarki dokumen HTML.\nElemen <html> berada di bawah node Document dan bercabang menjadi <head> dan <body>.\nBagian <head> berisi <title> dengan teks 'My First Webpage'.\nBagian <body> berisi elemen <h1> dengan teks 'Hello!', elemen <p> dengan teks 'My name is Ashok', serta elemen tautan <a> yang menggunakan atribut href='link' dan menampilkan teks 'Website'.",
+          "alt": "Diagram pohon struktur dokumen HTML"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Browser itu Super Toleran",
+          "isi": "Berbeda dengan Python yang langsung error jika ada satu karakter salah, browser tetap akan mencoba menampilkan halaman meskipun kamu lupa menutup tag atau bahkan tidak menulis DOCTYPE. Tapi jangan manfaatkan ini — kode yang jorok menyebabkan tampilan tidak konsisten antar browser."
+        }
+      ]
+    },
+
+    {
+      "id": "1.3",
+      "judul": "Elemen, Tag, dan Atribut",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Elemen vs Tag — Apa Bedanya?",
+          "isi": "Banyak orang menggunakan kata 'tag' dan 'elemen' secara bergantian, padahal keduanya berbeda. Tag adalah penanda yang diapit tanda kurung sudut, misalnya <p> atau </p>. Elemen adalah keseluruhan unit — dari tag pembuka, isinya, hingga tag penutup. Jadi <p>Halo dunia</p> adalah satu elemen paragraf yang lengkap."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Anatomi Elemen HTML",
+          "bahasa": "html",
+          "kode": "<!-- Elemen lengkap: tag pembuka + konten + tag penutup -->\n<p>Ini adalah paragraf.</p>\n\n<!-- Elemen bersarang (nested) -->\n<p>Kata ini <strong>penting</strong> dan kata ini <em>ditekankan</em>.</p>\n\n<!-- Void element: tidak perlu tag penutup, tidak bisa punya konten -->\n<img src=\"foto.jpg\" alt=\"Deskripsi foto\" />\n<br />\n<hr />",
+          "penjelasan": "Elemen seperti img, br, hr disebut void elements — tidak memiliki tag penutup karena memang tidak bisa memiliki konten."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Atribut: Memberikan Informasi Tambahan",
+          "isi": "Atribut ditulis di dalam tag pembuka dan memberikan informasi atau instruksi tambahan kepada elemen. Format: nama=\"nilai\". Ada tiga kategori atribut:\n\n• Atribut global — bisa dipakai di elemen apapun: id, class, style, lang\n• Atribut spesifik elemen — hanya berlaku untuk elemen tertentu: src dan alt hanya untuk img, href hanya untuk a\n• Atribut boolean — cukup tulis namanya saja, tidak perlu nilai: disabled, required, checked"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Contoh Atribut",
+          "bahasa": "html",
+          "kode": "<!-- Atribut pada gambar -->\n<img src=\"/foto.jpg\" alt=\"Foto gunung Rinjani\" width=\"400\" height=\"300\" />\n\n<!-- Atribut pada tautan -->\n<a href=\"https://example.com\" target=\"_blank\" rel=\"noopener\">Kunjungi</a>\n\n<!-- Atribut global: id dan class -->\n<p id=\"intro\" class=\"teks-utama\">Paragraf dengan ID unik dan class.</p>\n\n<!-- Atribut boolean -->\n<input type=\"text\" required disabled />",
+          "penjelasan": "Atribut id harus unik di seluruh halaman. Atribut class bisa dipakai berulang dan satu elemen bisa punya banyak class sekaligus."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Elemen seperti Kotak Paket",
+          "isi": "Bayangkan elemen HTML seperti kotak paket. Tag pembuka (<p>) adalah tutup kotak yang dibuka, isinya adalah barang di dalam kotak, dan tag penutup (</p>) adalah saat kotak ditutup kembali. Atribut adalah label-label yang ditempel di luar kotak — informasi tambahan seperti 'fragile', 'this side up', atau alamat tujuan."
+        }
+      ]
+    },
+
+    {
+      "id": "1.4",
+      "judul": "Heading dan Paragraf",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Hierarki Heading",
+          "isi": "HTML memiliki enam level heading, h1 hingga h6. Ini bukan sekadar soal ukuran teks — heading membawa makna struktural yang digunakan oleh mesin pencari dan screen reader untuk memahami halaman.\n\nAturan yang wajib diikuti:\n• Gunakan satu h1 per halaman — biasanya judul utama\n• Gunakan heading secara berurutan, jangan loncat dari h1 ke h4\n• Jangan pilih heading berdasarkan ukurannya — gunakan CSS untuk itu\n• Heading yang salah susunan = struktur dokumen yang rusak"
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Perbandingan Visual h1–h6",
+          "src": "/assets/frontend/bab1/bab1_1.4.png",
+          "deskripsi_gambar": "Enam level heading HTML ditampilkan berurutan dari h1 (teks sangat besar) hingga h6 (teks kecil), dengan label di sisi kiri. Latar putih, teks hitam.",
+          "alt": "Perbandingan visual ukuran heading HTML dari h1 hingga h6"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Penggunaan Heading yang Benar",
+          "bahasa": "html",
+          "kode": "<h1>Panduan Memasak Indonesia</h1>\n\n  <h2>Masakan Jawa</h2>\n    <h3>Gudeg Yogyakarta</h3>\n      <p>Gudeg adalah masakan khas Yogyakarta dari nangka muda yang dimasak\n      berjam-jam dengan santan dan rempah hingga menghasilkan cita rasa\n      manis gurih yang khas dan tekstur yang sangat lembut.</p>\n\n    <h3>Soto Lamongan</h3>\n      <p>Soto dengan kuah bening kekuningan khas Lamongan, disajikan\n      dengan koya — serbuk gurih dari kerupuk udang yang dihaluskan.</p>\n\n  <h2>Masakan Sunda</h2>\n    <h3>Nasi Timbel</h3>",
+          "penjelasan": "Indentasi di kode mencerminkan hierarki heading. Ini membantumu membaca struktur dokumen sekilas pandang."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Elemen Teks Inline Penting",
+          "isi": "Selain heading dan paragraf, ada beberapa elemen teks inline yang sering dipakai:\n\n• <strong> — teks penting secara semantik (tampil tebal, dibacakan dengan penekanan oleh screen reader)\n• <em> — penekanan pada kata atau frasa (tampil miring)\n• <mark> — teks yang disorot/relevan dalam konteks tertentu\n• <code> — menampilkan potongan kode dalam teks biasa\n• <abbr title=\"...\"> — singkatan dengan kepanjangan di atribut title\n• <del> dan <ins> — teks yang dihapus (dicoret) dan teks yang ditambahkan\n\nCatatan: <strong> berbeda dengan <b>, dan <em> berbeda dengan <i>. Versi strong/em membawa makna semantik, versi b/i hanya mengubah tampilan visual."
+        }
+      ]
+    },
+
+    {
+      "id": "1.5",
+      "judul": "Link dan Gambar",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Hyperlink — Nyawa dari Web",
+          "isi": "Hyperlink adalah fitur yang membuat web menjadi 'web' — jaring yang saling terhubung. Tanpanya, setiap halaman berdiri sendiri terisolasi. Elemen <a> (anchor) membuat hyperlink, dan atribut href menentukan tujuannya.\n\nNilai href bisa berupa:\n• URL absolut: https://google.com\n• URL relatif: /halaman-lain atau ../folder/file.html\n• Bagian halaman yang sama: #id-elemen\n• Email: mailto:halo@example.com\n• Telepon: tel:+628123456789"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Berbagai Jenis Hyperlink",
+          "bahasa": "html",
+          "kode": "<!-- Eksternal — buka di tab baru -->\n<a href=\"https://developer.mozilla.org\" target=\"_blank\" rel=\"noopener noreferrer\">\n  MDN Web Docs\n</a>\n\n<!-- Internal — navigasi antar halaman -->\n<a href=\"/tentang-kami\">Tentang Kami</a>\n\n<!-- Lompat ke bagian di halaman yang sama -->\n<a href=\"#kontak\">Ke Bagian Kontak</a>\n<section id=\"kontak\">...</section>\n\n<!-- Email dan telepon -->\n<a href=\"mailto:halo@example.com\">Kirim Email</a>\n<a href=\"tel:+6281234567890\">Hubungi Kami</a>\n\n<!-- Download file -->\n<a href=\"/panduan.pdf\" download>Unduh Panduan</a>",
+          "penjelasan": "Selalu tambahkan rel='noopener noreferrer' saat menggunakan target='_blank' — ini mencegah celah keamanan di mana halaman yang dibuka bisa memanipulasi tab asalnya."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Gambar dengan <img>",
+          "isi": "Elemen <img> adalah void element untuk menyematkan gambar. Dua atribut yang wajib ada: src (lokasi file gambar) dan alt (teks alternatif).\n\nAlt text bukan formalitas — ia punya tiga fungsi krusial: dibacakan oleh screen reader untuk pengguna tunanetra, ditampilkan jika gambar gagal dimuat, dan digunakan mesin pencari untuk memahami isi gambar.\n\nUntuk gambar dekoratif yang tidak membawa informasi, beri alt=\"\" (kosong) agar screen reader mengabaikannya. Jangan hilangkan atribut alt sama sekali — screen reader akan membacakan nama file gambarnya yang biasanya tidak informatif."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Gambar dan Figure",
+          "bahasa": "html",
+          "kode": "<!-- Gambar dasar -->\n<img src=\"/foto/gunung.jpg\" alt=\"Pemandangan Gunung Rinjani saat fajar\" />\n\n<!-- Gambar dekoratif -->\n<img src=\"/dekorasi/garis.svg\" alt=\"\" />\n\n<!-- Gambar dengan keterangan menggunakan figure -->\n<figure>\n  <img\n    src=\"/diagram/topologi.png\"\n    alt=\"Diagram topologi jaringan bintang dengan satu switch dan lima komputer\"\n    width=\"600\" height=\"400\"\n  />\n  <figcaption>Gambar 1. Topologi jaringan bintang yang umum dipakai di perkantoran.</figcaption>\n</figure>",
+          "penjelasan": "Selalu tulis atribut width dan height pada gambar untuk mencegah layout shift — pergeseran tata letak halaman saat gambar selesai dimuat."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Alt Text seperti Komentator Radio",
+          "isi": "Pendengar radio tidak bisa melihat pertandingan, jadi komentator harus mendeskripsikan semua kejadian dengan kata-kata. Alt text bekerja persis seperti itu — ia mendeskripsikan gambar untuk pengguna yang tidak bisa melihatnya."
+        }
+      ]
+    },
+
+    {
+      "id": "1.6",
+      "judul": "List (Daftar)",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Tiga Jenis List",
+          "isi": "HTML punya tiga jenis list, masing-masing untuk situasi berbeda:\n\n• <ul> (Unordered List) — daftar tanpa urutan, ditampilkan dengan bullet. Cocok untuk: fitur produk, daftar bahan, menu navigasi.\n• <ol> (Ordered List) — daftar berurutan, ditampilkan dengan angka. Cocok untuk: langkah instalasi, peringkat, prosedur step-by-step.\n• <dl> (Description List) — daftar pasangan istilah dan definisi. Cocok untuk: glosarium, FAQ, spesifikasi produk."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Ketiga Jenis List dalam Satu Contoh",
+          "bahasa": "html",
+          "kode": "<!-- Unordered List -->\n<ul>\n  <li>HTML — Struktur halaman</li>\n  <li>CSS — Tampilan visual</li>\n  <li>JavaScript — Interaktivitas</li>\n</ul>\n\n<!-- Ordered List -->\n<ol>\n  <li>Unduh installer dari nodejs.org</li>\n  <li>Jalankan file installer</li>\n  <li>Buka terminal, ketik <code>node --version</code></li>\n</ol>\n\n<!-- Description List -->\n<dl>\n  <dt>Elemen</dt>\n  <dd>Unit HTML terdiri dari tag pembuka, konten, dan tag penutup.</dd>\n\n  <dt>Atribut</dt>\n  <dd>Informasi tambahan yang ditulis di dalam tag pembuka.</dd>\n</dl>\n\n<!-- Nested List -->\n<ul>\n  <li>Front End\n    <ul>\n      <li>HTML</li>\n      <li>CSS</li>\n    </ul>\n  </li>\n  <li>Back End\n    <ul>\n      <li>Node.js</li>\n    </ul>\n  </li>\n</ul>",
+          "penjelasan": "List bisa disarangkan di dalam list lain untuk membuat hierarki. Hindari bersarang lebih dari dua tingkat karena menyulitkan pembacaan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Menu Navigasi adalah List!",
+          "isi": "Hampir semua menu navigasi website modern dibangun dari <ul>. Tampilan horizontal atau dropdown sepenuhnya dibuat CSS — strukturnya tetap list HTML. Secara semantik, navigasi memang adalah 'daftar tautan'."
+        }
+      ]
+    },
+
+    {
+      "id": "1.7",
+      "judul": "Tabel HTML",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Tabel untuk Data Tabular — Bukan Layout!",
+          "isi": "Tabel HTML dirancang khusus untuk menampilkan data tabular — data yang memang memiliki hubungan dalam baris dan kolom, seperti spreadsheet. Contoh tepat: jadwal kuliah, tabel perbandingan produk, laporan nilai, statistik pertandingan.\n\nKesalahan klasik yang masih sering terjadi: menggunakan tabel untuk mengatur layout halaman. Ini sangat keliru — ketika screen reader membaca tabel layout, ia akan memberikan instruksi 'baris satu, kolom dua' yang sama sekali tidak masuk akal bagi penggunanya. Gunakan CSS Flexbox atau Grid untuk layout."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Tabel Nilai Mahasiswa",
+          "bahasa": "html",
+          "kode": "<table>\n  <thead>\n    <tr>\n      <th scope=\"col\">Nama</th>\n      <th scope=\"col\">NIM</th>\n      <th scope=\"col\">UTS</th>\n      <th scope=\"col\">UAS</th>\n      <th scope=\"col\">Akhir</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Budi Santoso</td>\n      <td>2021001</td>\n      <td>80</td>\n      <td>85</td>\n      <td>83</td>\n    </tr>\n    <tr>\n      <td>Siti Rahayu</td>\n      <td>2021002</td>\n      <td>75</td>\n      <td>90</td>\n      <td>84</td>\n    </tr>\n  </tbody>\n  <tfoot>\n    <tr>\n      <td colspan=\"4\">Rata-rata Kelas</td>\n      <td>83.5</td>\n    </tr>\n  </tfoot>\n</table>",
+          "penjelasan": "Atribut scope='col' pada th membantu screen reader memahami bahwa heading ini berlaku untuk kolom. Atribut colspan membuat satu sel melebar melewati beberapa kolom."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Struktur Tabel HTML",
+          "src": "/assets/frontend/bab1/bab1_1.7.jpg",
+          "deskripsi_gambar": "Diagram struktur tabel HTML yang terdiri dari container table berwarna ungu. Bagian thead ditampilkan dalam blok hijau muda berisi elemen tr dan th. Bagian tbody ditampilkan dalam blok biru muda berisi beberapa baris data dengan elemen tr dan td. Bagian tfoot ditampilkan dalam blok krem berisi ringkasan data. Label thead, tbody, dan tfoot ditunjukkan dengan penanda di sisi kanan.",
+          "alt": "Diagram struktur tabel HTML yang menampilkan bagian thead, tbody, dan tfoot beserta elemen tr, th, dan td"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Tabel HTML = Spreadsheet Tanpa Kalkulasi",
+          "isi": "Anggap tabel HTML seperti Google Sheets yang bisa menampilkan data tapi tidak bisa menghitung. Kolom header adalah thead, data di tengah adalah tbody, dan baris total di bawah adalah tfoot. Kalkulasinya tetap dilakukan JavaScript atau server."
+        }
+      ]
+    },
+
+    {
+      "id": "1.8",
+      "judul": "Form dan Input",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Form: Jembatan Pengguna ke Server",
+          "isi": "Form HTML adalah cara utama pengguna mengirim data ke aplikasi web — login, daftar akun, pembayaran, pencarian, upload file, semuanya menggunakan form. Elemen <form> membungkus semua input dan menentukan ke mana data dikirim (atribut action) serta bagaimana cara mengirimnya (atribut method).\n\nDua metode pengiriman:\n• GET — data dikirim lewat URL, cocok untuk pencarian (data terlihat di address bar)\n• POST — data dikirim di body request, cocok untuk data sensitif seperti password"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Jenis-Jenis Input HTML5",
+          "isi": "Elemen <input> adalah komponen form paling serbaguna. Perilakunya berubah sepenuhnya berdasarkan atribut type:\n\n• text — input teks satu baris\n• email — otomatis validasi format email\n• password — karakter disembunyikan dengan titik\n• number — input angka dengan spinner\n• date — menampilkan date picker\n• checkbox — pilihan yang bisa dipilih banyak\n• radio — pilihan yang hanya satu yang bisa dipilih\n• file — upload file\n• range — slider angka\n• color — color picker\n• hidden — data tersembunyi (tidak tampil tapi ikut terkirim)\n• submit — tombol kirim form"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Form Pendaftaran",
+          "bahasa": "html",
+          "kode": "<form action=\"/daftar\" method=\"POST\">\n\n  <label for=\"nama\">Nama Lengkap</label>\n  <input type=\"text\" id=\"nama\" name=\"nama\" required minlength=\"3\" />\n\n  <label for=\"email\">Email</label>\n  <input type=\"email\" id=\"email\" name=\"email\" required />\n\n  <label for=\"password\">Kata Sandi</label>\n  <input type=\"password\" id=\"password\" name=\"password\" minlength=\"8\" required />\n\n  <label for=\"jurusan\">Jurusan</label>\n  <select id=\"jurusan\" name=\"jurusan\">\n    <option value=\"\">-- Pilih --</option>\n    <option value=\"ti\">Teknik Informatika</option>\n    <option value=\"si\">Sistem Informasi</option>\n  </select>\n\n  <fieldset>\n    <legend>Jenis Kelamin</legend>\n    <label><input type=\"radio\" name=\"gender\" value=\"L\" /> Laki-laki</label>\n    <label><input type=\"radio\" name=\"gender\" value=\"P\" /> Perempuan</label>\n  </fieldset>\n\n  <label>\n    <input type=\"checkbox\" name=\"setuju\" required />\n    Saya setuju dengan syarat dan ketentuan\n  </label>\n\n  <button type=\"submit\">Daftar</button>\n\n</form>",
+          "penjelasan": "Setiap input harus punya label yang terkait — baik dengan membungkus input di dalam label, atau mencocokkan atribut 'for' dengan 'id'. Label yang benar membuat form dapat diakses oleh pengguna screen reader."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Validasi HTML5 Bukan Pengganti Validasi Server",
+          "isi": "HTML5 punya validasi bawaan: required, minlength, type='email', dll. Tapi pengguna jahat bisa dengan mudah menonaktifkan ini lewat DevTools browser. Validasi di server WAJIB tetap ada — HTML5 validation hanya untuk pengalaman pengguna yang lebih baik."
+        }
+      ]
+    },
+
+    {
+      "id": "1.9",
+      "judul": "Multimedia: Audio dan Video",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Multimedia Native Tanpa Plugin",
+          "isi": "Sebelum HTML5, memutar video di website butuh plugin seperti Adobe Flash atau QuickTime — lambat, sering error, dan tidak aman. HTML5 mengakhiri itu dengan menghadirkan elemen <video> dan <audio> yang berjalan native di browser tanpa plugin apapun.\n\nSatu tantangan: tidak semua browser mendukung semua format file. Solusinya adalah menyediakan beberapa format sekaligus menggunakan elemen <source> — browser akan otomatis memilih format pertama yang ia dukung:\n• Video: MP4 (paling kompatibel), WebM (lebih efisien)\n• Audio: MP3 (universal), OGG (open source)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Menyematkan Video dan Audio",
+          "bahasa": "html",
+          "kode": "<!-- Video dengan kontrol dan thumbnail -->\n<video width=\"720\" height=\"405\" controls poster=\"/thumbnail.jpg\">\n  <source src=\"/video/tutorial.mp4\" type=\"video/mp4\" />\n  <source src=\"/video/tutorial.webm\" type=\"video/webm\" />\n  Browser Anda tidak mendukung video. <a href=\"/video/tutorial.mp4\">Unduh di sini</a>.\n</video>\n\n<!-- Audio dengan kontrol -->\n<audio controls>\n  <source src=\"/audio/podcast.mp3\" type=\"audio/mpeg\" />\n  <source src=\"/audio/podcast.ogg\" type=\"audio/ogg\" />\n</audio>\n\n<!-- Video YouTube lewat iframe -->\n<iframe\n  width=\"560\" height=\"315\"\n  src=\"https://www.youtube.com/embed/ID_VIDEO\"\n  title=\"Judul Video\"\n  allowfullscreen\n></iframe>",
+          "penjelasan": "Atribut 'poster' menentukan gambar thumbnail sebelum video diputar. Teks fallback di dalam tag video/audio akan tampil di browser yang tidak mendukung elemen tersebut."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Kematian Flash",
+          "isi": "Adobe Flash resmi pensiun pada 31 Desember 2020. Salah satu 'paku di peti matinya' adalah esai Steve Jobs tahun 2010 yang menjelaskan mengapa iPhone tidak akan pernah mendukung Flash — dan web masa depan harus berbasis standar terbuka seperti HTML5. Sejarah membuktikan ia benar."
+        }
+      ]
+    },
+
+    {
+      "id": "1.10",
+      "judul": "Semantik HTML5",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu HTML Semantik?",
+          "isi": "HTML semantik adalah prinsip memilih elemen HTML berdasarkan maknanya, bukan tampilannya. Kata 'semantik' berarti 'makna' — setiap elemen HTML membawa pesan tentang jenis konten yang ia tampung.\n\nSebelum HTML5, pengembang sangat bergantung pada <div> untuk segalanya — hasilnya adalah kode yang penuh tumpukan div tanpa makna, dikenal sebagai 'div soup'. HTML5 menghadirkan elemen semantik yang memberi nama pada bagian-bagian halaman:\n\n• <header> — kepala halaman atau kepala sebuah artikel\n• <nav> — kumpulan tautan navigasi utama\n• <main> — konten utama halaman (hanya boleh satu)\n• <article> — konten yang bisa berdiri sendiri (posting blog, berita)\n• <section> — bagian tematik dari konten yang lebih besar\n• <aside> — konten sampingan (sidebar, info tambahan)\n• <footer> — bagian penutup halaman atau artikel"
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Div Soup vs HTML Semantik",
+          "src": "/assets/frontend/bab1/bab1_1.10.png",
+          "deskripsi_gambar": "Dua layout halaman web ditampilkan berdampingan. Di sisi kiri, seluruh struktur halaman dibangun menggunakan elemen div dengan id dan class seperti div#header, div#content, div.sidebar, dan div#footer. Di sisi kanan, struktur yang sama menggunakan elemen semantik HTML5 seperti header, nav, main, article, dan footer. Diagram menunjukkan bagaimana elemen semantik membuat struktur halaman lebih mudah dipahami dibandingkan penggunaan div secara umum.",
+          "alt": "Perbandingan layout div biasa versus elemen semantik HTML5"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Struktur Halaman Semantik Lengkap",
+          "bahasa": "html",
+          "kode": "<body>\n\n  <header>\n    <h1>Blog Teknologi Indonesia</h1>\n  </header>\n\n  <nav aria-label=\"Navigasi Utama\">\n    <ul>\n      <li><a href=\"/\">Beranda</a></li>\n      <li><a href=\"/artikel\">Artikel</a></li>\n      <li><a href=\"/tentang\">Tentang</a></li>\n    </ul>\n  </nav>\n\n  <main>\n    <article>\n      <header>\n        <h2>Mengenal TypeScript</h2>\n        <time datetime=\"2024-03-15\">15 Maret 2024</time>\n      </header>\n\n      <section>\n        <h3>Apa itu TypeScript?</h3>\n        <p>TypeScript adalah superset JavaScript dengan sistem tipe statis...</p>\n      </section>\n\n      <section>\n        <h3>Kenapa Harus Belajar?</h3>\n        <p>Kesalahan penulisan kode terdeteksi lebih awal saat development...</p>\n      </section>\n    </article>\n\n    <aside>\n      <h3>Artikel Populer</h3>\n      <ul>\n        <li><a href=\"/belajar-react\">Belajar React dari Nol</a></li>\n      </ul>\n    </aside>\n  </main>\n\n  <footer>\n    <p>&copy; 2024 Blog Teknologi Indonesia</p>\n  </footer>\n\n</body>",
+          "penjelasan": "header dan footer bisa muncul lebih dari sekali — satu untuk situs, satu lagi di dalam article. Keduanya valid secara semantik."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Tiga Alasan HTML Semantik Wajib Dipelajari",
+          "isi": "• Aksesibilitas — screen reader menggunakan landmark semantik agar pengguna tunanetra bisa lompat langsung ke bagian halaman yang mereka inginkan tanpa harus mendengarkan seluruh konten dari awal.\n• SEO — Google lebih mudah memahami topik dan relevansi halaman yang terstruktur semantik dengan baik, yang berdampak pada peringkat di hasil pencarian.\n• Keterbacaan kode — kode semantik jauh lebih mudah dipahami siapapun yang membacanya, termasuk dirimu sendiri enam bulan ke depan."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Perpustakaan Tanpa Label vs Dengan Label",
+          "isi": "Perpustakaan tanpa sistem pelabelan: semua buku ditumpuk acak. Secara teknis semua buku ada, tapi mustahil menemukan yang kamu cari. Perpustakaan dengan rak berlabel 'Fiksi', 'Sains', 'Teknologi': mudah ditemukan siapapun — termasuk orang yang menggunakan panduan audio.\n\nHTML semantik adalah sistem pelabelan halaman webmu."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Aksesibilitas adalah Hukum",
+          "isi": "Di banyak negara, aksesibilitas website adalah kewajiban hukum — bukan pilihan. Di AS ada ADA (Americans with Disabilities Act). Di Indonesia, UU No. 8 Tahun 2016 tentang Penyandang Disabilitas mengatur hak akses informasi. HTML semantik yang ditulis benar adalah fondasi utama aksesibilitas web."
+        }
+      ]
+    }
+
+  ]
+}

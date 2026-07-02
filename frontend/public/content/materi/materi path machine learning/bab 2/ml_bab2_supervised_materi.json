@@ -1,0 +1,382 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "bab": 2,
+    "judul_bab": "Supervised Learning",
+    "deskripsi": "Materi lengkap supervised learning — regresi linear & logistik, decision tree, random forest, SVM, KNN, naive bayes, gradient boosting, neural network dasar, confusion matrix & ROC-AUC, hingga feature selection & importance.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "scikit-learn Official Documentation – Supervised Learning",
+        "url": "https://scikit-learn.org/stable/supervised_learning.html",
+        "lisensi": "BSD-3-Clause"
+      },
+      {
+        "nama": "Google ML Crash Course",
+        "url": "https://developers.google.com/machine-learning/crash-course",
+        "lisensi": "CC-BY 4.0"
+      },
+      {
+        "nama": "fast.ai – Practical Deep Learning for Coders",
+        "url": "https://course.fast.ai",
+        "lisensi": "Apache 2.0"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+  "sub_bab": [
+    {
+      "id": "2.1",
+      "judul": "Regresi Linear & Multiple Linear Regression",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Regresi Linear: Algoritma ML Paling Fundamental",
+          "isi": "Regresi Linear adalah algoritma supervised learning paling sederhana dan paling mendasar — model yang memprediksi output numerik kontinu dengan menemukan garis (atau hyperplane) terbaik yang melewati data. Meski sederhana, regresi linear adalah fondasi yang wajib dipahami sebelum mempelajari algoritma yang lebih kompleks.\n\nSimple Linear Regression menggunakan SATU fitur untuk prediksi:\ny = w₀ + w₁x\n• y = nilai yang diprediksi (output)\n• x = fitur input\n• w₀ = intercept (bias) — nilai y ketika x = 0\n• w₁ = slope (bobot/koefisien) — seberapa besar y berubah per unit perubahan x\n\nMultiple Linear Regression menggunakan BANYAK fitur:\ny = w₀ + w₁x₁ + w₂x₂ + ... + wₙxₙ\n\nModel belajar menemukan nilai w₀, w₁, ..., wₙ yang meminimalkan total error antara prediksi dan nilai asli. Metode yang paling umum adalah Ordinary Least Squares (OLS) — meminimalkan jumlah kuadrat residual (selisih prediksi vs asli).\n\nAsumsi yang harus dipenuhi agar regresi linear valid:\n• Linearitas — hubungan antara X dan y harus linear\n• Independensi error — residual tidak boleh berkorelasi satu sama lain\n• Homoskedastisitas — variance residual harus konstan\n• Normalitas residual — residual terdistribusi normal\n• Tidak ada multikolinearitas — fitur-fitur tidak boleh berkorelasi terlalu tinggi satu sama lain"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Regresi Linear dengan scikit-learn",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport pandas as pd\nfrom sklearn.linear_model import LinearRegression, Ridge, Lasso\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import mean_squared_error, r2_score\nfrom sklearn.preprocessing import StandardScaler\nimport matplotlib.pyplot as plt\n\n# Data contoh: prediksi IPK berdasarkan jam belajar dan nilai sebelumnya\nnp.random.seed(42)\nn = 200\njam_belajar    = np.random.uniform(1, 12, n)\nnilai_sebelum  = np.random.uniform(60, 100, n)\nipk = 0.5 + 0.2 * jam_belajar + 0.025 * nilai_sebelum + np.random.normal(0, 0.3, n)\nipk = np.clip(ipk, 0, 4)\n\nX = np.column_stack([jam_belajar, nilai_sebelum])\ny = ipk\n\n# Split data\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\n# Latih model\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)\n\n# Hasil\nprint(f'Intercept:  {model.intercept_:.4f}')\nprint(f'Koefisien:  {model.coef_}')  # [w1, w2]\nprint(f'  jam_belajar:   {model.coef_[0]:.4f}')\nprint(f'  nilai_sebelum: {model.coef_[1]:.4f}')\n\n# Evaluasi\ny_pred = model.predict(X_test)\nmse  = mean_squared_error(y_test, y_pred)\nrmse = np.sqrt(mse)\nr2   = r2_score(y_test, y_pred)\n\nprint(f'\\nRMSE: {rmse:.4f}')\nprint(f'R²:   {r2:.4f}')  # mendekati 1 = sangat baik\n\n# Regularized Linear Regression\nridge = Ridge(alpha=1.0)   # L2 regularization — cegah overfitting\nlasso = Lasso(alpha=0.01)  # L1 regularization — sparse features\n\nridge.fit(X_train, y_train)\nlasso.fit(X_train, y_train)\n\nprint(f'\\nRidge R²: {r2_score(y_test, ridge.predict(X_test)):.4f}')\nprint(f'Lasso R²: {r2_score(y_test, lasso.predict(X_test)):.4f}')\nprint(f'Lasso koef (sparse): {lasso.coef_}')  # beberapa mungkin 0",
+          "penjelasan": "Ridge (L2) mendorong semua koefisien mendekati nol. Lasso (L1) mendorong koefisien yang tidak penting menjadi tepat 0 — secara otomatis melakukan feature selection. Untuk dataset dengan banyak fitur tidak relevan, Lasso sangat berguna."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Regresi Linear: Garis Terbaik dan Residual",
+          "src": "/assets/ml/bab2/bab2_2.1.jpg",
+          "deskripsi_gambar": "Scatter plot dengan titik-titik data dan garis regresi yang melewati tengah data. Garis vertikal menghubungkan setiap titik data ke garis regresi merepresentasikan residual atau error. Persamaan regresi linear ditampilkan untuk menjelaskan hubungan antara input dan output.",
+          "alt": "Scatter plot regresi linear menampilkan garis terbaik dan residual"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Regresi Linear seperti Menggambar Garis Terbaik",
+          "isi": "Bayangkan kamu punya scatter plot pengeluaran iklan vs penjualan produk. Regresi linear seperti menarik satu garis lurus melalui titik-titik data itu sedemikian rupa sehingga total jarak semua titik ke garis itu seminimal mungkin. Garis inilah yang digunakan untuk prediksi: 'jika iklan Rp10 juta, prediksi penjualan Rp45 juta'."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Regresi Berasal dari Kata 'Kembali ke Rata-rata'",
+          "isi": "Kata 'regression' dalam statistik diciptakan oleh Francis Galton pada 1886 saat mengamati bahwa orang tua yang sangat tinggi cenderung punya anak yang lebih pendek dari mereka (mendekati rata-rata populasi), dan sebaliknya. Ia menyebut fenomena ini 'regression to the mean'. Istilahnya kemudian diadopsi sebagai nama metode prediksi nilai kontinu — meski kini maknanya sudah jauh dari asal-usulnya."
+        }
+      ]
+    },
+    {
+      "id": "2.2",
+      "judul": "Regresi Logistik untuk Klasifikasi Biner",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Meski Namanya Regresi, Ini adalah Classifier",
+          "isi": "Regresi Logistik adalah salah satu algoritma klasifikasi paling populer — meski namanya mengandung kata 'regresi'. Bedanya dengan regresi linear: outputnya bukan angka kontinu tapi probabilitas kelas (antara 0 dan 1), yang kemudian diubah menjadi prediksi kelas berdasarkan threshold (biasanya 0.5).\n\nIde utama regresi logistik:\n1. Hitung kombinasi linear fitur: z = w₀ + w₁x₁ + w₂x₂ + ... (sama seperti regresi linear)\n2. Terapkan fungsi Sigmoid untuk mengubah z menjadi probabilitas:\n   σ(z) = 1 / (1 + e^(-z))\n3. Jika σ(z) ≥ 0.5 → prediksi kelas 1 (positif), sebaliknya → kelas 0 (negatif)\n\nFungsi Sigmoid memiliki bentuk S yang khas — outputnya selalu di antara 0 dan 1 — sangat cocok untuk merepresentasikan probabilitas. Ketika z sangat besar (positif), output mendekati 1. Ketika z sangat kecil (negatif), output mendekati 0.\n\nKeunggulan Regresi Logistik:\n• Menghasilkan probabilitas — bukan hanya prediksi kelas tapi seberapa yakin model\n• Interpretabel — koefisien bisa diinterpretasikan sebagai log-odds\n• Training sangat cepat — cocok untuk baseline awal dan dataset besar\n• Bekerja baik untuk data yang linearly separable\n• Tidak membutuhkan scaling fitur (tapi biasanya membantu)\n\nKeterbatasan:\n• Mengasumsikan hubungan linear antara fitur dan log-odds\n• Tidak bisa menangkap pola non-linear yang kompleks\n• Sensitif terhadap outlier dan multikolinearitas"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Regresi Logistik: Binary dan Multi-class",
+          "bahasa": "python",
+          "kode": "from sklearn.linear_model import LogisticRegression\nfrom sklearn.datasets import load_breast_cancer, load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import classification_report, roc_auc_score\nimport numpy as np\n\n# ==========================================\n# BINARY CLASSIFICATION\n# ==========================================\nX, y = load_breast_cancer(return_X_y=True)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# Scaling penting untuk regresi logistik\nscaler = StandardScaler()\nX_train_sc = scaler.fit_transform(X_train)\nX_test_sc  = scaler.transform(X_test)\n\nmodel = LogisticRegression(C=1.0, max_iter=1000, random_state=42)\n# C = inverse of regularization strength: kecil = regularisasi kuat\nmodel.fit(X_train_sc, y_train)\n\n# Prediksi kelas dan probabilitas\ny_pred      = model.predict(X_test_sc)\ny_pred_prob = model.predict_proba(X_test_sc)[:, 1]  # prob kelas positif\n\nprint('Classification Report:')\nprint(classification_report(y_test, y_pred))\nprint(f'ROC-AUC Score: {roc_auc_score(y_test, y_pred_prob):.4f}')\n\n# Interpretasi koefisien\nprint(f'\\nTop 5 fitur paling berpengaruh:')\nfeature_names = load_breast_cancer().feature_names\ncoef_abs = np.abs(model.coef_[0])\ntop5 = np.argsort(coef_abs)[::-1][:5]\nfor i in top5:\n    print(f'  {feature_names[i]:35s}: {model.coef_[0][i]:+.4f}')\n\n# ==========================================\n# MULTI-CLASS (One vs Rest)\n# ==========================================\nX_iris, y_iris = load_iris(return_X_y=True)\nX_tr, X_te, y_tr, y_te = train_test_split(X_iris, y_iris, test_size=0.2, random_state=42)\n\nsc = StandardScaler()\nmodel_multi = LogisticRegression(\n    multi_class='ovr',   # one-vs-rest: satu classifier per kelas\n    C=10,\n    max_iter=1000,\n    random_state=42\n)\nmodel_multi.fit(sc.fit_transform(X_tr), y_tr)\nprint(f'\\nIris Multi-class Accuracy: {model_multi.score(sc.transform(X_te), y_te):.4f}')",
+          "penjelasan": "Parameter C adalah kebalikan dari kekuatan regularisasi: C kecil = regularisasi kuat (model lebih sederhana), C besar = regularisasi lemah (model lebih kompleks). Selalu coba beberapa nilai C dengan cross-validation."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Regresi Logistik seperti Mengukur Keyakinan",
+          "isi": "Regresi Logistik seperti seorang juri yang memberikan skor keyakinan 0-100% untuk setiap peserta. Skor 85% berarti 'saya sangat yakin ini adalah peserta yang berbakat'. Skor 15% berarti 'saya sangat yakin ini bukan peserta yang berbakat'. Skor 50% berarti 'saya sama sekali tidak yakin'. Threshold 50% adalah garis putus: di atasnya lolos, di bawahnya tidak. Meski juri memberikan angka kontinu, keputusan akhir tetap biner: lolos atau tidak lolos."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Regresi Logistik Masih Digunakan di Google dan Facebook",
+          "isi": "Meski ada deep learning yang jauh lebih kompleks, regresi logistik masih digunakan secara luas di industri teknologi terbesar dunia. Google menggunakannya untuk ad click prediction. Facebook untuk prediksi engagement. Alasannya: sangat cepat, mudah di-update secara online, sangat interpretabel, dan performanya sering cukup baik untuk data tabular sederhana. Di industri, 'yang bekerja dengan baik' sering mengalahkan 'yang paling canggih'."
+        }
+      ]
+    },
+    {
+      "id": "2.3",
+      "judul": "Decision Tree & Random Forest",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Decision Tree: Model yang Paling Mudah Diinterpretasikan",
+          "isi": "Decision Tree adalah algoritma ML yang membangun model berbentuk pohon keputusan — serangkaian pertanyaan if-else yang mempartisi data berdasarkan nilai fitur. Sangat intuitif dan mudah divisualisasikan.\n\nCara kerja Decision Tree:\n1. Mulai dari root node (seluruh data)\n2. Cari fitur dan threshold yang memisahkan data terbaik (meminimalkan impurity)\n3. Bagi data menjadi dua subtree berdasarkan kondisi tersebut\n4. Ulangi secara rekursif sampai kriteria berhenti terpenuhi\n5. Leaf node berisi prediksi final (kelas mayoritas atau rata-rata)\n\nUkuran impurity yang umum digunakan:\n• Gini Impurity — default di scikit-learn: Gini = 1 - Σpᵢ²\n• Entropy / Information Gain — dari teori informasi\n\nKeunggulan Decision Tree:\n• Sangat mudah divisualisasikan dan diinterpretasikan\n• Tidak butuh scaling fitur\n• Bisa menangani fitur numerik dan kategorikal\n• Menangkap hubungan non-linear secara alami\n\nKeterbatasan utama: sangat mudah overfit — pohon yang dalam bisa 'menghafal' setiap training sample. Solusinya: pruning (ccp_alpha) atau menggunakan ensemble seperti Random Forest.\n\nRandom Forest adalah kumpulan (ensemble) dari banyak Decision Tree yang dibuat dengan cara:\n1. Bootstrap sampling — setiap pohon dilatih pada subset acak data (sampling dengan pengembalian)\n2. Random feature subspace — di setiap split, hanya subset acak fitur yang dipertimbangkan\n3. Agregasi — prediksi final adalah voting mayoritas (klasifikasi) atau rata-rata (regresi)\n\nDua mekanisme ini (Bootstrap + Random Features) memastikan pohon-pohon saling tidak berkorelasi — sehingga error saling mengoreksi, bukan saling memperkuat. Hasilnya: Random Forest hampir selalu lebih baik dari satu Decision Tree."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Decision Tree dan Random Forest",
+          "bahasa": "python",
+          "kode": "from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.metrics import classification_report\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nX, y = load_iris(return_X_y=True)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# ==========================================\n# DECISION TREE\n# ==========================================\n# max_depth mencegah overfitting\ndt = DecisionTreeClassifier(max_depth=3, random_state=42)\ndt.fit(X_train, y_train)\n\nprint('=== Decision Tree ===')\nprint(export_text(dt, feature_names=load_iris().feature_names))\nprint(f'\\nTest Accuracy: {dt.score(X_test, y_test):.4f}')\nprint(f'Train Accuracy: {dt.score(X_train, y_train):.4f}')\n\n# Visualisasi pohon\nplt.figure(figsize=(12, 6))\nplot_tree(dt, filled=True, feature_names=load_iris().feature_names,\n          class_names=load_iris().target_names, rounded=True)\nplt.title('Decision Tree Visualization')\nplt.tight_layout()\nplt.savefig('decision_tree.png', dpi=100)\n\n# ==========================================\n# RANDOM FOREST\n# ==========================================\nrf = RandomForestClassifier(\n    n_estimators=100,   # jumlah pohon\n    max_depth=None,     # pohon tumbuh sampai murni\n    max_features='sqrt',# akar kuadrat jumlah fitur di setiap split\n    random_state=42,\n    n_jobs=-1\n)\nrf.fit(X_train, y_train)\n\nprint('\\n=== Random Forest ===')\nprint(f'Test Accuracy: {rf.score(X_test, y_test):.4f}')\n\n# Feature importance\nfitur = load_iris().feature_names\nimportances = rf.feature_importances_\nidx = np.argsort(importances)[::-1]\n\nprint('\\nFeature Importances:')\nfor i in idx:\n    print(f'  {fitur[i]:25s}: {importances[i]:.4f}')\n\n# CV Score\ncv = cross_val_score(rf, X, y, cv=5, scoring='accuracy')\nprint(f'\\nCV Accuracy: {cv.mean():.4f} ± {cv.std():.4f}')",
+          "penjelasan": "max_features='sqrt' adalah default untuk Random Forest Classifier — di setiap split, hanya √n_features yang dipertimbangkan. Ini mendiversifikasi pohon-pohon agar tidak berkorelasi. Untuk regressor, default-nya adalah max_features=1.0 (semua fitur)."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Random Forest: Banyak Pohon, Satu Keputusan",
+          "src": "/assets/ml/bab2/bab2_2.3.png",
+          "deskripsi_gambar": "Diagram ensemble learning yang menunjukkan data training masuk ke beberapa decision tree yang berbeda. Setiap pohon menghasilkan prediksi individual. Hasil dari semua pohon digabungkan melalui voting untuk menghasilkan prediksi final yang lebih stabil dan akurat.",
+          "alt": "Diagram Random Forest: banyak decision tree yang hasilnya digabung dengan voting"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Random Forest seperti Polling Pakar",
+          "isi": "Satu Decision Tree seperti mengandalkan satu pakar untuk membuat keputusan — bisa sangat pintar tapi juga bisa sangat bias dan salah. Random Forest seperti melakukan polling kepada 100 pakar yang berbeda latar belakang dan keahlian (karena masing-masing dilatih dengan data berbeda). Keputusan final adalah suara mayoritas — jauh lebih stabil dan akurat dari satu pakar manapun."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Random Forest Diciptakan oleh Leo Breiman",
+          "isi": "Random Forest diciptakan oleh Leo Breiman dan Adele Cutler pada 2001, dipublikasikan di jurnal Machine Learning. Hingga hari ini, Random Forest tetap menjadi salah satu algoritma ML paling banyak digunakan di dunia nyata — terutama untuk data tabular. Di survey Kaggle, Random Forest secara konsisten masuk top 5 algoritma yang paling sering digunakan oleh data scientist profesional, bertahan selama lebih dari dua dekade."
+        }
+      ]
+    },
+    {
+      "id": "2.4",
+      "judul": "Support Vector Machine (SVM)",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "SVM: Temukan Hyperplane Terbaik",
+          "isi": "Support Vector Machine (SVM) adalah algoritma yang mencari hyperplane (garis di 2D, bidang di 3D, atau hyperplane di dimensi lebih tinggi) yang memisahkan kelas-kelas dengan margin terlebar. Filosofi utamanya: memaksimalkan jarak antara hyperplane dan titik data terdekat dari masing-masing kelas — titik data terdekat ini disebut Support Vectors.\n\nMengapa memaksimalkan margin?\nMargin yang lebih besar berarti model lebih 'yakin' dalam membuat keputusan dan lebih mampu mengeneralisasi ke data baru yang belum pernah dilihat. Ini membuat SVM sangat tahan terhadap overfitting untuk data dimensi tinggi.\n\nKernel Trick — keajaiban SVM:\nData di dunia nyata sering tidak linearly separable — tidak ada garis lurus yang bisa memisahkan kelas-kelas. Kernel Trick memungkinkan SVM bekerja di ruang fitur dimensi lebih tinggi tanpa harus secara eksplisit menghitung transformasi tersebut. Cukup pilih fungsi kernel yang tepat:\n• Linear kernel — untuk data yang linearly separable\n• RBF (Radial Basis Function) / Gaussian kernel — paling populer, bisa menangani batas keputusan non-linear kompleks\n• Polynomial kernel — untuk data dengan hubungan polinomial\n\nHyperparameter utama:\n• C — trade-off antara margin besar (C kecil) dan klasifikasi benar semua training point (C besar). C kecil = regularisasi lebih kuat.\n• gamma (untuk RBF) — seberapa jauh pengaruh satu training point. Gamma kecil = pengaruh jauh (lebih smooth), gamma besar = pengaruh dekat (lebih complex).\n\nKeterbatasan SVM:\n• Lambat untuk dataset besar (O(n²) sampai O(n³))\n• Sensitif terhadap scaling fitur — wajib normalisasi\n• Pilihan kernel dan tuning C, gamma sangat mempengaruhi hasil"
+        },
+        {
+          "tipe": "kode",
+          "judul": "SVM untuk Klasifikasi",
+          "bahasa": "python",
+          "kode": "from sklearn.svm import SVC\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import classification_report\nfrom sklearn.pipeline import Pipeline\n\nX, y = load_breast_cancer(return_X_y=True)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# Pipeline: scaling + SVM (SCALING WAJIB untuk SVM!)\nsvm_pipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('svm',    SVC(kernel='rbf', probability=True, random_state=42))\n])\n\n# Grid search untuk tuning C dan gamma\nparam_grid = {\n    'svm__C':     [0.1, 1, 10, 100],\n    'svm__gamma': ['scale', 'auto', 0.001, 0.01]\n}\n\ngrid_search = GridSearchCV(\n    svm_pipeline,\n    param_grid,\n    cv=5,\n    scoring='f1',\n    n_jobs=-1,\n    verbose=0\n)\ngrid_search.fit(X_train, y_train)\n\nprint(f'Parameter terbaik: {grid_search.best_params_}')\nprint(f'CV F1 terbaik:      {grid_search.best_score_:.4f}')\n\n# Evaluasi model terbaik\nbest_model = grid_search.best_estimator_\ny_pred = best_model.predict(X_test)\ny_prob = best_model.predict_proba(X_test)[:, 1]\n\nprint(classification_report(y_test, y_pred))\n\nfrom sklearn.metrics import roc_auc_score\nprint(f'ROC-AUC: {roc_auc_score(y_test, y_prob):.4f}')\n\n# SVM untuk Regresi\nfrom sklearn.svm import SVR\nsvr = Pipeline([('sc', StandardScaler()), ('svr', SVR(kernel='rbf', C=100, gamma=0.1))])\n# svr.fit(X_train, y_train_reg)  # untuk masalah regresi",
+          "penjelasan": "probability=True di SVC mengaktifkan prediksi probabilitas menggunakan Platt scaling — membutuhkan sedikit waktu ekstra tapi memungkinkan predict_proba(). Tanpa ini, SVC hanya bisa memberikan prediksi kelas."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "SVM: Margin Maksimal dan Support Vectors",
+          "src": "/assets/ml/bab2/bab2_2.4.png",
+          "deskripsi_gambar": "Scatter plot dua kelas dengan garis pemisah utama di tengah. Dua garis sejajar di kedua sisi garis utama menandai batas margin. Titik-titik data yang berada tepat di batas margin ditandai sebagai support vectors. Panah menunjukkan lebar margin antara dua garis batas.",
+          "alt": "Diagram SVM menampilkan hyperplane, margin maksimal, dan support vectors"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: SVM seperti Menarik Garis Pembatas di Antara Dua Kelompok Orang",
+          "isi": "Bayangkan dua kelompok orang berdiri di lapangan: kelompok A memakai kaos merah, kelompok B memakai kaos biru. SVM seperti menarik garis pembatas (hyperplane) di tengah lapangan sedemikian rupa sehingga jarak dari garis ke orang terdekat dari kelompok A sama dengan jarak ke orang terdekat dari kelompok B — margin terlebar mungkin. Orang-orang terdekat ke garis ini disebut 'support vectors' — mereka adalah yang paling 'berisiko' salah kelompok. Jika ada orang yang berdiri di tengah-tengah (tidak bisa dipisahkan garis lurus), SVM dengan kernel RBF seperti memasang pagar melengkung yang bisa memisahkan kelompok dengan lebih fleksibel."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "SVM Pernah Menjadi State-of-the-Art untuk Pengenalan Tulisan Tangan",
+          "isi": "Sebelum era deep learning, SVM dengan kernel RBF adalah algoritma terbaik untuk pengenalan tulisan tangan (handwriting recognition). Di kompetisi MNIST tahun 1990-an dan awal 2000-an, SVM secara konsisten mengalahkan semua kompetitor. Kemampuan ini membuat SVM sangat populer di bidang computer vision hingga 2012, ketika AlexNet (deep CNN) menghancurkan semua baseline — termasuk SVM terbaik — dengan margin yang mengejutkan."
+        }
+      ]
+    },
+    {
+      "id": "2.5",
+      "judul": "K-Nearest Neighbors (KNN)",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "KNN: Algoritma 'Lazy Learning' yang Simpel tapi Powerful",
+          "isi": "K-Nearest Neighbors (KNN) adalah salah satu algoritma ML paling intuitif dan mudah dipahami. Prinsipnya sangat sederhana: untuk memprediksi kelas atau nilai suatu data baru, lihat K tetangga terdekatnya dalam training data dan ambil suara mayoritas (klasifikasi) atau rata-rata nilainya (regresi).\n\nTahapan KNN:\n1. Hitung jarak antara data baru dengan semua data training\n2. Ambil K data training dengan jarak terdekat\n3. Untuk klasifikasi: prediksi = kelas yang paling banyak muncul di antara K tetangga\n4. Untuk regresi: prediksi = rata-rata nilai K tetangga\n\nMetrik jarak yang umum digunakan:\n• Euclidean distance — jarak garis lurus (default, paling umum)\n• Manhattan distance — jumlah selisih absolut per dimensi\n• Minkowski distance — generalisasi Euclidean dan Manhattan\n• Cosine similarity — untuk data teks/vektor\n\nMemilih nilai K:\n• K terlalu kecil (K=1) — model sangat sensitif terhadap noise, cenderung overfit\n• K terlalu besar — model terlalu smooth, cenderung underfit\n• K ganjil — hindari tie (seri) di klasifikasi biner\n• Aturan praktis: K = √n (n = jumlah training samples) sebagai titik mulai\n• Selalu validasi dengan cross-validation!\n\nKNN disebut 'lazy learning' karena tidak ada proses training yang sesungguhnya — model hanya menyimpan seluruh training data. Konsekuensinya: training sangat cepat (O(1)) tapi prediksi sangat lambat untuk dataset besar (O(n×d) per prediksi). Wajib normalisasi fitur karena KNN sangat sensitif terhadap perbedaan skala."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "KNN Decision Boundary dengan Nilai K Berbeda",
+          "src": "/assets/ml/bab2/bab2_2.5.png",
+          "deskripsi_gambar": "Empat grafik yang menampilkan decision boundary algoritma K-Nearest Neighbors (KNN) dengan nilai K berbeda: K=1, K=3, K=5, dan K=10. Semakin kecil nilai K, boundary semakin kompleks dan sensitif terhadap noise (overfitting). Semakin besar nilai K, boundary menjadi lebih halus dan sederhana, tetapi berisiko kehilangan detail penting (underfitting).",
+          "alt": "Perbandingan decision boundary KNN dengan K=1, K=5, dan K=25"
+        },
+        {
+          "tipe": "kode",
+          "judul": "KNN: Klasifikasi dan Pengaruh Nilai K",
+          "bahasa": "python",
+          "kode": "from sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nX, y = load_iris(return_X_y=True)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# KNN dengan pipeline scaling\nknn_pipeline = Pipeline([\n    ('scaler', StandardScaler()),  # WAJIB untuk KNN!\n    ('knn',    KNeighborsClassifier(n_neighbors=5, metric='euclidean'))\n])\nknn_pipeline.fit(X_train, y_train)\nprint(f'K=5 Test Accuracy: {knn_pipeline.score(X_test, y_test):.4f}')\n\n# Eksplorasi pengaruh nilai K\nk_values = range(1, 31)\ntrain_scores = []\nval_scores   = []\n\nfor k in k_values:\n    pipe = Pipeline([\n        ('sc',  StandardScaler()),\n        ('knn', KNeighborsClassifier(n_neighbors=k))\n    ])\n    cv_score = cross_val_score(pipe, X_train, y_train, cv=5).mean()\n    pipe.fit(X_train, y_train)\n    train_scores.append(pipe.score(X_train, y_train))\n    val_scores.append(cv_score)\n\n# Plot\nplt.figure(figsize=(10, 4))\nplt.plot(k_values, train_scores, label='Train Accuracy', marker='o')\nplt.plot(k_values, val_scores,   label='CV Accuracy',    marker='s')\nplt.xlabel('Nilai K')\nplt.ylabel('Accuracy')\nplt.title('Pengaruh K terhadap Performa KNN')\nplt.legend()\nplt.xticks(k_values)\nplt.grid(True)\nplt.tight_layout()\nplt.savefig('knn_k_values.png', dpi=100)\n\nbest_k = k_values[np.argmax(val_scores)]\nprint(f'\\nK terbaik berdasarkan CV: {best_k}')\nprint(f'CV Accuracy terbaik: {max(val_scores):.4f}')",
+          "penjelasan": "Grafik train vs CV accuracy terhadap K adalah cara visual terbaik untuk memilih K optimal. Di K kecil, train accuracy tinggi tapi CV accuracy rendah (overfit). Seiring K naik, keduanya konvergen — pilih K di mana CV accuracy maksimal."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: KNN seperti Bertanya ke Tetangga",
+          "isi": "KNN seperti memilih restoran baru di kota asing. Kamu tidak punya informasi apapun, jadi kamu bertanya ke 5 orang terdekat yang kelihatannya lokal (K=5 nearest neighbors). Jika 4 dari 5 orang merekomendasikan restoran A, kamu pilih A. Semakin banyak orang yang kamu tanya (K besar), semakin smooth rekomendasinya — tapi kamu mungkin juga bertanya ke turis yang tidak tahu apa-apa (noise)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "KNN Digunakan di Sistem Rekomendasi",
+          "isi": "Salah satu aplikasi KNN yang tidak terduga: collaborative filtering di sistem rekomendasi. Netflix, Spotify, dan Amazon menggunakan varian KNN untuk mencari pengguna yang 'paling mirip' dengan kamu — lalu merekomendasikan item yang disukai pengguna-pengguna tersebut. 'Pengguna yang juga menonton/mendengarkan ini' adalah KNN dalam aksi. Untuk dataset besar, digunakan teknik Approximate Nearest Neighbor (FAISS, Annoy) yang jauh lebih cepat."
+        }
+      ]
+    },
+    {
+      "id": "2.6",
+      "judul": "Naive Bayes Classifier",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Naive Bayes: Sederhana tapi Mengejutkan",
+          "isi": "Naive Bayes adalah classifier berbasis probabilitas yang menggunakan Teorema Bayes dengan asumsi 'naif' (naive) bahwa semua fitur saling independen satu sama lain — asumsi yang hampir selalu salah di dunia nyata, tapi membuat model sangat cepat dan sering mengejutkan efektif.\n\nTeorema Bayes:\nP(kelas | fitur) = P(fitur | kelas) × P(kelas) / P(fitur)\n\nDimana:\n• P(kelas | fitur) = posterior — probabilitas kelas setelah melihat fitur (yang ingin dihitung)\n• P(fitur | kelas) = likelihood — probabilitas fitur tersebut muncul jika kelas benar\n• P(kelas) = prior — probabilitas kelas sebelum melihat fitur (dari data training)\n• P(fitur) = evidence — konstan, bisa diabaikan saat membandingkan kelas\n\nVarian Naive Bayes:\n• GaussianNB — untuk fitur numerik kontinu, mengasumsikan distribusi Gaussian\n• MultinomialNB — untuk data teks (hitungan kata), cocok untuk klasifikasi dokumen\n• BernoulliNB — untuk fitur biner (ada/tidak ada)\n• ComplementNB — varian MultinomialNB yang lebih baik untuk dataset tidak seimbang\n\nKeunggulan:\n• Sangat cepat untuk training dan prediksi — O(n×d)\n• Bekerja sangat baik untuk klasifikasi teks\n• Tidak butuh banyak data untuk estimasi parameter\n• Robust terhadap fitur yang tidak relevan\n\nKeterbatasan:\n• Asumsi independensi sering dilanggar\n• Estimasi probabilitas bisa tidak akurat\n• Tidak bisa menangkap interaksi antar fitur"
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Teorema Bayes: Conditional Probability",
+          "src": "/assets/ml/bab2/bab2_2.6.png",
+          "deskripsi_gambar": "Diagram Venn dengan dua lingkaran yang beririsan. Lingkaran kiri merepresentasikan kelas A, lingkaran kanan merepresentasikan fitur X. Irisan di tengah menunjukkan probabilitas posterior. Label menunjukkan prior, likelihood, dan evidence dalam teorema Bayes.",
+          "alt": "Diagram Venn Teorema Bayes menampilkan prior, likelihood, posterior, dan evidence"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Naive Bayes untuk Klasifikasi Teks",
+          "bahasa": "python",
+          "kode": "from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB\nfrom sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import classification_report\nimport numpy as np\n\n# ==========================================\n# KLASIFIKASI TEKS: Deteksi Spam\n# ==========================================\nteks = [\n    'Selamat! Anda memenangkan hadiah uang tunai 100 juta segera klaim',\n    'Pertemuan proyek besok jam 10 pagi di ruang rapat 3',\n    'GRATIS! Dapatkan pinjaman cepat tanpa jaminan hubungi sekarang',\n    'Laporan keuangan kuartal terlampir untuk tinjauan tim',\n    'Menangkan iPhone terbaru GRATIS klik link ini sekarang juga',\n    'Jadwal presentasi project minggu depan telah diupdate',\n    'Investasi terbaik untung 500% dalam 7 hari bergabunglah sekarang',\n    'Rapat evaluasi semester ini dijadwalkan Jumat pukul 14.00'\n]\nlabel = [1, 0, 1, 0, 1, 0, 1, 0]  # 1=spam, 0=bukan spam\n\n# Pipeline: TF-IDF + MultinomialNB\npipeline_spam = Pipeline([\n    ('tfidf', TfidfVectorizer(\n        ngram_range=(1, 2),  # unigram dan bigram\n        min_df=1,\n        sublinear_tf=True\n    )),\n    ('nb',    MultinomialNB(alpha=1.0))  # alpha=1.0 adalah Laplace smoothing\n])\n\n# Training (seluruh data karena contoh kecil)\npipeline_spam.fit(teks, label)\n\n# Prediksi email baru\nemail_baru = [\n    'Klaim hadiah gratis sebelum kedaluwarsa',\n    'Mohon konfirmasi kehadiran rapat besok'\n]\npred      = pipeline_spam.predict(email_baru)\nprob      = pipeline_spam.predict_proba(email_baru)\n\nfor e, p, pr in zip(email_baru, pred, prob):\n    status = 'SPAM' if p == 1 else 'Normal'\n    print(f'{status} ({pr[1]:.0%} prob spam): \"{e}\"')\n\n# ==========================================\n# GaussianNB untuk data numerik\n# ==========================================\nfrom sklearn.datasets import load_iris\nX, y = load_iris(return_X_y=True)\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)\n\ngnb = GaussianNB()\ngnb.fit(X_tr, y_tr)\nprint(f'\\nGaussianNB Iris Accuracy: {gnb.score(X_te, y_te):.4f}')",
+          "penjelasan": "Laplace smoothing (alpha=1.0) mencegah probabilitas nol ketika sebuah kata tidak muncul di training data untuk kelas tertentu. Tanpa ini, satu kata yang tidak pernah muncul di spam training bisa membuat probabilitas spam seluruh email menjadi nol."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Naive Bayes seperti Dokter yang Mendiagnosis",
+          "isi": "Dokter yang menggunakan pendekatan Naive Bayes memeriksa setiap gejala secara independen: demam (+30% kemungkinan flu), batuk (+25%), pilek (+20%). Meski kenyataannya gejala-gejala ini berkorelasi erat, dokter menggabungkan probabilitasnya secara 'naif' untuk mendapat diagnosis. Hasilnya sering cukup tepat meski asumsinya salah."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Gmail Pernah Menggunakan Naive Bayes untuk Spam Filter",
+          "isi": "Spam filter email Paul Graham yang sangat berpengaruh pada 2002 menggunakan Naive Bayes — dan mengklaim akurasi 99.5% dalam memfilter spam. Algoritma ini sangat efektif untuk teks karena kata-kata dalam email spam memiliki distribusi yang sangat berbeda dari email normal. Gmail menggunakan varian Naive Bayes sebagai salah satu komponen dalam sistem deteksi spam-nya selama bertahun-tahun, sebelum beralih ke model yang lebih canggih."
+        }
+      ]
+    },
+    {
+      "id": "2.7",
+      "judul": "Gradient Boosting: XGBoost & LightGBM",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Gradient Boosting: Raja Data Tabular",
+          "isi": "Gradient Boosting adalah metode ensemble yang membangun model secara sekuensial — setiap model baru berfokus memperbaiki kesalahan model sebelumnya. Berbeda dengan Random Forest yang membangun pohon secara paralel dan independen, Gradient Boosting membangun pohon secara berurutan dimana setiap pohon belajar dari residual pohon sebelumnya.\n\nAlur kerja Gradient Boosting:\n1. Mulai dengan prediksi awal yang sederhana (rata-rata target)\n2. Hitung residual (selisih prediksi vs nilai asli)\n3. Latih pohon baru untuk memprediksi residual tersebut\n4. Tambahkan pohon baru ke model dengan learning rate sebagai bobot\n5. Update prediksi: pred_baru = pred_lama + learning_rate × pred_pohon_baru\n6. Ulangi langkah 2-5 sebanyak n_estimators kali\n\nXGBoost (eXtreme Gradient Boosting) adalah implementasi gradient boosting yang sangat dioptimasi oleh Tianqi Chen (2014):\n• Regulasi L1 dan L2 built-in untuk mencegah overfitting\n• Penanganan missing values otomatis\n• Parallel processing untuk training yang lebih cepat\n• Pruning berbasis 'gain' yang lebih efisien\n\nLightGBM (Light Gradient Boosting Machine) oleh Microsoft, bahkan lebih cepat dari XGBoost:\n• Histogram-based algorithm — membagi data menjadi bin terlebih dahulu\n• Leaf-wise tree growth (vs level-wise di XGBoost) — lebih akurat tapi butuh pengaturan max_depth\n• Lebih cepat dan hemat memori untuk dataset besar\n• Native support untuk categorical features\n\nKeduanya secara konsisten menjuarai kompetisi Kaggle untuk data tabular dan menjadi pilihan utama industri untuk production ML."
+        },
+        {
+          "tipe": "kode",
+          "judul": "XGBoost dan LightGBM",
+          "bahasa": "python",
+          "kode": "# pip install xgboost lightgbm\nimport xgboost as xgb\nimport lightgbm as lgb\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.metrics import classification_report, roc_auc_score\nimport numpy as np\n\nX, y = load_breast_cancer(return_X_y=True)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# ==========================================\n# XGBOOST\n# ==========================================\nxgb_model = xgb.XGBClassifier(\n    n_estimators=200,\n    max_depth=4,\n    learning_rate=0.1,   # shrinkage: kontribusi setiap pohon\n    subsample=0.8,       # 80% sampel per pohon (stochastic GB)\n    colsample_bytree=0.8, # 80% fitur per pohon\n    reg_alpha=0.1,       # L1 regularization\n    reg_lambda=1.0,      # L2 regularization\n    use_label_encoder=False,\n    eval_metric='logloss',\n    random_state=42\n)\nxgb_model.fit(\n    X_train, y_train,\n    eval_set=[(X_test, y_test)],\n    verbose=False\n)\n\nprint('=== XGBoost ===')\ny_pred = xgb_model.predict(X_test)\ny_prob = xgb_model.predict_proba(X_test)[:, 1]\nprint(f'ROC-AUC: {roc_auc_score(y_test, y_prob):.4f}')\nprint(classification_report(y_test, y_pred))\n\n# ==========================================\n# LIGHTGBM\n# ==========================================\nlgb_model = lgb.LGBMClassifier(\n    n_estimators=200,\n    max_depth=5,\n    learning_rate=0.05,\n    num_leaves=31,       # kontrol kompleksitas model\n    subsample=0.8,\n    colsample_bytree=0.8,\n    reg_alpha=0.1,\n    reg_lambda=0.1,\n    random_state=42,\n    verbose=-1\n)\nlgb_model.fit(X_train, y_train)\n\nprint('\\n=== LightGBM ===')\ny_pred_lgb = lgb_model.predict(X_test)\ny_prob_lgb = lgb_model.predict_proba(X_test)[:, 1]\nprint(f'ROC-AUC: {roc_auc_score(y_test, y_prob_lgb):.4f}')\n\n# Perbandingan cepat\nmodels_gb = {'XGBoost': xgb_model, 'LightGBM': lgb_model}\nprint('\\n=== Perbandingan CV Score ===')\nfor nama, mdl in models_gb.items():\n    cv = cross_val_score(mdl, X_train, y_train, cv=5, scoring='roc_auc')\n    print(f'{nama}: {cv.mean():.4f} ± {cv.std():.4f}')",
+          "penjelasan": "learning_rate dan n_estimators berkebalikan: learning_rate kecil butuh n_estimators lebih banyak. Pola umum yang bagus: mulai dengan n_estimators=1000, learning_rate=0.01, lalu gunakan early stopping untuk menemukan n_estimators optimal."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Boosting: Setiap Pohon Memperbaiki Error Sebelumnya",
+          "src": "/assets/ml/bab2/bab2_2.7.png",
+          "deskripsi_gambar": "Diagram sekuensial yang menunjukkan cara kerja gradient boosting. Model pertama membuat prediksi dengan beberapa error. Model berikutnya fokus memperbaiki error residual dari model sebelumnya. Proses ini diulang dan hasil akhir adalah gabungan semua model dengan bobot learning rate.",
+          "alt": "Diagram cara kerja gradient boosting: model sekuensial yang masing-masing memperbaiki error sebelumnya"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Gradient Boosting seperti Tim yang Saling Koreksi",
+          "isi": "Bayangkan tim arsitek yang merancang bangunan. Arsitek 1 membuat desain awal — tapi ada banyak kesalahan (dinding tidak seimbang, atap bocor). Arsitek 2 tidak memulai dari nol, tapi fokus memperbaiki kesalahan arsitek 1. Arsitek 3 memperbaiki kesalahan yang masih tersisa setelah arsitek 2. Setiap arsitek baru menambahkan perbaikan kecil, bukan desain ulang. Hasil akhir adalah gabungan semua perbaikan — jauh lebih baik dari satu arsitek manapun. Learning rate adalah seberapa besar kontribusi setiap arsitek: 0.1 berarti setiap arsitek hanya berkontribusi 10% dari perbaikannya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "XGBoost Memenangkan Lebih dari 50% Kompetisi Kaggle",
+          "isi": "Antara 2015 dan 2017, XGBoost digunakan dalam lebih dari separuh solusi pemenang di kompetisi Kaggle untuk data tabular. Hal ini mendorong Kaggle sendiri untuk mengadakan sesi khusus 'XGBoost tricks' di kompetisi. Hingga hari ini, XGBoost dan LightGBM masih mendominasi leaderboard untuk tabular data — meski CatBoost dari Yandex dan HistGradientBoosting dari scikit-learn menjadi pesaing yang semakin kuat."
+        }
+      ]
+    },
+    {
+      "id": "2.8",
+      "judul": "Neural Network Dasar (MLP)",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Multi-Layer Perceptron: Jembatan ke Deep Learning",
+          "isi": "Multi-Layer Perceptron (MLP) adalah bentuk neural network yang paling dasar — jaringan berlapis yang menghubungkan input ke output melalui satu atau lebih hidden layer. Memahami MLP adalah fondasi sebelum mempelajari arsitektur deep learning yang lebih kompleks di Bab 4.\n\nKomponen utama MLP:\n• Input Layer — menerima fitur input, jumlah neuron = jumlah fitur\n• Hidden Layer(s) — lapisan tersembunyi dimana representasi kompleks dipelajari\n• Output Layer — menghasilkan prediksi, jumlah neuron tergantung task (1 untuk regresi/binary, n untuk multi-class)\n• Weights (bobot) — parameter yang dipelajari, menghubungkan antar neuron\n• Biases — parameter tambahan per neuron\n• Activation Function — fungsi non-linear yang diterapkan pada output setiap neuron\n\nAktivasi yang umum di hidden layer:\n• ReLU (Rectified Linear Unit): f(x) = max(0, x) — paling populer, cepat, mencegah vanishing gradient\n• Sigmoid: f(x) = 1/(1+e^(-x)) — output 0-1, tapi rentan vanishing gradient\n• Tanh: f(x) = (e^x - e^(-x))/(e^x + e^(-x)) — output -1 sampai 1\n\nProses pembelajaran:\n1. Forward pass — hitung prediksi dari input ke output\n2. Hitung loss — selisih prediksi vs nilai asli\n3. Backward pass (Backpropagation) — hitung gradient loss terhadap setiap bobot\n4. Update bobot — kurangi bobot sebesar gradient × learning rate (Gradient Descent)\n5. Ulangi hingga konvergen"
+        },
+        {
+          "tipe": "kode",
+          "judul": "MLP dengan scikit-learn",
+          "bahasa": "python",
+          "kode": "from sklearn.neural_network import MLPClassifier\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import classification_report\nimport matplotlib.pyplot as plt\n\nX, y = load_breast_cancer(return_X_y=True)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# MLP dengan satu hidden layer (100 neuron)\nmlp = Pipeline([\n    ('scaler', StandardScaler()),  # WAJIB scaling untuk MLP!\n    ('mlp',    MLPClassifier(\n        hidden_layer_sizes=(128, 64),  # 2 hidden layers: 128 dan 64 neuron\n        activation='relu',\n        solver='adam',              # optimizer modern\n        learning_rate_init=0.001,\n        max_iter=500,\n        early_stopping=True,        # hentikan jika validation score tidak membaik\n        validation_fraction=0.1,\n        n_iter_no_change=20,\n        random_state=42\n    ))\n])\n\nmlp.fit(X_train, y_train)\n\nprint('=== MLP Classifier ===')\nprint(classification_report(y_test, mlp.predict(X_test)))\n\n# Plot learning curve\nmodel_mlp = mlp.named_steps['mlp']\nplt.figure(figsize=(10, 4))\nplt.plot(model_mlp.loss_curve_, label='Training Loss')\nif model_mlp.validation_scores_:\n    # validation_scores_ diisi saat early_stopping=True\n    val_loss = [1 - s for s in model_mlp.validation_scores_]\n    plt.plot(val_loss, label='Validation Loss')\nplt.xlabel('Epoch')\nplt.ylabel('Loss')\nplt.title('MLP Training & Validation Loss')\nplt.legend()\nplt.grid(True)\nplt.tight_layout()\nplt.savefig('mlp_loss_curve.png', dpi=100)\nprint(f'\\nIterasi training: {model_mlp.n_iter_}')",
+          "penjelasan": "Untuk dataset besar atau arsitektur yang lebih kompleks, gunakan PyTorch atau TensorFlow/Keras yang jauh lebih fleksibel dan performant. MLPClassifier scikit-learn bagus untuk prototyping cepat dan dataset berukuran sedang."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Arsitektur Multi-Layer Perceptron",
+          "src": "/assets/ml/bab2/bab2_2.8.png",
+          "deskripsi_gambar": "Diagram neural network dengan beberapa layer. Layer input menerima fitur. Layer hidden memproses representasi. Layer output menghasilkan prediksi. Garis menghubungkan semua neuron antar layer dengan bobot yang dipelajari selama training.",
+          "alt": "Diagram arsitektur Multi-Layer Perceptron dengan input, hidden, dan output layer"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Neural Network seperti Jaringan Saraf Manusia",
+          "isi": "Neural Network seperti jaringan saraf di otak manusia. Setiap neuron (node) menerima sinyal dari banyak neuron lain (input), memprosesnya (activation function), lalu mengirim sinyal ke neuron berikutnya (output). Hidden layer adalah seperti area otak yang tidak langsung terhubung ke indra atau otot — mereka memproses representasi abstrak dari informasi. Seperti bayi yang belajar mengenal wajah: awalnya melihat piksel mentah (input layer), lalu otaknya belajar mendeteksi garis, bentuk, tekstur (hidden layers), hingga akhirnya bisa mengenali 'ini wajah ibu' (output layer)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Universal Approximation Theorem",
+          "isi": "Ada teorema matematika yang sangat kuat dalam ML: Universal Approximation Theorem (Cybenko, 1989) — menyatakan bahwa MLP dengan SATU hidden layer yang cukup besar bisa mengaproksimasi sembarang fungsi kontinu dengan akurasi sembarang. Artinya, secara teoritis, satu hidden layer sudah cukup untuk menyelesaikan masalah ML apapun. Tapi 'cukup besar' dalam praktiknya bisa berarti jutaan neuron — inilah mengapa deep learning (banyak hidden layer yang lebih kecil) jauh lebih efisien."
+        }
+      ]
+    },
+    {
+      "id": "2.9",
+      "judul": "Confusion Matrix & ROC-AUC",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Evaluasi Mendalam untuk Klasifikasi",
+          "isi": "Di Bab 1 kita sudah mengenal Confusion Matrix dan metrik dasar. Di sub-bab ini kita mendalami dua alat evaluasi yang lebih canggih: ROC Curve dan AUC.\n\nROC Curve (Receiver Operating Characteristic):\nROC Curve adalah grafik yang menampilkan trade-off antara True Positive Rate (TPR/Recall) dan False Positive Rate (FPR) pada berbagai threshold klasifikasi. Dengan menggeser threshold dari 0 ke 1, kita bisa melihat bagaimana model berperilaku:\n• Threshold rendah (mendekati 0) → hampir semua diprediksi positif → TPR tinggi, FPR juga tinggi\n• Threshold tinggi (mendekati 1) → hampir semua diprediksi negatif → TPR rendah, FPR juga rendah\n\nAUC (Area Under the Curve) adalah luas area di bawah ROC Curve:\n• AUC = 1.0 → klasifier sempurna\n• AUC = 0.5 → setara prediksi acak (diagonal)\n• AUC < 0.5 → lebih buruk dari acak (pertanda ada yang salah)\n• AUC = 0.7-0.8 → cukup baik\n• AUC > 0.9 → sangat baik\n\nKeunggulan ROC-AUC: tidak terpengaruh class imbalance dan tidak bergantung pada threshold. Ini membuat AUC sangat berguna untuk membandingkan model secara keseluruhan.\n\nPrecision-Recall Curve:\nAlternatif ROC Curve yang lebih informatif untuk dataset yang sangat tidak seimbang (imbalanced). Menampilkan trade-off antara Precision dan Recall. Average Precision (AP) atau Area under PR Curve lebih informatif dari AUC untuk kasus imbalanced."
+        },
+        {
+          "tipe": "kode",
+          "judul": "ROC Curve, AUC, dan Perbandingan Multi-Model",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import (\n    roc_curve, roc_auc_score,\n    precision_recall_curve, average_precision_score,\n    ConfusionMatrixDisplay\n)\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.svm import SVC\n\nX, y = load_breast_cancer(return_X_y=True)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# Definisi beberapa model untuk dibandingkan\nmodels = {\n    'Logistic Reg': Pipeline([('sc', StandardScaler()), ('m', LogisticRegression(max_iter=1000))]),\n    'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),\n    'Gradient Boost': GradientBoostingClassifier(n_estimators=100, random_state=42),\n    'SVM':            Pipeline([('sc', StandardScaler()), ('m', SVC(probability=True))])\n}\n\n# Plot ROC Curve semua model dalam satu grafik\nfig, axes = plt.subplots(1, 2, figsize=(14, 5))\n\nfor nama, model in models.items():\n    model.fit(X_train, y_train)\n    y_prob = model.predict_proba(X_test)[:, 1]\n\n    # ROC Curve\n    fpr, tpr, _ = roc_curve(y_test, y_prob)\n    auc = roc_auc_score(y_test, y_prob)\n    axes[0].plot(fpr, tpr, label=f'{nama} (AUC={auc:.3f})')\n\n    # Precision-Recall Curve\n    prec, rec, _ = precision_recall_curve(y_test, y_prob)\n    ap = average_precision_score(y_test, y_prob)\n    axes[1].plot(rec, prec, label=f'{nama} (AP={ap:.3f})')\n\n# Garis baseline (random classifier)\naxes[0].plot([0, 1], [0, 1], 'k--', label='Random (AUC=0.5)')\naxes[0].set(xlabel='False Positive Rate', ylabel='True Positive Rate',\n            title='ROC Curve')\naxes[0].legend()\naxes[0].grid(True)\n\naxes[1].set(xlabel='Recall', ylabel='Precision', title='Precision-Recall Curve')\naxes[1].legend()\naxes[1].grid(True)\n\nplt.tight_layout()\nplt.savefig('roc_pr_curves.png', dpi=100)\nprint('Grafik ROC dan PR Curve tersimpan!')",
+          "penjelasan": "Selalu plot ROC curve semua model dalam satu grafik untuk perbandingan visual yang mudah. Model dengan kurva yang lebih dekat ke pojok kiri atas (TPR=1, FPR=0) adalah yang terbaik."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "ROC Curve: Trade-off TPR dan FPR",
+          "src": "/assets/ml/bab2/bab2_2.9.png",
+          "deskripsi_gambar": "Grafik ROC curve dengan sumbu horizontal false positive rate dan sumbu vertikal true positive rate. Beberapa kurva model ditampilkan untuk perbandingan. Garis diagonal menunjukkan baseline prediksi acak. Area di bawah kurva menunjukkan nilai AUC untuk evaluasi model.",
+          "alt": "ROC Curve menampilkan trade-off TPR vs FPR untuk beberapa model dengan nilai AUC"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: ROC Curve seperti Tuning Radio",
+          "isi": "ROC Curve seperti men-tuning radio analog untuk mencari stasiun favorit. Threshold rendah (mendekati 0) seperti memutar knob ke kiri — kamu menangkap banyak sinyal, termasuk noise (False Positive tinggi, tapi True Positive juga tinggi). Threshold tinggi (mendekati 1) seperti memutar knob ke kanan — hanya sinyal yang sangat kuat yang tertangkap (False Positive rendah, tapi banyak sinyal yang sebenarnya bagus terlewatkan). ROC Curve menunjukkan trade-off ini: seberapa banyak stasiun bagus yang kamu dapatkan vs seberapa banyak noise yang ikut masuk pada setiap posisi knob. AUC adalah seberapa baik radio itu secara keseluruhan — radio berkualitas tinggi punya AUC mendekati 1.0."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "ROC Curve Berasal dari Perang Dunia II",
+          "isi": "ROC Curve pertama kali dikembangkan oleh insinyur sinyal radar selama Perang Dunia II untuk menganalisis kemampuan operator radar membedakan sinyal pesawat musuh dari noise (False Positive vs True Positive). 'Receiver Operating Characteristic' adalah istilah teknis dari analisis radar. Barulah di tahun 1970-an konsep ini diadopsi oleh bidang kedokteran untuk mengevaluasi tes diagnostik, dan kemudian oleh ML."
+        }
+      ]
+    },
+    {
+      "id": "2.10",
+      "judul": "Feature Selection & Importance",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Feature Selection Penting?",
+          "isi": "Tidak semua fitur sama bermanfaatnya. Fitur yang tidak relevan atau redundan dapat:\n• Menambah waktu training dan prediksi\n• Meningkatkan risiko overfitting\n• Menyulitkan interpretasi model\n• Menurunkan performa pada beberapa algoritma (terutama KNN dan linear model)\n\nAda tiga pendekatan utama Feature Selection:\n\n1. Filter Methods — evaluasi fitur secara independen dari model:\n• Correlation coefficient — korelasi fitur dengan target\n• Chi-squared test — untuk fitur kategorikal\n• ANOVA F-test — perbedaan mean fitur antar kelas\n• Mutual Information — dependensi statistik non-linear\n• Keunggulan: cepat, tidak bergantung model. Keterbatasan: tidak menangkap interaksi antar fitur.\n\n2. Wrapper Methods — gunakan model untuk evaluasi subset fitur:\n• Recursive Feature Elimination (RFE) — secara rekursif hapus fitur paling tidak penting\n• Forward Selection — mulai dari kosong, tambah fitur satu per satu\n• Backward Elimination — mulai dari semua fitur, hapus satu per satu\n• Keunggulan: mempertimbangkan interaksi fitur. Keterbatasan: sangat lambat untuk banyak fitur.\n\n3. Embedded Methods — feature selection sebagai bagian dari training model:\n• L1 (Lasso) Regularization — bobot fitur tidak penting menjadi nol\n• Tree-based Feature Importance — Random Forest, XGBoost memberikan importance score\n• Permutation Importance — ukur penurunan performa saat fitur diacak\n• Keunggulan: efisien dan spesifik untuk model. Keterbatasan: hanya berlaku untuk model tertentu."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Tiga Pendekatan Feature Selection",
+          "src": "/assets/ml/bab2/bab2_2.10.png",
+          "deskripsi_gambar": "Diagram tiga kolom yang menampilkan metode feature selection. Kolom kiri menunjukkan filter method dengan statistical test. Kolom tengah menunjukkan wrapper method dengan iterasi subset fitur dan evaluasi model. Kolom kanan menunjukkan embedded method dengan regularisasi built-in dalam model.",
+          "alt": "Diagram perbandingan tiga metode feature selection: filter, wrapper, dan embedded"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Feature Selection dan Importance",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.inspection import permutation_importance\nfrom sklearn.feature_selection import (\n    SelectKBest, f_classif, mutual_info_classif,\n    RFE, SelectFromModel\n)\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.model_selection import train_test_split\n\nbunch = load_breast_cancer()\nX, y = bunch.data, bunch.target\nfitur = bunch.feature_names\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# ==========================================\n# 1. FILTER METHOD: ANOVA F-test + MI\n# ==========================================\nselector_f  = SelectKBest(f_classif, k=10)\nselector_mi = SelectKBest(mutual_info_classif, k=10)\n\nselector_f.fit(X_train, y_train)\nfitur_terpilih_f = fitur[selector_f.get_support()]\nprint('Top 10 Fitur (ANOVA F-test):')\nfor f, s in sorted(zip(fitur_terpilih_f, selector_f.scores_[selector_f.get_support()]),\n                   key=lambda x: -x[1]):\n    print(f'  {f:40s}: {s:.2f}')\n\n# ==========================================\n# 2. EMBEDDED: Random Forest Importance\n# ==========================================\nrf = RandomForestClassifier(n_estimators=100, random_state=42)\nrf.fit(X_train, y_train)\n\n# Plot feature importance\nimportances = pd.Series(rf.feature_importances_, index=fitur).sort_values(ascending=False)\n\nplt.figure(figsize=(10, 6))\nimportances[:10].plot(kind='bar', color='steelblue', edgecolor='white')\nplt.title('Top 10 Feature Importances (Random Forest)')\nplt.ylabel('Importance Score')\nplt.xticks(rotation=45, ha='right')\nplt.tight_layout()\nplt.savefig('feature_importance.png', dpi=100)\n\n# ==========================================\n# 3. PERMUTATION IMPORTANCE — lebih reliable\n# ==========================================\nresult = permutation_importance(\n    rf, X_test, y_test, n_repeats=30, random_state=42, n_jobs=-1\n)\n\nperm_imp = pd.Series(result.importances_mean, index=fitur).sort_values(ascending=False)\nprint('\\nTop 10 Fitur (Permutation Importance):')\nfor nama, score in perm_imp[:10].items():\n    print(f'  {nama:40s}: {score:.4f}')\n\n# ==========================================\n# 4. RFE dengan Logistic Regression\n# ==========================================\nrfe = RFE(\n    estimator=LogisticRegression(max_iter=1000),\n    n_features_to_select=10\n)\nrfe_pipeline = Pipeline([('sc', StandardScaler()), ('rfe', rfe)])\nrfe_pipeline.fit(X_train, y_train)\n\nfitur_rfe = fitur[rfe_pipeline.named_steps['rfe'].support_]\nprint(f'\\nFitur terpilih RFE: {list(fitur_rfe)}')",
+          "penjelasan": "Permutation Importance lebih reliable dari tree-based feature importance karena mengukur dampak nyata terhadap performa model. Tree importance cenderung melebih-lebihkan fitur dengan banyak nilai unik (high cardinality)."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Feature Selection seperti Memilih Bahan Resep",
+          "isi": "Bayangkan resep sup yang menggunakan 50 bahan. Filter method seperti mencicipi setiap bahan satu per satu untuk melihat mana yang paling berasa di sup (korelasi dengan target). Wrapper method seperti memasak sup berkali-kali dengan kombinasi bahan berbeda sampai menemukan yang terenak. Embedded method seperti menambahkan semua bahan lalu membiarkan proses memasak secara alami 'menguapkan' bahan yang tidak berkontribusi (regularisasi Lasso)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Curse of Dimensionality",
+          "isi": "Semakin banyak fitur, semakin banyak data yang dibutuhkan untuk melatih model yang baik — secara eksponensial. Fenomena ini disebut 'Curse of Dimensionality' oleh Richard Bellman (1957). Di ruang 100 dimensi, bahkan satu juta titik data bisa sangat jarang (sparse) sehingga model tidak bisa belajar pola yang bermakna. Feature selection dan dimensionality reduction (PCA, t-SNE — akan dibahas di Bab 3) adalah dua cara utama melawan kutukan ini."
+        }
+      ]
+    }
+  ]
+}

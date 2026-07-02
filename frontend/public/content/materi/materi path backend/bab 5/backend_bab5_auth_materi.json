@@ -1,0 +1,338 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 5,
+    "judul_bab": "Autentikasi & Keamanan",
+    "deskripsi": "Materi lengkap autentikasi dan keamanan backend — dari konsep autentikasi vs otorisasi, password hashing dengan bcrypt, JWT (JSON Web Token), implementasi login & register, middleware autentikasi, refresh token, validasi input, keamanan API, ancaman umum, hingga manajemen environment variables dan secrets.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "FullStackOpen – Part 4 (User Authentication & JWT)",
+        "url": "https://fullstackopen.com/en/part4/token_authentication",
+        "lisensi": "CC-BY-NC-SA 3.0"
+      },
+      {
+        "nama": "MDN Web Docs – Website Security",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/First_steps/Website_security",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "freeCodeCamp – Back End APIs (Auth bagian)",
+        "url": "https://www.freecodecamp.org/learn/back-end-development-and-apis",
+        "lisensi": "BSD-3-Clause"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+  "sub_bab": [
+    {
+      "id": "5.1",
+      "judul": "Konsep Autentikasi vs Otorisasi",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Dua Pilar Keamanan Aplikasi Web",
+          "isi": "Dua istilah yang paling sering tertukar dalam pembicaraan keamanan web adalah autentikasi dan otorisasi. Padahal keduanya adalah konsep yang sangat berbeda dan keduanya wajib ada di setiap aplikasi yang menangani data pengguna.\n\nAutentikasi (Authentication) — proses memverifikasi identitas pengguna. Apakah kamu benar-benar orang yang kamu klaim?\n• Pengguna memasukkan kredensial (email + password, atau OAuth)\n• Sistem memverifikasi kecocokan kredensial dengan data yang tersimpan\n• Jika cocok, sistem mengenali pengguna dan memberikan identitas\n• Contoh: login ke aplikasi, scan sidik jari, verifikasi OTP\n\nOtorisasi (Authorization) — proses menentukan APA yang boleh dilakukan pengguna yang sudah terautentikasi.\n• Setelah identitas terverifikasi, sistem memeriksa hak akses pengguna\n• Pengguna A boleh mengedit profil sendiri, tapi tidak boleh mengedit profil Pengguna B\n• Admin boleh menghapus data, tapi user biasa tidak boleh\n• Contoh: role-based access control (RBAC), permission matrix\n\nAnalogi sederhana: autentikasi seperti menunjukkan KTP saat masuk gedung — petugas memverifikasi identitasmu. Otorisasi seperti kartu akses yang menentukan lantai mana yang boleh kamu masuki — lantai 1 untuk semua, lantai 10 hanya untuk direksi."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Alur Autentikasi Modern",
+          "isi": "Aplikasi web modern umumnya menggunakan alur autentikasi berbasis token, bukan session-based seperti dulu:\n\nSession-Based Authentication (tradisional):\n1. User login dengan email + password\n2. Server memverifikasi, membuat session di memory/database\n3. Server kirim session ID ke browser via cookie\n4. Browser kirim cookie di setiap request berikutnya\n5. Server cek session ID, validasi, lalu proses request\n\nToken-Based Authentication (modern):\n1. User login dengan email + password\n2. Server memverifikasi, membuat token (biasanya JWT)\n3. Server kirim token ke client\n4. Client menyimpan token (localStorage/sessionStorage/cookie)\n5. Client kirim token di header Authorization setiap request\n6. Server verifikasi token tanpa perlu menyimpan session\n\nKeunggulan token-based: stateless (server tidak perlu menyimpan session), scalable (banyak server bisa verifikasi token yang sama), dan cocok untuk API/mobile app."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Diagram Autentikasi vs Otorisasi",
+          "src": "/assets/backend/bab5/bab5_5.1.png",
+          "deskripsi_gambar": "Infografik perbandingan Authentication dan Authorization. Sisi kiri menjelaskan Authentication sebagai proses verifikasi identitas pengguna dengan konsep 'Who are you?', menggunakan password, OTP, atau metode login lainnya. Sisi kanan menjelaskan Authorization sebagai proses verifikasi hak akses dengan konsep 'What can you do?', menggunakan roles, permissions, dan policies. Diagram menampilkan perbedaan fungsi keduanya dalam sistem keamanan aplikasi.",
+          "alt": "Diagram perbedaan autentikasi dan otorisasi dalam keamanan aplikasi web"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Autentikasi seperti Check-in Hotel",
+          "isi": "Saat check-in di hotel, resepsionis meminta KTP dan bukti booking — itu autentikasi (membuktikan kamu adalah tamu yang berhak). Setelah terverifikasi, kamu mendapatkan kartu kamar yang hanya bisa membuka kamar 205 — itu otorisasi (hanya boleh mengakses kamar sendiri, bukan kamar orang lain, bukan ruang server, bukan dapur)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Multi-Factor Authentication (MFA) Mengurangi 99.9% Serangan",
+          "isi": "Menurut laporan Microsoft, mengaktifkan MFA mengurangi risiko akun disusupi hingga 99.9%. Bahkan jika password bocor, penyerang masih butuh faktor kedua (OTP, biometrik, atau hardware key) untuk masuk. Namun menurut survei, hanya sekitar 26% pengguna yang mengaktifkan MFA di akun mereka — padahal hampir semua layanan besar (Google, GitHub, AWS) menyediakannya gratis."
+        }
+      ]
+    },
+    {
+      "id": "5.2",
+      "judul": "Password Hashing dengan bcrypt",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Password Tidak Boleh Disimpan Plain Text?",
+          "isi": "Menyimpan password pengguna dalam bentuk plain text adalah praktik yang sangat berbahaya dan tidak profesional. Jika database bocor — entah karena SQL Injection, insider threat, atau kesalahan konfigurasi — semua password pengguna akan langsung terbaca.\n\nBahkan perusahaan besar pernah melakukan kesalahan ini. Pada 2019, Facebook mengakui menyimpan ratusan juta password pengguna dalam plain text selama bertahun-tahun.\n\nSolusinya: password hashing. Hashing adalah fungsi one-way yang mengubah password menjadi string acak yang tidak bisa dikembalikan ke password asli.\n\nSyarat algoritma hashing yang baik:\n• One-way — tidak bisa reverse dari hash ke password asli\n• Deterministic — password yang sama selalu menghasilkan hash yang sama (tanpa salt)\n• Collision-resistant — sangat sulit menemukan dua password berbeda dengan hash sama\n• Slow — sengaja lambat untuk mencegah brute force attack\n\nAlgoritma yang TIDAK boleh digunakan untuk password:\n• MD5 — terlalu cepat, sudah banyak collision ditemukan\n• SHA-1 — sudah ditemukan collision, tidak direkomendasikan\n• SHA-256 — cepat, cocok untuk checksum, tapi terlalu cepat untuk password\n\nAlgoritma yang DIREKOMENDASIKAN:\n• bcrypt — paling populer, built-in salt, adaptive cost factor\n• Argon2 — pemenang Password Hashing Competition 2015\n• scrypt — memory-hard, cocok untuk cryptocurrency"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Implementasi bcrypt di Node.js",
+          "bahasa": "javascript",
+          "kode": "// npm install bcryptjs  (atau bcrypt untuk native binding)\nconst bcrypt = require('bcryptjs');\n\n// ==========================================\n// HASHING PASSWORD\n// ==========================================\nconst SALT_ROUNDS = 12;\n\nasync function hashPassword(passwordPlain) {\n  const hash = await bcrypt.hash(passwordPlain, SALT_ROUNDS);\n  return hash;\n}\n\n// ==========================================\n// VERIFIKASI PASSWORD\n// ==========================================\nasync function verifyPassword(passwordPlain, passwordHash) {\n  const isMatch = await bcrypt.compare(passwordPlain, passwordHash);\n  return isMatch;\n}\n\n// ==========================================\n// INTEGRASI DENGAN MODEL USER (Mongoose)\n// ==========================================\nconst mongoose = require('mongoose');\nconst { Schema, model } = mongoose;\n\nconst userSchema = new Schema({\n  email:    { type: String, required: true, unique: true, lowercase: true },\n  password: { type: String, required: true, minlength: 6 },\n  nama:     { type: String, required: true }\n}, { timestamps: true });\n\n// Pre-save hook: hash password SEBELUM disimpan\nuserSchema.pre('save', async function(next) {\n  if (!this.isModified('password')) return next();\n  this.password = await bcrypt.hash(this.password, SALT_ROUNDS);\n  next();\n});\n\n// Method instance untuk verifikasi password\nuserSchema.methods.comparePassword = async function(candidatePassword) {\n  return await bcrypt.compare(candidatePassword, this.password);\n};\n\nconst User = model('User', userSchema);\n\nmodule.exports = { User, hashPassword, verifyPassword };",
+          "penjelasan": "Pesan error untuk login selalu samakan — 'Email atau password salah' — agar penyerang tidak bisa mengetahui apakah email tersebut terdaftar atau tidak. Jika pesan berbeda ('Email tidak ditemukan' vs 'Password salah'), penyerang bisa melakukan user enumeration attack."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Hashing seperti Membuat Tepung dari Gandum",
+          "isi": "Mengubah gandum menjadi tepung (hashing) sangat mudah — masukkan ke penggiling, hasilkan tepung. Tapi mengubah tepung kembali menjadi gandum utuh (reverse hash) adalah tugas yang hampir mustahil. Salt seperti menambahkan biji wijen acak ke dalam gandum sebelum digiling — dua gandum yang sama dengan biji wijen berbeda akan menghasilkan tepung yang berbeda, mencegah penyerang menggunakan pre-computed hash table."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Rainbow Table: Mengapa Salt Sangat Penting",
+          "isi": "Rainbow Table adalah database pre-computed hash untuk jutaan password umum. Tanpa salt, penyerang bisa langsung mencocokkan hash yang bocor dengan rainbow table. Dengan salt unik per password, penyerang harus menghitung hash baru untuk setiap password — membuat serangan jutaan kali lebih lambat. bcrypt otomatis menangani salt: setiap hash bcrypt sudah mengandung salt-nya sendiri di dalam string hash."
+        }
+      ]
+    },
+    {
+      "id": "5.3",
+      "judul": "JWT (JSON Web Token) — Struktur & Cara Kerja",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu JWT?",
+          "isi": "JWT (JSON Web Token) adalah standar terbuka (RFC 7519) untuk mengirimkan informasi antar pihak secara kompak dan aman sebagai objek JSON. JWT digunakan secara luas untuk autentikasi stateless di aplikasi modern.\n\nJWT terdiri dari tiga bagian yang dipisahkan oleh titik (.):\n\nheader.payload.signature\n\n1. Header — berisi tipe token (JWT) dan algoritma signing (HS256 atau RS256):\n   { \"alg\": \"HS256\", \"typ\": \"JWT\" }\n   Di-encode dengan Base64Url.\n\n2. Payload — berisi klaim (claims) atau data pengguna:\n   { \"sub\": \"1234567890\", \"name\": \"Budi\", \"role\": \"user\", \"iat\": 1516239022, \"exp\": 1516242622 }\n   Klaim standar: sub (subject), iat (issued at), exp (expiration), iss (issuer).\n   Di-encode dengan Base64Url.\n   PENTING: Payload TIDAK dienkripsi — bisa dibaca siapapun yang memiliki token. Jangan simpan data sensitif di payload!\n\n3. Signature — hasil signing header + payload dengan secret key:\n   HMACSHA256(base64Url(header) + \".\" + base64Url(payload), secret)\n   Signature memastikan token tidak dimanipulasi. Jika payload diubah, signature tidak valid.\n\nAlgoritma signing:\n• HS256 (HMAC + SHA-256) — symmetric, satu secret key untuk sign dan verify. Cocok untuk monolith.\n• RS256 (RSA + SHA-256) — asymmetric, private key untuk sign, public key untuk verify. Cocok untuk microservices."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Membuat dan Memverifikasi JWT dengan jsonwebtoken",
+          "bahasa": "javascript",
+          "kode": "// npm install jsonwebtoken dotenv\nconst jwt = require('jsonwebtoken');\nrequire('dotenv').config();\n\nconst JWT_SECRET = process.env.JWT_SECRET;\nconst JWT_EXPIRES_IN = '15m';\nconst REFRESH_EXPIRES_IN = '7d';\n\nfunction generateAccessToken(user) {\n  const payload = {\n    sub:   user._id.toString(),\n    email: user.email,\n    role:  user.role || 'user'\n  };\n  return jwt.sign(payload, JWT_SECRET, {\n    expiresIn: JWT_EXPIRES_IN,\n    issuer:    'web-belajar-api'\n  });\n}\n\nfunction generateRefreshToken(user) {\n  return jwt.sign(\n    { sub: user._id.toString() },\n    JWT_SECRET,\n    { expiresIn: REFRESH_EXPIRES_IN }\n  );\n}\n\nfunction verifyToken(token) {\n  try {\n    const decoded = jwt.verify(token, JWT_SECRET);\n    return { valid: true, decoded };\n  } catch (err) {\n    if (err.name === 'TokenExpiredError') {\n      return { valid: false, error: 'Token sudah expired', expiredAt: err.expiredAt };\n    }\n    if (err.name === 'JsonWebTokenError') {\n      return { valid: false, error: 'Token tidak valid' };\n    }\n    return { valid: false, error: err.message };\n  }\n}\n\nmodule.exports = { generateAccessToken, generateRefreshToken, verifyToken };",
+          "penjelasan": "JWT_SECRET harus panjang (minimal 256 bit / 32 karakter acak) dan disimpan di environment variable — JANGAN pernah hardcode di kode atau commit ke Git. Gunakan command: node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\" untuk generate secret yang aman."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Struktur JWT: Header, Payload, Signature",
+          "src": "/assets/backend/bab5/bab5_5.3.png",
+          "deskripsi_gambar":  "Diagram struktur JSON Web Token (JWT) yang terdiri dari tiga bagian utama: Header, Payload, dan Signature. Header berisi algoritma dan tipe token, Payload berisi data klaim pengguna seperti sub dan name, sedangkan Signature dihasilkan dari proses hashing menggunakan Header, Payload, dan secret key. Panah menunjukkan hubungan antara setiap komponen JWT dan proses pembentukan signature.",
+          "alt": "Diagram struktur JWT menampilkan header, payload, dan signature dengan penjelasan encoding"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: JWT seperti Tiket Konser",
+          "isi": "JWT seperti tiket konser yang dibeli online. Tiket berisi informasi: nama pemegang, nomor kursi, tanggal konser, dan kode QR (signature). Siapapun bisa membaca informasi di tiket (payload tidak dienkripsi), tapi hanya penyelenggara yang bisa memverifikasi keaslian kode QR (signature dengan secret key). Jika kamu mengubah nomor kursi di tiket, kode QR tidak cocok lagi — tiket ditolak."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "JWT Bisa Dibaca Tanpa Secret Key",
+          "isi": "Banyak developer baru mengira JWT dienkripsi karena terlihat seperti string acak. Faktanya, header dan payload hanya di-encode Base64Url — bisa langsung di-decode siapapun menggunakan tools online seperti jwt.io. Yang dilindungi oleh secret key hanyalah signature. Ini mengapa JANGAN pernah menyimpan password, nomor KTP, atau data sensitif lainnya di JWT payload. Gunakan payload hanya untuk user ID dan role."
+        }
+      ]
+    },
+    {
+      "id": "5.4",
+      "judul": "Implementasi Login & Register",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Arsitektur Endpoint Autentikasi",
+          "isi": "Implementasi login dan register melibatkan beberapa komponen yang bekerja sama: route handler, controller, model, dan service layer. Berikut adalah best practice untuk membangun endpoint autentikasi yang aman dan robust.\n\nEndpoint yang wajib ada:\n• POST /api/auth/register — mendaftarkan pengguna baru\n• POST /api/auth/login — autentikasi dan mengembalikan token\n• POST /api/auth/refresh — memperbarui access token yang expired\n• POST /api/auth/logout — menghapus refresh token\n\nPrinsip keamanan yang harus diterapkan:\n• Validasi input — pastikan email valid, password kuat, tidak ada field kosong\n• Password hashing — selalu hash sebelum disimpan\n• Rate limiting — batasi percobaan login untuk mencegah brute force\n• HTTPS only — token dan password tidak boleh dikirim via HTTP\n• Same error message — jangan bedakan pesan error untuk email tidak ditemukan vs password salah\n• Sanitasi input — hindari NoSQL Injection dengan validasi tipe data"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Implementasi Lengkap Login & Register",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// controllers/authController.js\n// ==========================================\nconst { User } = require('../models/User');\nconst { generateAccessToken, generateRefreshToken } = require('../utils/jwt');\n\nasync function register(req, res, next) {\n  try {\n    const { email, password, nama } = req.body;\n    if (!email || !password || !nama) {\n      return res.status(400).json({ message: 'Semua field wajib diisi' });\n    }\n    const existingUser = await User.findOne({ email: email.toLowerCase() });\n    if (existingUser) {\n      return res.status(409).json({ message: 'Email sudah terdaftar' });\n    }\n    const user = await User.create({ email, password, nama });\n    const accessToken  = generateAccessToken(user);\n    const refreshToken = generateRefreshToken(user);\n    user.refreshTokens = user.refreshTokens || [];\n    user.refreshTokens.push({ token: refreshToken, createdAt: new Date() });\n    await user.save();\n    res.status(201).json({\n      message: 'Registrasi berhasil',\n      data: {\n        user: { id: user._id, email: user.email, nama: user.nama, role: user.role },\n        accessToken,\n        refreshToken\n      }\n    });\n  } catch (err) {\n    next(err);\n  }\n}\n\nasync function login(req, res, next) {\n  try {\n    const { email, password } = req.body;\n    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');\n    if (!user || !(await user.comparePassword(password))) {\n      return res.status(401).json({ message: 'Email atau password salah' });\n    }\n    if (!user.isActive) {\n      return res.status(403).json({ message: 'Akun dinonaktifkan' });\n    }\n    const accessToken  = generateAccessToken(user);\n    const refreshToken = generateRefreshToken(user);\n    user.refreshTokens = user.refreshTokens || [];\n    user.refreshTokens.push({ token: refreshToken, createdAt: new Date() });\n    if (user.refreshTokens.length > 5) {\n      user.refreshTokens = user.refreshTokens.slice(-5);\n    }\n    await user.save();\n    res.status(200).json({\n      message: 'Login berhasil',\n      data: {\n        user: { id: user._id, email: user.email, nama: user.nama, role: user.role },\n        accessToken,\n        refreshToken\n      }\n    });\n  } catch (err) {\n    next(err);\n  }\n}\n\nasync function refresh(req, res, next) {\n  try {\n    const { refreshToken } = req.body;\n    if (!refreshToken) {\n      return res.status(401).json({ message: 'Refresh token diperlukan' });\n    }\n    const { valid, decoded, error } = verifyToken(refreshToken);\n    if (!valid) {\n      return res.status(403).json({ message: error });\n    }\n    const user = await User.findById(decoded.sub);\n    const tokenExists = user?.refreshTokens?.some(t => t.token === refreshToken);\n    if (!tokenExists) {\n      return res.status(403).json({ message: 'Refresh token tidak valid' });\n    }\n    const newAccessToken = generateAccessToken(user);\n    res.json({ accessToken: newAccessToken });\n  } catch (err) {\n    next(err);\n  }\n}\n\nasync function logout(req, res, next) {\n  try {\n    const { refreshToken } = req.body;\n    const userId = req.user.sub;\n    await User.findByIdAndUpdate(userId, {\n      $pull: { refreshTokens: { token: refreshToken } }\n    });\n    res.json({ message: 'Logout berhasil' });\n  } catch (err) {\n    next(err);\n  }\n}\n\nmodule.exports = { register, login, refresh, logout };",
+          "penjelasan": "Select('+password') diperlukan karena di schema User, password mungkin diset select: false agar tidak muncul di query default. Gunakan .select('+password') untuk sementara mengoverride dan mengambil field password saat login."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Refresh Token seperti Kartu Member",
+          "isi": "Access token seperti tiket masuk ke gedung yang hanya berlaku 15 menit — setelah itu hangus. Refresh token seperti kartu member yang berlaku 7 hari — dengan kartu member ini, kamu bisa minta tiket masuk baru tanpa harus antre ulang di resepsionis (login ulang). Saat logout, kartu member dicabut (refresh token dihapus dari database) sehingga tidak bisa digunakan lagi meskipun belum expired."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Password '123456' Masih Paling Banyak Digunakan",
+          "isi": "Menurut laporan NordPass 2023, password paling populer yang masih digunakan: 1) 123456, 2) admin, 3) 12345678, 4) 123456789, 5) 1234. Implementasi validasi password yang kuat di endpoint register sangat penting: minimal 8 karakter, kombinasi huruf besar/kecil, angka, dan simbol. Library seperti validator.js atau Joi bisa membantu memastikan password pengguna tidak masuk dalam daftar password yang paling umum."
+        }
+      ]
+    },
+    {
+      "id": "5.5",
+      "judul": "Middleware Autentikasi — Protected Route",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Middleware Autentikasi Diperlukan?",
+          "isi": "Setelah pengguna berhasil login dan mendapatkan token, setiap request ke endpoint yang dilindungi harus membawa token tersebut. Middleware autentikasi adalah lapisan yang berjalan SEBELUM route handler — memverifikasi token dan menolak request yang tidak valid.\n\nTugas middleware autentikasi:\n• Ekstrak token dari header Authorization\n• Verifikasi token (signature, expiration, issuer)\n• Dekode payload dan tempelkan ke req.user\n• Lanjutkan ke route handler jika valid, tolak jika tidak\n\nTipe middleware yang umum digunakan:\n• authenticate — verifikasi token, tempelkan user ke req\n• authorize(roles) — verifikasi role pengguna, tolak jika tidak memiliki hak akses\n• optionalAuth — autentikasi opsional, lanjutkan meski tidak ada token (berguna untuk endpoint publik yang punya fitur tambahan untuk user login)\n\nHeader Authorization format:\nAuthorization: Bearer <token>\n\nBearer artinya 'pembawa' — pengguna membawa token ini sebagai bukti identitas."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Middleware Autentikasi dan Otorisasi",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// middleware/auth.js\n// ==========================================\nconst { verifyToken } = require('../utils/jwt');\nconst { User } = require('../models/User');\n\nasync function authenticate(req, res, next) {\n  try {\n    const authHeader = req.headers.authorization;\n    if (!authHeader || !authHeader.startsWith('Bearer ')) {\n      return res.status(401).json({ message: 'Akses ditolak. Token tidak ditemukan.' });\n    }\n    const token = authHeader.split(' ')[1];\n    const { valid, decoded, error } = verifyToken(token);\n    if (!valid) {\n      return res.status(401).json({ message: `Token tidak valid: ${error}` });\n    }\n    const user = await User.findById(decoded.sub).select('-password -refreshTokens');\n    if (!user || !user.isActive) {\n      return res.status(401).json({ message: 'User tidak ditemukan atau dinonaktifkan' });\n    }\n    req.user = {\n      id:    decoded.sub,\n      email: decoded.email,\n      role:  decoded.role,\n      ...user.toObject()\n    };\n    next();\n  } catch (err) {\n    next(err);\n  }\n}\n\nfunction authorize(...allowedRoles) {\n  return (req, res, next) => {\n    if (!req.user) {\n      return res.status(401).json({ message: 'Autentikasi diperlukan' });\n    }\n    if (!allowedRoles.includes(req.user.role)) {\n      return res.status(403).json({\n        message: `Akses ditolak. Role '${req.user.role}' tidak memiliki izin.`\n      });\n    }\n    next();\n  };\n}\n\nasync function optionalAuth(req, res, next) {\n  try {\n    const authHeader = req.headers.authorization;\n    if (authHeader && authHeader.startsWith('Bearer ')) {\n      const token = authHeader.split(' ')[1];\n      const { valid, decoded } = verifyToken(token);\n      if (valid) req.user = decoded;\n    }\n    next();\n  } catch (err) {\n    next();\n  }\n}\n\nmodule.exports = { authenticate, authorize, optionalAuth };",
+          "penjelasan": "Pisahkan middleware authenticate (siapa kamu?) dan authorize (apa yang boleh kamu lakukan?). Ini memungkinkan reuse: authenticate dipakai di semua protected route, sementara authorize dipakai hanya di route yang butuh role khusus. Urutan sangat penting: authenticate HARUS dijalankan SEBELUM authorize."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Middleware Stack: Request → Auth → Route",
+          "src": "/assets/backend/bab5/bab5_5.5.png",
+          "deskripsi_gambar": "Diagram alur request pada Express.js. HTTP Request masuk melalui route yang cocok, kemudian melewati beberapa middleware seperti CORS Middleware, CSRF Middleware, dan Authentication Middleware sebelum mencapai route handler atau proses utama aplikasi. Setelah diproses, response dikembalikan ke client melalui jalur yang sama.",
+          "alt": "Diagram alur middleware Express dari autentikasi hingga otorisasi dan route handler"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Middleware seperti Pemeriksaan Keamanan Bandara",
+          "isi": "Saat masuk bandara, kamu melewati beberapa pemeriksaan berurutan: (1) cek boarding pass dan ID — ini autentikasi (membuktikan identitas), (2) cek gate dan kelas tiket — ini otorisasi (menentukan area mana yang boleh diakses: lounge, gate, dll). Jika gagal di pemeriksaan 1, tidak perlu lanjut ke pemeriksaan 2. Middleware Express bekerja persis seperti ini — satu per satu, berurutan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "HTTP 401 vs 403: Bedanya Signifikan",
+          "isi": "Banyak developer bingung membedakan 401 Unauthorized dan 403 Forbidden. Padahal bedanya jelas: 401 berarti 'Saya tidak tahu siapa kamu — tolong autentikasi dulu' (belum login atau token invalid). 403 berarti 'Saya tahu siapa kamu, tapi kamu tidak punya izin' (sudah login tapi role tidak cukup). Mengirim 403 saat token invalid adalah kesalahan umum yang membingungkan client."
+        }
+      ]
+    },
+    {
+      "id": "5.6",
+      "judul": "Refresh Token & Token Expiry",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Perlu Refresh Token?",
+          "isi": "Access token yang berlalu lama (misal 7 hari) berisiko tinggi — jika token dicuri, penyerang punya waktu lama untuk menggunakannya. Tapi access token yang terlalu pendek (misal 5 menit) membuat pengguna harus login terus-menerus.\n\nSolusi: dual token system\n• Access Token — berlaku singkat (5-15 menit), digunakan untuk setiap API request\n• Refresh Token — berlaku lebih lama (7-30 hari), digunakan untuk mendapatkan access token baru\n\nAlur kerja:\n1. User login → dapat access token (15 menit) + refresh token (7 hari)\n2. User akses API dengan access token\n3. Access token expired → client kirim refresh token ke /api/auth/refresh\n4. Server verifikasi refresh token → kirim access token baru\n5. User logout → refresh token dihapus dari database (revoke)\n\nKeuntungan:\n• Jika access token dicuri, hanya berlaku 15 menit — kerusakan terbatas\n• Refresh token bisa di-revoke saat logout atau deteksi aktivitas mencurigakan\n• Pengalaman user tetap nyaman tanpa login berulang kali\n\nBest practice tambahan:\n• Simpan refresh token di httpOnly cookie (lebih aman dari localStorage)\n• Batasi jumlah refresh token per user (misal max 5 perangkat)\n• Rotasi refresh token: saat refresh, hapus token lama dan kirim token baru"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Implementasi Refresh Token dengan Rotasi",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// controllers/authController.js (Refresh dengan Rotasi)\n// ==========================================\nasync function refresh(req, res, next) {\n  try {\n    const { refreshToken } = req.body;\n    if (!refreshToken) {\n      return res.status(401).json({ message: 'Refresh token diperlukan' });\n    }\n    const { valid, decoded, error } = verifyToken(refreshToken);\n    if (!valid) {\n      return res.status(403).json({ message: 'Refresh token tidak valid' });\n    }\n    const user = await User.findById(decoded.sub);\n    if (!user) {\n      return res.status(403).json({ message: 'User tidak ditemukan' });\n    }\n    const tokenIndex = user.refreshTokens.findIndex(t => t.token === refreshToken);\n    if (tokenIndex === -1) {\n      user.refreshTokens = [];\n      await user.save();\n      return res.status(403).json({\n        message: 'Refresh token tidak valid. Silakan login ulang.'\n      });\n    }\n    const newAccessToken  = generateAccessToken(user);\n    const newRefreshToken = generateRefreshToken(user);\n    user.refreshTokens[tokenIndex] = {\n      token: newRefreshToken,\n      createdAt: new Date()\n    };\n    await user.save();\n    res.json({\n      accessToken:  newAccessToken,\n      refreshToken: newRefreshToken\n    });\n  } catch (err) {\n    next(err);\n  }\n}\n\nasync function logoutAllDevices(req, res, next) {\n  try {\n    const userId = req.user.id;\n    await User.findByIdAndUpdate(userId, { refreshTokens: [] });\n    res.json({ message: 'Berhasil logout dari semua perangkat' });\n  } catch (err) {\n    next(err);\n  }\n}\n\nmodule.exports = { refresh, logoutAllDevices };",
+          "penjelasan": "Rotasi refresh token adalah best practice keamanan: setiap kali refresh, token lama dihapus dan diganti yang baru. Jika penyerang mencuri refresh token lama dan mencoba menggunakannya setelah rotasi, server akan mendeteksi reuse dan menghapus semua refresh token user — memaksa login ulang."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Access Token seperti Tiket Harian, Refresh Token seperti Kartu Bulanan",
+          "isi": "Access token seperti tiket harian kereta — berlaku 1 hari, murah, dan jika hilang kerugian kecil. Refresh token seperti kartu bulanan — berlaku 30 hari, dan dengan kartu ini kamu bisa ambil tiket harian baru tanpa antre di loket. Jika tiket harian hilang (access token dicuri), penumpang ilegal hanya bisa naik 1 hari. Jika kartu bulanan dicuri dan digunakan, sistem mendeteksi dan memblokir kartu — pemilik asli harus ke kantor untuk kartu baru (login ulang)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "localStorage vs httpOnly Cookie untuk Menyimpan Token",
+          "isi": "localStorage mudah digunakan tapi rentan XSS (Cross-Site Scripting) — jika attacker bisa inject script ke halaman, mereka bisa membaca localStorage dan mencuri token. httpOnly cookie tidak bisa diakses oleh JavaScript sama sekali, sehingga immune dari XSS. Tapi cookie rentan CSRF (Cross-Site Request Forgery) jika tidak dikonfigurasi dengan benar. Solusi modern: simpan access token di memory (React state / Vue store) dan refresh token di httpOnly cookie — kombinasi terbaik dari kedua dunia."
+        }
+      ]
+    },
+    {
+      "id": "5.7",
+      "judul": "Validasi Input dengan Joi / express-validator",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Validasi Input Penting?",
+          "isi": "Validasi input adalah lapisan pertahanan pertama aplikasi web. Data yang tidak valid atau berbahaya yang masuk ke sistem bisa menyebabkan berbagai masalah: crash aplikasi, data corrupt, atau celah keamanan seperti SQL Injection dan NoSQL Injection.\n\nValidasi harus dilakukan di dua tempat:\n• Client-side — memberikan feedback instan ke pengguna (tapi bisa di-bypass)\n• Server-side — WAJIB, karena client-side bisa dimanipulasi\n\nLibrary validasi populer di Node.js/Express:\n• Joi — schema-based validation, sangat powerful dan ekspresif\n• express-validator — middleware-based, integrasi native dengan Express\n• Yup — populer di frontend, bisa juga di backend\n• Zod — TypeScript-first, type inference otomatis\n\nApa yang perlu divalidasi:\n• Tipe data — apakah ini string, number, boolean, date?\n• Format — apakah email valid? apakah URL valid?\n• Panjang — password minimal 8 karakter, nama maksimal 100 karakter\n• Range — umur antara 17-60, IPK antara 0-4\n• Enum — hanya nilai tertentu yang diizinkan (role: 'user' | 'admin' | 'dosen')\n• Sanitasi — hapus HTML tags, trim whitespace, escape karakter berbahaya\n• Keberadaan — field wajib vs opsional"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Validasi dengan Joi dan express-validator",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// OPSI 1: JOI — Schema-based Validation\n// ==========================================\nconst Joi = require('joi');\n\nconst registerSchema = Joi.object({\n  nama: Joi.string()\n    .min(3).max(100).trim().required()\n    .messages({\n      'string.min': 'Nama minimal 3 karakter',\n      'string.max': 'Nama maksimal 100 karakter',\n      'any.required': 'Nama wajib diisi'\n    }),\n  email: Joi.string()\n    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'id', 'org'] } })\n    .lowercase().trim().required(),\n  password: Joi.string()\n    .min(8).max(128)\n    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$/)\n    .required()\n    .messages({\n      'string.pattern.base': 'Password harus mengandung huruf besar, huruf kecil, angka, dan simbol'\n    }),\n  konfirmasiPassword: Joi.string()\n    .valid(Joi.ref('password')).required()\n    .messages({ 'any.only': 'Konfirmasi password tidak cocok' }),\n  umur: Joi.number().integer().min(17).max(60).optional(),\n  role: Joi.string().valid('user', 'admin', 'dosen').default('user')\n}).with('password', 'konfirmasiPassword');\n\nfunction validate(schema) {\n  return (req, res, next) => {\n    const { error, value } = schema.validate(req.body, {\n      abortEarly: false,\n      stripUnknown: true\n    });\n    if (error) {\n      const errors = error.details.map(d => ({\n        field: d.path[0],\n        message: d.message\n      }));\n      return res.status(400).json({ message: 'Validasi gagal', errors });\n    }\n    req.body = value;\n    next();\n  };\n}\n\n// ==========================================\n// OPSI 2: express-validator\n// ==========================================\nconst { body, validationResult } = require('express-validator');\n\nconst registerValidators = [\n  body('nama').trim().notEmpty().withMessage('Nama wajib diisi')\n    .isLength({ min: 3, max: 100 }).withMessage('Nama harus 3-100 karakter'),\n  body('email').trim().isEmail().withMessage('Format email tidak valid')\n    .normalizeEmail().toLowerCase(),\n  body('password').isLength({ min: 8 }).withMessage('Password minimal 8 karakter')\n    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)/)\n    .withMessage('Password harus mengandung huruf besar, huruf kecil, dan angka'),\n  body('konfirmasiPassword').custom((value, { req }) => {\n    if (value !== req.body.password) {\n      throw new Error('Konfirmasi password tidak cocok');\n    }\n    return true;\n  })\n];\n\nfunction handleValidationErrors(req, res, next) {\n  const errors = validationResult(req);\n  if (!errors.isEmpty()) {\n    return res.status(400).json({\n      message: 'Validasi gagal',\n      errors: errors.array().map(e => ({ field: e.path, message: e.msg }))\n    });\n  }\n  next();\n}\n\nmodule.exports = { validate, registerSchema, registerValidators, handleValidationErrors };",
+          "penjelasan": "abortEarly: false sangat penting untuk UX — pengguna bisa melihat semua error sekaligus, bukan harus submit berulang kali untuk menemukan error berikutnya. stripUnknown: true mencegah client mengirim field tambahan yang tidak diharapkan (mass assignment protection)."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Validasi seperti Pemeriksaan di Perbatasan",
+          "isi": "Validasi input seperti pemeriksaan di perbatasan negara. Pemeriksaan pertama di bandara (client-side) — petugas melihat passport dan boarding pass. Tapi penumpang bisa memalsukan dokumen. Pemeriksaan kedua di imigrasi (server-side) — petugas memindai passport, cek database interpol, verifikasi visa. Ini adalah pemeriksaan yang sebenarnya. Pemeriksaan ketiga di pintu masuk gedung (database schema) — security cek ID card, memastikan orang yang benar masuk ke ruangan yang benar."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Mass Assignment: Celah yang Hampir Merusak GitHub",
+          "isi": "Pada 2012, seorang peneliti keamanan menemukan celah mass assignment di GitHub. Dengan menambahkan field 'role=admin' ke form registrasi biasa, dia bisa membuat akun admin di GitHub. Ini terjadi karena server menerima semua field dari client tanpa whitelist. Solusinya: gunakan stripUnknown (Joi) atau body whitelist (express-validator) — hanya field yang diizinkan yang diproses, field tambahan diabaikan."
+        }
+      ]
+    },
+    {
+      "id": "5.8",
+      "judul": "Keamanan API — Rate Limiting, Helmet, CORS",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Lapisan Keamanan untuk API Express",
+          "isi": "Setelah autentikasi dan validasi input, ada lapisan keamanan tambahan yang harus diterapkan di setiap API production untuk melindungi dari serangan umum dan abuse.\n\n1. Rate Limiting — membatasi jumlah request dari satu IP dalam periode waktu tertentu. Mencegah brute force attack, DDoS, dan scraping.\n\n2. Helmet — middleware yang secara otomatis menambahkan HTTP security headers ke setiap response. Headers penting yang diatur Helmet:\n• Content-Security-Policy — mencegah XSS dengan membatasi sumber script\n• X-Frame-Options — mencegah clickjacking (website dibungkus di iframe)\n• Strict-Transport-Security — memaksa HTTPS\n• X-Content-Type-Options — mencegah MIME type sniffing\n• Referrer-Policy — mengontrol informasi referrer yang dikirim\n\n3. CORS (Cross-Origin Resource Sharing) — mengontrol domain mana yang boleh mengakses API. Secara default browser memblokir request dari domain berbeda (same-origin policy). CORS memungkinkan whitelist domain yang diizinkan.\n\n4. Compression — mengompres response body untuk mengurangi ukuran data yang dikirim (gzip/brotli).\n\n5. Morgan / Winston — logging request untuk monitoring dan debugging."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Setup Keamanan Express Lengkap",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// app.js — Setup Keamanan Express\n// ==========================================\nconst express = require('express');\nconst helmet = require('helmet');\nconst cors = require('cors');\nconst rateLimit = require('express-rate-limit');\nconst compression = require('compression');\nconst morgan = require('morgan');\n\nconst app = express();\n\n// 1. HELMET — Security Headers\napp.use(helmet());\napp.use(helmet.contentSecurityPolicy({\n  directives: {\n    defaultSrc: [\"'self'\"],\n    styleSrc: [\"'self'\", \"'unsafe-inline'\"],\n    scriptSrc: [\"'self'\"],\n    imgSrc: [\"'self'\", 'data:', 'https:']\n  }\n}));\napp.use(helmet.hsts({\n  maxAge: 31536000,\n  includeSubDomains: true,\n  preload: true\n}));\n\n// 2. CORS — whitelist domain\nconst whitelist = [\n  'http://localhost:3000',\n  'http://localhost:5173',\n  'https://web-belajar.vercel.app'\n];\nconst corsOptions = {\n  origin: function (origin, callback) {\n    if (!origin || whitelist.includes(origin)) callback(null, true);\n    else callback(new Error('Not allowed by CORS'));\n  },\n  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],\n  allowedHeaders: ['Content-Type', 'Authorization'],\n  credentials: true,\n  maxAge: 86400\n};\napp.use(cors(corsOptions));\n\n// 3. RATE LIMITING\nconst generalLimiter = rateLimit({\n  windowMs: 15 * 60 * 1000,\n  max: 100,\n  message: { message: 'Terlalu banyak request, coba lagi dalam 15 menit' },\n  standardHeaders: true,\n  legacyHeaders: false\n});\napp.use(generalLimiter);\n\nconst authLimiter = rateLimit({\n  windowMs: 15 * 60 * 1000,\n  max: 5,\n  skipSuccessfulRequests: true,\n  message: { message: 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.' }\n});\n// app.use('/api/auth/login', authLimiter);\n\n// 4. COMPRESSION\napp.use(compression());\n\n// 5. LOGGING\nif (process.env.NODE_ENV === 'development') {\n  app.use(morgan('dev'));\n} else {\n  app.use(morgan('combined'));\n}\n\n// 6. BODY PARSER dengan limit\napp.use(express.json({ limit: '10kb' }));\napp.use(express.urlencoded({ extended: true, limit: '10kb' }));\n\n// 7. ERROR HANDLER GLOBAL\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  const message = process.env.NODE_ENV === 'production'\n    ? 'Terjadi kesalahan server'\n    : err.message;\n  res.status(err.statusCode || 500).json({\n    message,\n    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })\n  });\n});\n\nmodule.exports = app;",
+          "penjelasan": "express.json({ limit: '10kb' }) sangat penting untuk mencegah DoS attack melalui request body yang sangat besar. Tanpa batasan ini, attacker bisa mengirim request dengan body ratusan MB yang membuat server kehabisan memory."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Rate Limiting seperti Batas Antrean di Bank",
+          "isi": "Rate limiting seperti bank yang membatasi jumlah nasabah yang dilayani per teller per jam. Jika terlalu banyak nasabah datang bersamaan, teller akan overwhelmed dan layanan menjadi lambat untuk semua orang. Dengan sistem antrean (rate limit), bank bisa menjaga kualitas layanan. Jika seseorang mencoba memotong antrean berulang kali (brute force), security akan mengusirnya (IP diblokir sementara)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Helmet Menambahkan 11 Security Headers Sekaligus",
+          "isi": "Helmet adalah middleware kecil yang sangat powerful — hanya dengan app.use(helmet()), Express otomatis menambahkan 11 HTTP security headers ke setiap response. Ini termasuk protection dari XSS, clickjacking, MIME sniffing, dan downgrade attack. Helmet diunduh lebih dari 3 juta kali per minggu dan digunakan oleh perusahaan besar seperti Netflix dan Mozilla."
+        }
+      ]
+    },
+    {
+      "id": "5.9",
+      "judul": "Ancaman Umum — XSS, SQL Injection, CSRF",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Tiga Ancaman Besar Aplikasi Web",
+          "isi": "OWASP (Open Web Application Security Project) setiap beberapa tahun merilis daftar 10 ancaman keamanan web paling kritis. Tiga ancaman yang paling umum dan paling berbahaya adalah XSS, SQL Injection, dan CSRF. Memahami dan mencegah ketiganya adalah kewajiban setiap backend developer.\n\n1. XSS (Cross-Site Scripting) — penyerang menyisipkan script berbahaya ke halaman web yang dilihat pengguna lain.\n• Reflected XSS: script dikirim via URL/query parameter, dieksekusi sekali\n• Stored XSS: script disimpan di database (komentar, profil), dieksekusi setiap kali data ditampilkan\n• DOM-based XSS: script dimanipulasi di client-side tanpa melalui server\nDampak: pencurian cookie/session, keylogging, defacement, redirect ke phishing site.\n\n2. SQL Injection — penyerang menyisipkan kode SQL berbahaya ke input yang dikirim ke database.\n• Contoh: input email = \"' OR '1'='1\" membuat query WHERE selalu true\n• Dampak: baca semua data, hapus tabel, bypass login, ekstrak data sensitif\n• Solusi: prepared statement/parameterized query — JANGAN pernah concatenation string\n\n3. CSRF (Cross-Site Request Forgery) — penyerang memaksa pengguna yang sudah login untuk melakukan aksi tidak diinginkan.\n• Contoh: pengguna login ke bank, lalu membuka email berisi gambar <img src=\"https://bank.com/transfer?to=attacker&amount=1000000\">\n• Browser otomatis mengirim cookie session ke bank.com → transfer terjadi tanpa sepengetahuan pengguna\n• Solusi: CSRF token, SameSite cookie attribute, validasi Origin/Referer header"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Pencegahan XSS, SQL Injection, dan CSRF",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// PENCEGAHAN XSS\n// ==========================================\nconst escapeHtml = (unsafe) => {\n  return unsafe\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/\"/g, '&quot;')\n    .replace(/'/g, '&#039;');\n};\n\nconst sanitizeHtml = require('sanitize-html');\nconst clean = sanitizeHtml(dirtyInput, {\n  allowedTags: ['b', 'i', 'em', 'strong', 'a'],\n  allowedAttributes: { 'a': ['href'] }\n});\n\n// Gunakan httpOnly cookie untuk session/token\n// Cookie dengan httpOnly tidak bisa diakses oleh JavaScript → immune dari XSS\n\n// ==========================================\n// PENCEGAHAN SQL INJECTION\n// ==========================================\n// SALAH — JANGAN pernah lakukan ini!\n// const query = `SELECT * FROM users WHERE email = '${email}'`;\n\n// BENAR — Gunakan parameterized query\nconst [rows] = await pool.execute(\n  'SELECT * FROM users WHERE email = ? AND aktif = ?',\n  [email, true]\n);\n\n// BENAR — Dengan Mongoose (waspadai NoSQL Injection!)\n// SALAH: User.findOne(req.body)\n// BENAR: User.findOne({ email: req.body.email })\n\n// ==========================================\n// PENCEGAHAN CSRF\n// ==========================================\nres.cookie('sessionId', token, {\n  httpOnly: true,\n  secure: true,\n  sameSite: 'strict',\n  maxAge: 24 * 60 * 60 * 1000\n});\n\nconst allowedOrigins = ['https://web-belajar.vercel.app'];\napp.use((req, res, next) => {\n  const origin = req.headers.origin;\n  if (origin && !allowedOrigins.includes(origin)) {\n    return res.status(403).json({ message: 'Origin tidak diizinkan' });\n  }\n  next();\n});\n\nconst csrf = require('csurf');\nconst csrfProtection = csrf({ cookie: true });",
+          "penjelasan": "NoSQL Injection sering diabaikan karena developer mengira MongoDB aman dari injection. Faktanya, query seperti User.findOne(req.body) bisa di-exploit dengan payload { '$gt': '' } yang selalu true — bypass autentikasi. SELALU validasi dan whitelist field yang digunakan dalam query."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Tiga Ancaman seperti Tiga Jenis Penipuan",
+          "isi": "XSS seperti penipu yang menyelinap ke panggung dan mengambil alih mikrofon — dia berbicara atas nama pembicara asli (website) ke audiens (pengguna). SQL Injection seperti penipu yang menulis catatan tambahan di formulir resmi — formulir diproses tanpa verifikasi, dan catatan tambahan mengubah hasil akhir. CSRF seperti penipu yang memaksa seseorang yang sudah terverifikasi (sudah login) untuk menandatangani dokumen atas nama mereka sendiri — korban tidak sadar telah melakukan aksi."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "SQL Injection Masih Menempati Posisi #3 OWASP Top 10 2021",
+          "isi": "Meski sudah dikenal lebih dari 20 tahun dan solusinya sangat sederhana (gunakan parameterized query), SQL Injection masih menempati posisi #3 di OWASP Top 10 2021. Serangan ini menyebabkan kerugian miliaran dolar setiap tahun. Kasus paling terkenal: 2017, Equifax kebocoran data 143 juta orang karena celah SQL Injection di aplikasi web mereka. Jangan pernah meremehkan ancaman yang sudah dikenal lama — justru karena sudah lama, banyak developer menganggapnya tidak relevan lagi."
+        }
+      ]
+    },
+    {
+      "id": "5.10",
+      "judul": "Environment Variables & Secrets Management",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Environment Variables Penting?",
+          "isi": "Menyimpan secret seperti password database, API key, dan JWT secret langsung di kode sumber adalah kesalahan fatal. Jika kode di-push ke GitHub (bahkan repo private), secret tersebut bisa bocor ke pihak ketiga.\n\nApa yang termasuk secret dan harus disimpan di environment variable:\n• JWT_SECRET / JWT_PRIVATE_KEY\n• DATABASE_URI / MONGODB_URI (termasuk password!)\n• API keys (Stripe, SendGrid, AWS, Google Maps)\n• Encryption keys\n• OAuth client secrets\n• Email SMTP credentials\n\nApa yang TIDAK perlu disimpan di environment variable:\n• PORT server (bisa default 3000)\n• Nama aplikasi\n• URL frontend (kecuali berbeda per environment)\n\nFile .env adalah cara paling umum menyimpan environment variable di development. Tapi JANGAN pernah commit file .env ke Git!\n\nBest practice:\n• Buat file .env.example yang berisi daftar variable tanpa nilai sensitif\n• Tambahkan .env ke .gitignore\n• Gunakan dotenv untuk memuat .env saat development\n• Di production, gunakan secret management service (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault, atau environment variable di platform hosting)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Manajemen Environment Variables yang Aman",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// .env (JANGAN commit ke Git!)\n// ==========================================\nNODE_ENV=development\nPORT=3000\n\n# Database\nMONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/db_name\n\n# JWT\nJWT_SECRET=your-super-secret-key-min-32-chars-long\nJWT_EXPIRES_IN=15m\nREFRESH_TOKEN_EXPIRES_IN=7d\n\n# API Keys\nSTRIPE_SECRET_KEY=sk_test_...\nSENDGRID_API_KEY=SG.xxx\n\n# Email SMTP\nSMTP_HOST=smtp.sendgrid.net\nSMTP_PORT=587\nSMTP_USER=apikey\nSMTP_PASS=SG.xxx\n\n# Frontend URL (untuk CORS)\nCLIENT_URL=http://localhost:5173\n\n// ==========================================\n// .env.example (boleh di-commit)\n// ==========================================\nNODE_ENV=development\nPORT=3000\nMONGODB_URI=\nJWT_SECRET=\nJWT_EXPIRES_IN=15m\nREFRESH_TOKEN_EXPIRES_IN=7d\nSTRIPE_SECRET_KEY=\nSENDGRID_API_KEY=\nSMTP_HOST=\nSMTP_PORT=\nSMTP_USER=\nSMTP_PASS=\nCLIENT_URL=http://localhost:5173\n\n// ==========================================\n// config/env.js — Validasi Environment Variables\n// ==========================================\nrequire('dotenv').config();\n\nconst requiredEnvVars = [\n  'NODE_ENV',\n  'PORT',\n  'MONGODB_URI',\n  'JWT_SECRET'\n];\n\nfunction validateEnv() {\n  const missing = requiredEnvVars.filter(varName => !process.env[varName]);\n  if (missing.length > 0) {\n    console.error('Environment variables berikut tidak ditemukan:');\n    missing.forEach(v => console.error(`   - ${v}`));\n    process.exit(1);\n  }\n  if (process.env.JWT_SECRET.length < 32) {\n    console.error('JWT_SECRET harus minimal 32 karakter');\n    process.exit(1);\n  }\n  console.log('Semua environment variables valid');\n}\n\nconst config = {\n  env:     process.env.NODE_ENV || 'development',\n  port:    parseInt(process.env.PORT, 10) || 3000,\n  isDev:   process.env.NODE_ENV === 'development',\n  isProd:  process.env.NODE_ENV === 'production',\n  db:      { uri: process.env.MONGODB_URI },\n  jwt:     {\n    secret:           process.env.JWT_SECRET,\n    expiresIn:        process.env.JWT_EXPIRES_IN || '15m',\n    refreshExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d'\n  },\n  client:  { url: process.env.CLIENT_URL },\n  stripe:  { secretKey: process.env.STRIPE_SECRET_KEY },\n  email:   {\n    host: process.env.SMTP_HOST,\n    port: parseInt(process.env.SMTP_PORT, 10),\n    user: process.env.SMTP_USER,\n    pass: process.env.SMTP_PASS\n  }\n};\n\nmodule.exports = { validateEnv, config };",
+          "penjelasan": "validateEnv() dijalankan saat startup aplikasi — jika ada environment variable yang hilang atau tidak valid, aplikasi langsung berhenti dengan pesan error yang jelas. Ini mencegah aplikasi berjalan dalam kondisi konfigurasi tidak lengkap yang bisa menyebabkan error misterius di kemudian hari."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: .env seperti Brankas Pribadi",
+          "isi": "File .env seperti brankas pribadi di rumahmu — berisi kunci rumah, PIN ATM, dan password akun penting. Kamu tidak akan meninggalkan brankas itu di trotoar (commit ke Git) atau memberikan kunci brankas ke semua orang (hardcode di kode). Brankas harus disimpan di tempat aman dan hanya orang yang berwenang yang punya akses. Saat pindah rumah (deploy ke server baru), kamu membawa isi brankas, bukan brankasnya sendiri."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "GitHub Memindai Secret di Setiap Commit",
+          "isi": "Sejak 2022, GitHub secara otomatis memindai setiap commit untuk mendeteksi secret yang tidak sengaja di-commit — API keys, database credentials, private keys, dll. Jika terdeteksi, GitHub akan mengirim alert dan bisa otomatis revoke secret tertentu (tergantung provider). Tapi jangan andalkan ini sebagai pertahanan utama — secret yang sudah di-commit tetap ada di history Git dan bisa diakses siapapun yang melihat history. Gunakan git-filter-repo atau BFG Repo-Cleaner untuk menghapus secret dari history jika sudah terlanjur di-commit."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 4,
+    "judul_bab": "Database NoSQL (MongoDB)",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "4.1",
+      "pertanyaan": "Perhatikan perbandingan berikut antara SQL dan NoSQL:\n\n1. SQL memiliki schema kaku — semua baris harus punya kolom yang sama\n2. NoSQL mendukung transaksi ACID yang ketat untuk keuangan dan perbankan\n3. NoSQL lebih mudah melakukan horizontal scaling\n4. SQL cocok untuk data yang sangat terstruktur dengan relasi kompleks\n\nPernyataan mana yang BENAR?",
+      "opsi": {
+        "A": "Hanya 1 dan 2",
+        "B": "Hanya 1, 3, dan 4",
+        "C": "Hanya 2 dan 3",
+        "D": "Semua pernyataan benar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pernyataan 2 salah: SQL (bukan NoSQL) yang mendukung transaksi ACID yang ketat — cocok untuk keuangan, perbankan, dan inventory. NoSQL mengorbankan ACID penuh demi fleksibilitas schema dan horizontal scaling. Pernyataan 1 benar (SQL schema kaku), 3 benar (NoSQL horizontal scaling lebih mudah), dan 4 benar (SQL untuk data terstruktur dengan relasi kompleks)."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "4.2",
+      "pertanyaan": "Dalam hierarki data MongoDB, manakah urutan yang BENAR dari level tertinggi ke terendah?",
+      "opsi": {
+        "A": "Document → Collection → Database → MongoDB Server",
+        "B": "MongoDB Server → Database → Collection → Document",
+        "C": "Database → Collection → Document → BSON",
+        "D": "Collection → Document → Field → BSON"
+      },
+      "jawaban": "B",
+      "penjelasan": "Hierarki MongoDB dari atas ke bawah: MongoDB Server (satu server bisa menjalankan banyak database) → Database (wadah berisi collection) → Collection (kumpulan dokumen sejenis, padanan tabel di SQL) → Document (unit data tunggal dalam format BSON, padanan baris di SQL). BSON adalah format penyimpanan internal, bukan level hierarki data."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "4.3",
+      "pertanyaan": "Perhatikan operasi update berikut di MongoDB shell:\n\ndb.mahasiswa.updateOne(\n  { nim: \"2021001\" },\n  { ipk: 3.95 }\n)\n\nApa yang akan terjadi jika query tersebut dijalankan?",
+      "opsi": {
+        "A": "Field ipk berubah menjadi 3.95, field lain tetap utuh",
+        "B": "Seluruh dokumen diganti hanya dengan { ipk: 3.95 }, semua field lain hilang",
+        "C": "Query gagal karena tidak menggunakan operator $set",
+        "D": "Dokumen baru dibuat jika nim \"2021001\" tidak ditemukan"
+      },
+      "jawaban": "B",
+      "penjelasan": "Tanpa operator $set, MongoDB akan MENGGANTI seluruh dokumen dengan object yang diberikan — hanya menyisakan { ipk: 3.95 } dan menghapus semua field lain (nama, email, alamat, dll). Ini adalah kesalahan yang sangat berbahaya di production. Cara yang benar adalah menggunakan { $set: { ipk: 3.95 } } agar hanya field ipk yang diubah. Untuk upsert (insert jika tidak ada), gunakan opsi { upsert: true }."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "4.4",
+      "pertanyaan": "Perhatikan query MongoDB berikut:\n\ndb.mahasiswa.find({\n  $and: [\n    { ipk: { $gte: 3.5 } },\n    { aktif: true }\n  ]\n})\n\nQuery tersebut setara dengan SQL berikut:",
+      "opsi": {
+        "A": "SELECT * FROM mahasiswa WHERE ipk > 3.5 OR aktif = TRUE",
+        "B": "SELECT * FROM mahasiswa WHERE ipk >= 3.5 AND aktif = TRUE",
+        "C": "SELECT * FROM mahasiswa WHERE ipk >= 3.5 AND aktif = FALSE",
+        "D": "SELECT * FROM mahasiswa WHERE ipk BETWEEN 3.5 AND TRUE"
+      },
+      "jawaban": "B",
+      "penjelasan": "$and memastikan semua kondisi harus true (AND di SQL). $gte berarti 'greater than or equal' (>= di SQL). Jadi query tersebut mencari mahasiswa dengan IPK >= 3.5 DAN aktif = true. Pilihan A salah karena menggunakan OR. Pilihan C salah karena aktif = FALSE. Pilihan D tidak valid secara sintaksis. Catatan: MongoDB juga mendukung shorthand $and dengan menulis langsung { ipk: { $gte: 3.5 }, aktif: true }."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "4.5",
+      "pertanyaan": "Mengapa Mongoose (ODM) diperlukan saat bekerja dengan MongoDB di Node.js, padahal MongoDB sendiri tidak memaksakan schema?",
+      "opsi": {
+        "A": "Mongoose membuat MongoDB menjadi database relasional seperti MySQL",
+        "B": "Mongoose menambahkan schema validation sehingga data tidak valid tidak masuk ke database",
+        "C": "Mongoose diperlukan agar MongoDB bisa menyimpan data dalam format JSON",
+        "D": "Tanpa Mongoose, MongoDB tidak bisa diakses dari Node.js"
+      },
+      "jawaban": "B",
+      "penjelasan": "MongoDB secara default tidak punya schema — dokumen dalam satu collection bisa punya struktur berbeda-beda. Mongoose menambahkan schema validation di level aplikasi: mendefinisikan field apa saja, tipe datanya, constraint (required, unique, min, max, enum), dan validasi kustom. Ini mencegah data tidak valid masuk ke database. Pilihan A salah (Mongoose tidak mengubah MongoDB jadi relasional), C salah (MongoDB sudah native menyimpan BSON/JSON), D salah (ada driver MongoDB native tanpa Mongoose)."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "4.6",
+      "pertanyaan": "Perhatikan definisi schema Mongoose berikut:\n\nconst mahasiswaSchema = new Schema({\n  nim: { type: String, required: true, unique: true, match: /^\\d{7}$/ },\n  ipk: { type: Number, default: 0, min: 0, max: 4 },\n  jenisKelamin: { type: String, enum: ['L', 'P'] },\n  aktif: { type: Boolean, default: true }\n}, { timestamps: true });\n\nApa yang terjadi jika mencoba menyimpan dokumen dengan ipk = 4.5?",
+      "opsi": {
+        "A": "Dokumen tersimpan dengan ipk = 4.5 karena tipe datanya Number",
+        "B": "Dokumen tersimpan dengan ipk = 4.00 karena max constraint memotong nilai",
+        "C": "Mongoose melempar ValidationError karena ipk melebihi batas max: 4",
+        "D": "Dokumen tersimpan dengan ipk = 0 karena default: 0 menggantikan nilai yang tidak valid"
+      },
+      "jawaban": "C",
+      "penjelasan": "Mongoose akan melempar ValidationError saat validasi gagal. Field ipk memiliki constraint max: 4, sehingga nilai 4.5 ditolak. Error ini bisa ditangkap dengan try-catch dan memberikan pesan error yang spesifik ke client. Opsi timestamps: true otomatis menambahkan createdAt dan updatedAt. Constraint match pada nim memastikan NIM terdiri dari tepat 7 digit angka."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "4.7",
+      "pertanyaan": "Perhatikan kode berikut:\n\nconst mhs = await Mahasiswa.findByIdAndUpdate(\n  id,\n  { $set: { ipk: ipkBaru } },\n  { new: true, runValidators: true }\n);\n\nMengapa opsi runValidators: true wajib ditambahkan dalam operasi update?",
+      "opsi": {
+        "A": "Agar query update berjalan lebih cepat",
+        "B": "Karena secara default validasi Mongoose TIDAK berjalan pada operasi update",
+        "C": "Agar MongoDB otomatis membuat index pada field yang diupdate",
+        "D": "Untuk mengaktifkan fitur upsert (insert jika tidak ada)"
+      },
+      "jawaban": "B",
+      "penjelasan": "Secara default, validasi Mongoose hanya berjalan pada operasi create (save, create) — TIDAK pada update (updateOne, updateMany, findByIdAndUpdate). Ini bisa menyebabkan data tidak valid masuk ke database melalui jalur update. Dengan menambahkan runValidators: true, validasi schema akan dijalankan juga saat update. Opsi new: true mengembalikan dokumen SETELAH update (bukan sebelum update). Untuk upsert, gunakan opsi upsert: true, bukan runValidators."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "4.8",
+      "pertanyaan": "Dalam sistem e-commerce, data order menyimpan informasi pelanggan dan detail produk yang dibeli. Manakah strategi terbaik untuk merelasikan data tersebut?",
+      "opsi": {
+        "A": "Embed semua data: pelanggan, produk, dan detail order dalam satu dokumen order",
+        "B": "Reference pelanggan (karena bisa punya banyak order), embed detail produk (karena harga saat beli tidak boleh berubah)",
+        "C": "Reference semua data: pelanggan, produk, dan detail order disimpan terpisah",
+        "D": "Embed pelanggan dalam order, reference produk karena harga bisa berubah sewaktu-waktu"
+      },
+      "jawaban": "B",
+      "penjelasan": "Ini adalah contoh klasik embed vs reference. Pelanggan di-reference karena satu pelanggan bisa punya banyak order — jika di-embed, data pelanggan akan duplikat di setiap order. Detail produk di-embed (nama dan hargaSaatBeli) karena harga produk bisa berubah di kemudian hari, tapi kita ingin menyimpan harga saat pembelian — jika di-reference, harga di order akan ikut berubah saat harga produk diupdate. Aturan praktis: embed jika data sering dibaca bersama dan tidak berubah sering; reference jika data dipakai banyak dokumen atau sering diupdate."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "4.9",
+      "pertanyaan": "Perhatikan aggregation pipeline berikut:\n\nMahasiswa.aggregate([\n  { $match: { aktif: true } },\n  { $group: { _id: '$jurusan', total: { $sum: 1 }, rataIPK: { $avg: '$ipk' } } },\n  { $sort: { total: -1 } }\n])\n\nApa fungsi dari stage $match yang diletakkan di awal pipeline?",
+      "opsi": {
+        "A": "Mengurutkan dokumen berdasarkan field aktif sebelum diproses",
+        "B": "Memfilter hanya dokumen aktif sejak awal, mengurangi jumlah dokumen yang diproses stage selanjutnya",
+        "C": "Menghitung jumlah dokumen yang aktif untuk digunakan di stage $group",
+        "D": "Menggabungkan collection mahasiswa dengan collection lain"
+      },
+      "jawaban": "B",
+      "penjelasan": "$match di awal pipeline adalah best practice untuk performa — memfilter dokumen sejak awal sehingga stage selanjutnya ($group, $sort) hanya memproses dokumen yang relevan. Ini memungkinkan MongoDB menggunakan index dan mengurangi beban pemrosesan. Jika $match diletakkan di akhir pipeline, semua dokumen tetap diproses oleh stage sebelumnya — tidak efisien. $match setara dengan WHERE di SQL. Untuk mengurutkan gunakan $sort, untuk menghitung gunakan $count, dan untuk join gunakan $lookup."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "4.10",
+      "pertanyaan": "Perhatikan connection string MongoDB Atlas berikut:\n\nmongodb+srv://user:pass@cluster0.abc123.mongodb.net/web_belajar?retryWrites=true&w=majority\n\nApa fungsi dari parameter w=majority dalam connection string tersebut?",
+      "opsi": {
+        "A": "Membatasi jumlah koneksi maksimal ke database menjadi mayoritas dari pool",
+        "B": "Write concern: data dianggap tersimpan setelah mayoritas replica mengkonfirmasi penulisan",
+        "C": "Mengaktifkan fitur sharding agar data didistribusikan ke mayoritas server",
+        "D": "Menentukan bahwa hanya user dengan role mayoritas yang bisa menulis ke database"
+      },
+      "jawaban": "B",
+      "penjelasan": "w=majority adalah write concern yang menentukan kapan MongoDB menganggap write operation berhasil. Dengan majority, data dianggap tersimpan setelah mayoritas node dalam replica set mengkonfirmasi penulisan — memberikan jaminan data durability yang lebih tinggi. retryWrites=true membuat MongoDB otomatis retry write yang gagal karena transient network error. Parameter ini penting untuk production agar data tidak hilang saat ada masalah koneksi. Atlas menggunakan replica set (Primary + Secondary) secara default."
+    }
+  ]
+}

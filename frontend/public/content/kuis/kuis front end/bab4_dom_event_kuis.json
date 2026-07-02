@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 4,
+    "judul_bab": "JavaScript DOM & Event",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "4.1",
+      "pertanyaan": "Apa yang dimaksud dengan DOM (Document Object Model)?",
+      "opsi": {
+        "A": "File HTML yang disimpan di server web",
+        "B": "Representasi halaman web dalam bentuk pohon objek yang bisa diakses dan dimanipulasi oleh JavaScript",
+        "C": "Bahasa pemrograman khusus untuk membuat halaman web interaktif",
+        "D": "Protokol komunikasi antara browser dan server"
+      },
+      "jawaban": "B",
+      "penjelasan": "DOM adalah representasi struktur halaman HTML dalam bentuk pohon objek yang dibangun browser saat memuat halaman. JavaScript bisa mengakses DOM ini untuk membaca, mengubah, menambah, atau menghapus elemen secara dinamis. DOM bukan bagian dari JavaScript, melainkan Web API yang disediakan browser."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "4.2",
+      "pertanyaan": "Perhatikan kode berikut:\n\nconst elemen = document.querySelector('.kartu');\nconst semuaElemen = document.querySelectorAll('.kartu');\n\nApa perbedaan hasil dari kedua baris tersebut?",
+      "opsi": {
+        "A": "Keduanya mengembalikan hasil yang sama persis",
+        "B": "querySelector mengembalikan elemen pertama yang cocok, querySelectorAll mengembalikan NodeList berisi semua elemen yang cocok",
+        "C": "querySelector lebih lambat dari querySelectorAll karena harus mencari seluruh dokumen",
+        "D": "querySelectorAll hanya bekerja untuk selector class, querySelector untuk semua selector"
+      },
+      "jawaban": "B",
+      "penjelasan": "querySelector mengembalikan elemen DOM pertama yang cocok dengan selector (atau null jika tidak ada). querySelectorAll mengembalikan NodeList berisi SEMUA elemen yang cocok — bisa diiterasi dengan forEach. NodeList dari querySelectorAll bersifat static, tidak berubah meski DOM dimanipulasi setelahnya."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "4.3",
+      "pertanyaan": "Seorang developer menulis kode berikut untuk menampilkan data dari input pengguna:\n\nconst komentar = document.querySelector('#komentar');\nkomentar.innerHTML = inputDariPengguna;\n\nApa masalah serius dari kode ini?",
+      "opsi": {
+        "A": "innerHTML tidak bisa menampilkan teks biasa, hanya HTML",
+        "B": "Kode ini rentan terhadap serangan XSS karena input pengguna langsung dimasukkan ke innerHTML tanpa sanitasi",
+        "C": "inputDariPengguna harus dikonversi ke string terlebih dahulu",
+        "D": "Tidak ada masalah, ini cara yang benar untuk menampilkan input pengguna"
+      },
+      "jawaban": "B",
+      "penjelasan": "Memasukkan input pengguna langsung ke innerHTML adalah celah XSS (Cross-Site Scripting). Penyerang bisa memasukkan script berbahaya seperti <script>stealCookies()</script> yang akan dieksekusi browser. Untuk konten dari pengguna, gunakan textContent (aman, tidak memproses tag HTML) atau sanitasi input dulu dengan library seperti DOMPurify."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "4.4",
+      "pertanyaan": "Manakah pendekatan yang PALING DIREKOMENDASIKAN untuk mengimplementasikan fitur dark mode dengan JavaScript?",
+      "opsi": {
+        "A": "Mengubah setiap property style secara langsung: element.style.backgroundColor = '#000', element.style.color = '#fff', dst.",
+        "B": "Mengganti seluruh file CSS dengan yang baru menggunakan JavaScript",
+        "C": "Menambah/menghapus class 'dark-mode' di body menggunakan classList.toggle(), lalu definisikan semua style di CSS",
+        "D": "Menggunakan innerHTML untuk menimpa seluruh konten halaman dengan versi dark mode"
+      },
+      "jawaban": "C",
+      "penjelasan": "classList.toggle() pada body adalah cara terbaik: satu baris JS mengaktifkan/menonaktifkan dark mode, semua style didefinisikan di CSS dengan selector body.dark-mode. Ini memisahkan logika (JS) dari tampilan (CSS). Mengubah style property satu per satu sangat tidak efisien dan sulit dipelihara jika ada banyak elemen."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "4.5",
+      "pertanyaan": "Mengapa menggunakan DocumentFragment lebih baik daripada langsung appendChild ke DOM berkali-kali saat merender banyak elemen?",
+      "opsi": {
+        "A": "DocumentFragment memiliki API yang lebih mudah digunakan daripada appendChild biasa",
+        "B": "DocumentFragment mencegah browser melakukan reflow/repaint berulang kali, sehingga performa lebih baik karena DOM hanya diupdate sekali",
+        "C": "DocumentFragment adalah satu-satunya cara yang valid untuk menambah elemen baru ke DOM",
+        "D": "DocumentFragment otomatis mensanitasi konten HTML dari serangan XSS"
+      },
+      "jawaban": "B",
+      "penjelasan": "Setiap kali elemen ditambahkan langsung ke DOM, browser perlu menghitung ulang layout (reflow) dan menggambar ulang (repaint). Jika merender 100 elemen satu per satu, terjadi 100 reflow. DocumentFragment adalah kontainer virtual di luar DOM — kumpulkan semua elemen di sana dulu, lalu satu appendChild ke DOM = satu reflow. Perbedaan performa bisa sangat signifikan untuk banyak elemen."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "4.6",
+      "pertanyaan": "Perhatikan kode berikut:\n\nconst form = document.querySelector('#form-daftar');\nform.addEventListener('submit', (e) => {\n  const email = document.querySelector('#email').value;\n  console.log('Email:', email);\n});\n\nApa yang akan terjadi ketika form ini disubmit?",
+      "opsi": {
+        "A": "Email akan dicetak ke console dan form berfungsi normal",
+        "B": "Kode akan error karena form tidak bisa menggunakan addEventListener",
+        "C": "Email dicetak ke console, tapi halaman langsung reload sehingga log tidak sempat terlihat karena tidak ada e.preventDefault()",
+        "D": "Email dicetak ke console dan halaman tidak reload karena submit event otomatis dicegah"
+      },
+      "jawaban": "C",
+      "penjelasan": "Perilaku default form submit adalah mengirim data dan merefresh halaman. Tanpa e.preventDefault(), browser akan melakukan reload sesaat setelah handler dijalankan — console.log mungkin terlihat sekilas lalu hilang. Selalu tambahkan e.preventDefault() di handler form submit jika ingin menangani data dengan JavaScript tanpa reload."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "4.7",
+      "pertanyaan": "Sebuah aplikasi memiliki daftar yang akan terus bertambah secara dinamis. Setiap item butuh event click. Manakah pendekatan yang paling efisien?",
+      "opsi": {
+        "A": "Pasang addEventListener('click') di setiap item setiap kali item baru ditambahkan ke daftar",
+        "B": "Gunakan setInterval untuk terus memeriksa item baru dan memasang listener",
+        "C": "Pasang satu addEventListener('click') di parent list, lalu gunakan event delegation dengan e.target untuk menentukan item mana yang diklik",
+        "D": "Pasang addEventListener('click') di document untuk menangkap semua klik di halaman"
+      },
+      "jawaban": "C",
+      "penjelasan": "Event delegation adalah solusinya: satu listener di parent menangkap semua klik dari child melalui event bubbling. Gunakan e.target.matches('.item') atau e.target.closest('.item') untuk memastikan klik pada elemen yang tepat. Keuntungannya: satu listener (hemat memori), otomatis bekerja untuk elemen yang ditambah belakangan, dan kode lebih bersih."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "4.8",
+      "pertanyaan": "Apa perbedaan utama antara Promise.all() dan Promise.allSettled()?",
+      "opsi": {
+        "A": "Promise.all() lebih cepat dari Promise.allSettled() karena tidak menunggu semua promise",
+        "B": "Promise.all() langsung reject jika satu promise gagal; Promise.allSettled() menunggu semua selesai dan melaporkan status masing-masing",
+        "C": "Promise.allSettled() hanya bisa digunakan dengan fetch API, Promise.all() untuk semua jenis promise",
+        "D": "Keduanya identik, hanya berbeda nama"
+      },
+      "jawaban": "B",
+      "penjelasan": "Promise.all() reject seluruhnya jika satu saja promise gagal — cocok ketika semua data wajib berhasil. Promise.allSettled() menunggu semua promise selesai (baik fulfilled maupun rejected) dan mengembalikan array status masing-masing — cocok ketika kamu ingin mengetahui hasil tiap promise dan tetap melanjutkan meski ada yang gagal."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "4.9",
+      "pertanyaan": "Perhatikan kode fetch berikut:\n\nasync function ambilData() {\n  const response = await fetch('https://api.example.com/data');\n  const data = await response.json();\n  return data;\n}\n\nApa yang KURANG dari kode ini?",
+      "opsi": {
+        "A": "Tidak ada yang kurang, kode sudah benar",
+        "B": "Tidak ada pengecekan response.ok, sehingga jika server mengembalikan status 404 atau 500, kode tetap mencoba parsing JSON dari response error",
+        "C": "await tidak bisa digunakan langsung pada fetch(), harus menggunakan .then()",
+        "D": "response.json() tidak memerlukan await karena bukan operasi asinkron"
+      },
+      "jawaban": "B",
+      "penjelasan": "fetch() hanya reject Promise-nya jika ada masalah jaringan. Jika server merespons dengan status 404 atau 500, fetch() tetap resolve dan kode lanjut ke response.json() — yang bisa menghasilkan data error atau bahkan throw error jika body bukan JSON valid. Selalu tambahkan: if (!response.ok) { throw new Error(`HTTP Error: ${response.status}`); } setelah await fetch()."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "4.10",
+      "pertanyaan": "Seorang developer menyimpan object pengaturan pengguna ke localStorage dengan kode:\n\nlocalStorage.setItem('setting', userSetting);\n\nKemudian membacanya kembali dengan:\n\nconst setting = localStorage.getItem('setting');\nconsole.log(setting.tema);\n\nOutput-nya adalah undefined. Apa penyebabnya?",
+      "opsi": {
+        "A": "localStorage tidak bisa menyimpan object, hanya string primitif",
+        "B": "Object userSetting otomatis dikonversi menjadi string '[object Object]' saat disimpan, dan console.log mencoba mengakses property dari string tersebut",
+        "C": "getItem selalu mengembalikan null untuk object",
+        "D": "setting.tema undefined karena property tema tidak ada di object awal"
+      },
+      "jawaban": "B",
+      "penjelasan": "localStorage hanya menyimpan string. Ketika object langsung dimasukkan ke setItem tanpa JSON.stringify(), JavaScript otomatis memanggil .toString() pada object yang menghasilkan '[object Object]' — bukan data yang diinginkan. Cara yang benar: localStorage.setItem('setting', JSON.stringify(userSetting)) saat menyimpan, dan JSON.parse(localStorage.getItem('setting')) saat membaca."
+    }
+  ]
+}

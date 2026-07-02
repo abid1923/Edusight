@@ -1,0 +1,387 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 2,
+    "judul_bab": "Express.js & REST API",
+    "deskripsi": "Materi lengkap Express.js dari setup awal, routing, middleware, REST API design, request/response object, error handling, CORS, hingga struktur folder project profesional.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "MDN Web Docs – Express Routing & Middleware",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Express_Nodejs/Introduction",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "FullStackOpen – Part 3: Node.js and Express",
+        "url": "https://fullstackopen.com/en/part3/node_js_and_express",
+        "lisensi": "CC-BY-NC-SA 3.0"
+      },
+      {
+        "nama": "freeCodeCamp – Back End Development and APIs",
+        "url": "https://www.freecodecamp.org/learn/back-end-development-and-apis",
+        "lisensi": "BSD-3-Clause"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+  "sub_bab": [
+    {
+      "id": "2.1",
+      "judul": "Apa itu Express & Cara Setup",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Express?",
+          "isi": "Di bab sebelumnya, kita membuat web server menggunakan built-in http module Node.js. Hasilnya? Puluhan baris kode hanya untuk routing sederhana, parsing body, dan mengirim respons JSON. Bayangkan harus melakukan itu untuk ratusan endpoint di aplikasi nyata — mimpi buruk.\n\nExpress.js hadir sebagai solusi: framework web minimalis dan fleksibel untuk Node.js yang menyederhanakan semua pekerjaan berulang itu menjadi kode yang bersih dan ekspresif. Express adalah framework Node.js paling populer di dunia — diunduh lebih dari 30 juta kali per minggu di npm, dan menjadi fondasi dari banyak framework lain seperti Feathers, LoopBack, dan Sails.js.\n\nApa yang Express sediakan:\n• Routing yang bersih dan intuitif berdasarkan HTTP method dan path\n• Middleware pipeline — sistem plugin yang bisa ditambahkan dan dikonfigurasi dengan mudah\n• Template engine integration untuk server-side rendering\n• Static file serving yang efisien\n• Error handling yang terstruktur\n• Ekosistem middleware yang sangat kaya\n\nYang menarik dari Express adalah filosofinya: unopinionated (tidak memaksakan cara). Express tidak mendikte bagaimana kamu harus mengatur folder, database apa yang digunakan, atau template engine mana yang dipilih. Kamu bebas memilih — ini fleksibel tapi butuh pengalaman untuk membuat keputusan yang tepat."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Setup Project Express dari Nol",
+          "bahasa": "bash",
+          "kode": "# 1. Buat folder project dan masuk ke dalamnya\nmkdir api-web-belajar && cd api-web-belajar\n\n# 2. Inisialisasi project Node.js\nnpm init -y\n\n# 3. Install Express\nnpm install express\n\n# 4. Install tools development\nnpm install nodemon --save-dev\n\n# 5. Buat file entry point\ntouch index.js\n\n# 6. Tambahkan script di package.json:\n# \"scripts\": {\n#   \"start\": \"node index.js\",\n#   \"dev\": \"nodemon index.js\"\n# }\n\n# 7. Jalankan server development\nnpm run dev",
+          "penjelasan": "Selalu mulai project dengan npm init -y untuk membuat package.json. Install nodemon sebagai devDependency agar server otomatis restart saat kode berubah."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Express App Pertama — Hello World",
+          "bahasa": "javascript",
+          "kode": "const express = require('express');\nconst app = express();\nconst PORT = process.env.PORT || 3000;\n\n// Middleware: parse JSON body secara otomatis\napp.use(express.json());\n\n// Route sederhana\napp.get('/', (req, res) => {\n  res.json({\n    pesan: 'Selamat datang di API Web Belajar!',\n    versi: '1.0.0',\n    waktu: new Date().toISOString()\n  });\n});\n\napp.get('/health', (req, res) => {\n  res.json({ status: 'OK', uptime: process.uptime() });\n});\n\n// Jalankan server\napp.listen(PORT, () => {\n  console.log(`🚀 Server berjalan di http://localhost:${PORT}`);\n});\n\nmodule.exports = app; // ekspor untuk testing",
+          "penjelasan": "Bandingkan dengan versi http module di Bab 1 — Express jauh lebih ringkas dan ekspresif. app.use(express.json()) adalah middleware bawaan Express yang otomatis mem-parse body JSON dari setiap request."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Arsitektur Aplikasi Express.js",
+          "src": "/assets/backend/bab2/bab2_2.1.png",
+          "deskripsi_gambar": "Diagram alur request Express.js: HTTP Request masuk dari kiri, melewati stack middleware (CORS, Auth, Logger), lalu ke Route Handler, dan keluar sebagai Response. Logo Express.js di bagian bawah.",
+          "alt": "Diagram arsitektur Express.js menampilkan alur request melalui middleware stack hingga route handler"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Express seperti Kerangka Gedung Jadi",
+          "isi": "Membuat server dengan http module Node.js seperti membangun gedung dari bata satu per satu. Express seperti membeli kerangka gedung prefabrikasi yang sudah jadi — dinding, pintu, jendela sudah tersedia. Kamu tinggal mengisi dan mendekorasi sesuai kebutuhan, bukan membangun dari nol."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Express Lahir dari Sinatra",
+          "isi": "Express diciptakan oleh TJ Holowaychuk pada November 2010, terinspirasi langsung dari Sinatra — framework web Ruby yang terkenal dengan sintaksnya yang elegan dan minimalis. Filosofi 'middleware pipeline' yang menjadi ciri khas Express juga diadopsi dari Rack, sistem middleware Ruby. Ironi menarik: JavaScript yang awalnya dianggap 'bahasa mainan browser' kini meminjam konsep terbaik dari ekosistem Ruby yang lebih matang."
+        }
+      ]
+    },
+    {
+      "id": "2.2",
+      "judul": "Routing — GET, POST, PUT, DELETE",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu Routing?",
+          "isi": "Routing adalah cara aplikasi merespons request client ke endpoint tertentu — kombinasi dari URL path dan HTTP method. Setiap route mendefinisikan: path mana yang ditangani, method apa yang diterima, dan fungsi apa yang dijalankan sebagai handler-nya.\n\nExpress menyediakan method untuk setiap HTTP verb:\n\n• app.get(path, handler) — mengambil data, tidak mengubah state server\n• app.post(path, handler) — mengirim data baru untuk dibuat/diproses\n• app.put(path, handler) — mengganti seluruh resource yang ada\n• app.patch(path, handler) — mengubah sebagian dari resource yang ada\n• app.delete(path, handler) — menghapus resource\n• app.all(path, handler) — menangani semua HTTP method di path tersebut\n\nSatu hal yang sangat berguna: Express Router. Daripada mendefinisikan semua route di satu file app.js yang akan menjadi sangat besar, gunakan express.Router() untuk memecah route menjadi modul-modul terpisah berdasarkan resource — satu file untuk route mahasiswa, satu untuk route mata kuliah, dan seterusnya. Ini membuat kode jauh lebih terorganisir dan mudah dikelola."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Routing Dasar dan Express Router",
+          "bahasa": "javascript",
+          "kode": "const express = require('express');\nconst router = express.Router();\n\n// Data sementara (nanti diganti dengan database)\nlet mahasiswa = [\n  { id: 1, nama: 'Budi Santoso', nim: '2021001', ipk: 3.85 },\n  { id: 2, nama: 'Siti Rahayu', nim: '2021002', ipk: 3.70 },\n  { id: 3, nama: 'Ahmad Fauzi', nim: '2021003', ipk: 3.55 }\n];\n\n// GET /mahasiswa — ambil semua mahasiswa\nrouter.get('/', (req, res) => {\n  res.json({\n    sukses: true,\n    total: mahasiswa.length,\n    data: mahasiswa\n  });\n});\n\n// GET /mahasiswa/:id — ambil satu mahasiswa berdasarkan ID\nrouter.get('/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  const mhs = mahasiswa.find(m => m.id === id);\n\n  if (!mhs) {\n    return res.status(404).json({\n      sukses: false,\n      pesan: `Mahasiswa dengan ID ${id} tidak ditemukan`\n    });\n  }\n\n  res.json({ sukses: true, data: mhs });\n});\n\n// POST /mahasiswa — tambah mahasiswa baru\nrouter.post('/', (req, res) => {\n  const { nama, nim, ipk } = req.body;\n\n  // Validasi sederhana\n  if (!nama || !nim) {\n    return res.status(400).json({\n      sukses: false,\n      pesan: 'Nama dan NIM wajib diisi'\n    });\n  }\n\n  const mahasiswaBaru = {\n    id: mahasiswa.length + 1,\n    nama,\n    nim,\n    ipk: ipk ?? 0\n  };\n\n  mahasiswa.push(mahasiswaBaru);\n  res.status(201).json({ sukses: true, data: mahasiswaBaru });\n});\n\n// PUT /mahasiswa/:id — update seluruh data mahasiswa\nrouter.put('/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  const index = mahasiswa.findIndex(m => m.id === id);\n\n  if (index === -1) {\n    return res.status(404).json({ sukses: false, pesan: 'Tidak ditemukan' });\n  }\n\n  mahasiswa[index] = { id, ...req.body };\n  res.json({ sukses: true, data: mahasiswa[index] });\n});\n\n// DELETE /mahasiswa/:id — hapus mahasiswa\nrouter.delete('/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  const sebelum = mahasiswa.length;\n  mahasiswa = mahasiswa.filter(m => m.id !== id);\n\n  if (mahasiswa.length === sebelum) {\n    return res.status(404).json({ sukses: false, pesan: 'Tidak ditemukan' });\n  }\n\n  res.status(200).json({ sukses: true, pesan: 'Berhasil dihapus' });\n});\n\nmodule.exports = router;\n\n// ======================\n// Di app.js:\n// const mahasiswaRouter = require('./routes/mahasiswa');\n// app.use('/mahasiswa', mahasiswaRouter);\n// Semua route di atas otomatis prefix /mahasiswa",
+          "penjelasan": "Perhatikan konsistensi format respons: selalu ada field 'sukses' (boolean) dan 'data' atau 'pesan'. Konsistensi ini sangat membantu front-end developer dalam menangani respons API."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "HTTP Methods dan Fungsinya di REST API",
+          "src": "/assets/backend/bab2/bab2_2.2.png",
+          "deskripsi_gambar": "Tabel yang menjelaskan method HTTP utama dalam REST API. GET digunakan untuk membaca data, POST untuk menambahkan data baru, PUT atau PATCH untuk memperbarui data, dan DELETE untuk menghapus data. Method-method ini menjadi dasar operasi CRUD pada REST API.",
+          "alt": "Tabel HTTP methods REST API: GET, POST, PUT, DELETE beserta fungsi dan status code"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: HTTP Methods seperti Operasi di Perpustakaan",
+          "isi": "GET seperti meminjam buku untuk dibaca — hanya melihat, tidak mengubah. POST seperti menyerahkan buku baru untuk didaftarkan ke koleksi. PUT seperti mengganti seluruh data kartu katalog buku yang sudah ada. PATCH seperti mengoreksi satu kesalahan ketik di kartu katalog. DELETE seperti menarik buku dari koleksi secara permanen."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "PATCH vs PUT — Perbedaan yang Sering Diabaikan",
+          "isi": "Banyak developer menggunakan PUT untuk semua update, padahal standar REST membedakannya. PUT bersifat idempoten dan mengganti seluruh resource — jika kamu PUT tanpa menyertakan field 'email', field itu akan hilang. PATCH hanya mengubah field yang dikirim, sisanya tetap. Di API profesional, PATCH lebih umum digunakan untuk update parsial karena lebih hemat bandwidth dan lebih aman untuk field yang tidak perlu diubah."
+        }
+      ]
+    },
+    {
+      "id": "2.3",
+      "judul": "Middleware — Konsep & Cara Kerja",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Middleware: Jantung dari Express",
+          "isi": "Middleware adalah fungsi yang memiliki akses ke objek request (req), objek response (res), dan fungsi next() dalam siklus request-response aplikasi. Middleware adalah konsep paling penting dan paling powerful di Express — hampir semua yang terjadi di antara request masuk dan response keluar adalah middleware.\n\nSetiap middleware bisa melakukan hal-hal berikut:\n\n• Mengeksekusi kode apapun\n• Memodifikasi objek req dan res (misalnya menambahkan property req.user setelah autentikasi)\n• Mengakhiri siklus request-response dengan mengirim response\n• Memanggil next() untuk meneruskan ke middleware berikutnya\n\nJika middleware tidak mengirim response DAN tidak memanggil next(), request akan tergantung (hang) tanpa respons — ini bug yang umum dan menjengkelkan.\n\nJenis-jenis middleware di Express:\n\n• Application-level middleware — berlaku untuk semua request di seluruh app: app.use(middleware)\n• Router-level middleware — berlaku untuk semua request di router tertentu: router.use(middleware)\n• Error-handling middleware — fungsi khusus dengan empat parameter (err, req, res, next)\n• Built-in middleware — bawaan Express: express.json(), express.urlencoded(), express.static()\n• Third-party middleware — dari npm: cors, morgan, helmet, multer, dll."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Membuat dan Menggunakan Middleware",
+          "bahasa": "javascript",
+          "kode": "const express = require('express');\nconst app = express();\n\n// ==========================================\n// MIDDLEWARE BUILT-IN\n// ==========================================\napp.use(express.json());                    // parse JSON body\napp.use(express.urlencoded({ extended: true })); // parse form data\napp.use(express.static('public'));          // sajikan file statis dari folder 'public'\n\n// ==========================================\n// MIDDLEWARE KUSTOM: Logger\n// ==========================================\nconst logger = (req, res, next) => {\n  const waktu = new Date().toISOString();\n  const { method, url, ip } = req;\n  console.log(`[${waktu}] ${method} ${url} - IP: ${ip}`);\n  next(); // WAJIB dipanggil agar request terus ke handler berikutnya\n};\n\napp.use(logger); // terapkan ke semua route\n\n// ==========================================\n// MIDDLEWARE KUSTOM: Autentikasi Sederhana\n// ==========================================\nconst cekApiKey = (req, res, next) => {\n  const apiKey = req.headers['x-api-key'];\n\n  if (!apiKey || apiKey !== process.env.API_KEY) {\n    return res.status(401).json({\n      sukses: false,\n      pesan: 'API Key tidak valid atau tidak ada'\n    });\n  }\n\n  next();\n};\n\n// ==========================================\n// MIDDLEWARE KUSTOM: Validasi Body\n// ==========================================\nconst validasiMahasiswa = (req, res, next) => {\n  const { nama, nim } = req.body;\n  const errors = [];\n\n  if (!nama || nama.trim().length < 3)\n    errors.push('Nama minimal 3 karakter');\n  if (!nim || !/^\\d{7}$/.test(nim))\n    errors.push('NIM harus 7 digit angka');\n\n  if (errors.length > 0) {\n    return res.status(400).json({ sukses: false, errors });\n  }\n\n  // Tambahkan data yang sudah dibersihkan ke req\n  req.validatedBody = { nama: nama.trim(), nim };\n  next();\n};\n\n// ==========================================\n// CONTOH PENGGUNAAN\n// ==========================================\n\n// Middleware hanya untuk route tertentu\napp.get('/admin/data', cekApiKey, (req, res) => {\n  res.json({ data: 'Data rahasia admin' });\n});\n\n// Beberapa middleware sekaligus\napp.post('/mahasiswa', cekApiKey, validasiMahasiswa, (req, res) => {\n  const dataBersih = req.validatedBody;\n  // Simpan ke database...\n  res.status(201).json({ sukses: true, data: dataBersih });\n});\n\n// Middleware untuk sekelompok route\nconst adminRouter = express.Router();\nadminRouter.use(cekApiKey); // semua route admin butuh API key\nadminRouter.get('/users', (req, res) => res.json({ users: [] }));\nadminRouter.get('/stats', (req, res) => res.json({ total: 0 }));\napp.use('/admin', adminRouter);",
+          "penjelasan": "Urutan app.use() sangat penting — middleware dieksekusi sesuai urutan pendaftaran. Logger harus didaftarkan sebelum route handler agar bisa merekam semua request."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Alur Middleware Pipeline Express",
+          "src": "/assets/backend/bab2/bab2_2.3.png",
+          "deskripsi_gambar":  "Diagram alur request pada Express.js. HTTP Request masuk lalu melewati beberapa middleware secara berurutan, seperti Logging, User Authentication, JSON Parsing, dan Static Files. Setiap middleware menerima objek req dan res, kemudian meneruskan request ke middleware berikutnya menggunakan fungsi next(). Setelah seluruh proses selesai, request diteruskan ke App Routing untuk menghasilkan HTTP Response.",
+          "alt": "Diagram alur middleware Express.js dari HTTP request melalui logging, authentication, parsing, routing hingga HTTP response"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Middleware seperti Pos Pemeriksaan",
+          "isi": "Bayangkan bandara internasional. Setiap penumpang (request) harus melewati beberapa pos pemeriksaan secara berurutan: check-in (parse body), security scan (autentikasi), imigrasi (otorisasi), baru masuk ke gate (route handler) dan bisa terbang (response). Di setiap pos, petugas bisa mempersilakan lanjut (next()) atau menghentikan perjalanan (kirim response error). Middleware adalah pos-pos pemeriksaan itu."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Kecepatan Middleware Matters",
+          "isi": "Di aplikasi dengan traffic tinggi, waktu yang dihabiskan di setiap middleware terakumulasi. Sebuah benchmark menunjukkan bahwa menambahkan terlalu banyak middleware yang tidak diperlukan bisa mengurangi throughput Express hingga 30-40%. Best practice: daftarkan middleware yang berat (seperti rate limiter atau body parser) hanya di route yang memang membutuhkannya, bukan secara global dengan app.use()."
+        }
+      ]
+    },
+    {
+      "id": "2.4",
+      "judul": "Request & Response Object",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Objek req dan res: Sumber Segala Informasi",
+          "isi": "Setiap route handler dan middleware menerima dua objek utama: req (request) dan res (response). Memahami property dan method dari kedua objek ini secara mendalam adalah kunci untuk membangun API yang handal.\n\nObjek req (request) — berisi semua informasi tentang request yang masuk:\n\n• req.params — parameter dari URL dinamis (:id, :slug)\n• req.query — query string dari URL (?halaman=1&limit=10)\n• req.body — body dari request (JSON, form data) — butuh middleware parser\n• req.headers — semua HTTP headers dari request\n• req.method — HTTP method (GET, POST, dll.)\n• req.url — URL lengkap\n• req.path — hanya path tanpa query string\n• req.ip — IP address client\n• req.cookies — cookies (butuh middleware cookie-parser)\n• req.get('header-name') — ambil satu header spesifik\n\nObjek res (response) — untuk membangun dan mengirim respons:\n\n• res.json(data) — kirim respons JSON (otomatis set Content-Type: application/json)\n• res.send(data) — kirim respons string, Buffer, atau object\n• res.status(code) — set HTTP status code (bisa di-chain)\n• res.sendStatus(code) — set status dan kirim status message sebagai body\n• res.redirect(url) — redirect ke URL lain\n• res.set(header, value) — set HTTP response header\n• res.cookie(name, value) — set cookie\n• res.clearCookie(name) — hapus cookie\n• res.download(path) — kirim file sebagai attachment (download)\n• res.sendFile(path) — kirim file sebagai response"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Eksplorasi req dan res",
+          "bahasa": "javascript",
+          "kode": "const express = require('express');\nconst router = express.Router();\n\n// GET /mahasiswa?halaman=2&limit=5&sort=nama\nrouter.get('/', (req, res) => {\n  // req.query — query string parameters\n  const halaman = parseInt(req.query.halaman) || 1;\n  const limit   = parseInt(req.query.limit)   || 10;\n  const sort    = req.query.sort || 'id';\n\n  console.log(`Halaman: ${halaman}, Limit: ${limit}, Sort: ${sort}`);\n\n  // Hitung offset untuk pagination\n  const offset = (halaman - 1) * limit;\n\n  res.json({\n    sukses: true,\n    pagination: { halaman, limit, total: 100 },\n    data: [] // isi dari database nanti\n  });\n});\n\n// GET /mahasiswa/:id — req.params\nrouter.get('/:id', (req, res) => {\n  console.log(req.params);   // { id: '5' }\n  console.log(req.method);   // 'GET'\n  console.log(req.path);     // '/5'\n  console.log(req.ip);       // '::1' (localhost)\n  console.log(req.get('Authorization')); // 'Bearer token...'\n  console.log(req.get('User-Agent'));    // info browser/client\n\n  const id = parseInt(req.params.id);\n  // ... ambil dari database\n  res.json({ sukses: true, data: { id } });\n});\n\n// POST /mahasiswa — req.body\nrouter.post('/', (req, res) => {\n  console.log(req.body);\n  // { nama: 'Budi', nim: '2021001', ipk: 3.85 }\n\n  const { nama, nim, ipk } = req.body;\n\n  // Kirim respons dengan status code dan header kustom\n  res\n    .status(201)                          // 201 Created\n    .set('X-Resource-Id', '42')           // header kustom\n    .set('Location', '/mahasiswa/42')     // lokasi resource baru\n    .json({\n      sukses: true,\n      pesan: 'Mahasiswa berhasil ditambahkan',\n      data: { id: 42, nama, nim, ipk }\n    });\n});\n\n// Contoh response lainnya\nrouter.get('/download/laporan', (req, res) => {\n  res.download('./laporan.pdf', 'Laporan-Mahasiswa.pdf');\n});\n\nrouter.get('/redirect-contoh', (req, res) => {\n  res.redirect(301, 'https://www.example.com');\n});",
+          "penjelasan": "res.status(201).json(...) adalah method chaining — status() mengembalikan objek res itu sendiri sehingga bisa disambung langsung dengan json(). Ini pola yang sangat umum di Express."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Siklus Request dan Response HTTP",
+          "src": "/assets/backend/bab2/bab2_2.4.png",
+          "deskripsi_gambar": "Diagram siklus request-response: Client (Browser) mengirim HTTP Request ke Server, server memproses dan mengembalikan HTTP Response dengan data JSON.",
+          "alt": "Diagram siklus request-response HTTP antara client browser dan server"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "req.body Tidak Langsung Tersedia",
+          "isi": "Salah satu kebingungan paling umum pemula Express: req.body adalah undefined tanpa middleware parser. Ini disengaja — Express sangat modular dan tidak mengasumsikan format body yang dikirim client. Kamu harus secara eksplisit menambahkan express.json() untuk JSON, express.urlencoded() untuk form data, atau multer untuk file upload. Sebelum Express 4.16, bahkan harus install package body-parser terpisah — sekarang sudah built-in."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: req dan res seperti Amplop dan Kertas Balasan",
+          "isi": "req adalah amplop surat yang masuk — berisi alamat pengirim (IP), tujuan (URL), isi surat (body), dan stempel (headers). res adalah kertas balasan kosong yang kamu isi — kamu menentukan isi (json/send), amplop balasan (headers), dan kode prioritas pengiriman (status code). Setelah res.json() dipanggil, amplop ditutup dan dikirim — kamu tidak bisa mengubahnya lagi."
+        }
+      ]
+    },
+    {
+      "id": "2.5",
+      "judul": "Route Parameter, Query String & Body",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Tiga Cara Mengirim Data ke Server",
+          "isi": "Dalam membangun API, client bisa mengirimkan data ke server melalui tiga cara utama, masing-masing punya konteks penggunaan yang berbeda:\n\n1. Route Parameter (:param) — bagian dari URL path yang bersifat dinamis. Digunakan untuk mengidentifikasi resource spesifik berdasarkan ID atau identifier unik lainnya. Contoh: /mahasiswa/42 — angka 42 adalah ID mahasiswa yang diminta. Parameter ini wajib ada di URL.\n\n2. Query String (?key=value) — parameter opsional yang ditambahkan di akhir URL setelah tanda ?. Beberapa parameter dipisahkan dengan &. Cocok untuk filtering, sorting, pagination, dan pencarian. Contoh: /mahasiswa?jurusan=TI&sort=ipk&halaman=2. Karena bersifat opsional, handler harus menangani kasus ketika parameter tidak diberikan.\n\n3. Request Body — data yang dikirim di dalam body HTTP request. Cocok untuk data yang lebih kompleks atau sensitif (tidak terlihat di URL). Umumnya digunakan di POST, PUT, PATCH. Format yang paling umum adalah JSON, tapi bisa juga form-urlencoded atau multipart (untuk file upload).\n\nBagaimana memilih yang mana?\n• ID atau identifier resource yang spesifik → route parameter\n• Filter, search, sort, pagination yang opsional → query string\n• Data untuk membuat atau mengubah resource → request body\n• Data sensitif (password, token) → SELALU request body, JANGAN query string"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Route Param, Query String, dan Body dalam Aksi",
+          "bahasa": "javascript",
+          "kode": "const express = require('express');\nconst router = express.Router();\n\n// ==========================================\n// ROUTE PARAMETER\n// ==========================================\n// Satu parameter\nrouter.get('/:id', (req, res) => {\n  const { id } = req.params; // selalu string!\n  res.json({ id: parseInt(id) });\n});\n\n// Beberapa parameter\nrouter.get('/:tahun/semester/:sem', (req, res) => {\n  const { tahun, sem } = req.params;\n  res.json({ tahun, semester: sem });\n  // GET /2024/semester/1 → { tahun: '2024', semester: '1' }\n});\n\n// Parameter opsional dengan regex\nrouter.get('/kategori/:kategori?', (req, res) => {\n  const kategori = req.params.kategori || 'semua';\n  res.json({ kategori });\n});\n\n// ==========================================\n// QUERY STRING — Filtering & Pagination\n// ==========================================\n// GET /mahasiswa?jurusan=TI&ipk_min=3.0&halaman=1&limit=10&sort=nama&order=asc\nrouter.get('/', (req, res) => {\n  const {\n    jurusan,\n    ipk_min,\n    halaman = 1,\n    limit = 10,\n    sort = 'id',\n    order = 'asc'\n  } = req.query;\n\n  // Bangun filter\n  let hasil = dataMahasiswa;\n\n  if (jurusan) {\n    hasil = hasil.filter(m => m.jurusan === jurusan);\n  }\n  if (ipk_min) {\n    hasil = hasil.filter(m => m.ipk >= parseFloat(ipk_min));\n  }\n\n  // Sorting\n  hasil.sort((a, b) => {\n    if (order === 'asc') return a[sort] > b[sort] ? 1 : -1;\n    return a[sort] < b[sort] ? 1 : -1;\n  });\n\n  // Pagination\n  const offset = (parseInt(halaman) - 1) * parseInt(limit);\n  const data = hasil.slice(offset, offset + parseInt(limit));\n\n  res.json({\n    sukses: true,\n    pagination: {\n      halaman: parseInt(halaman),\n      limit: parseInt(limit),\n      total: hasil.length,\n      total_halaman: Math.ceil(hasil.length / parseInt(limit))\n    },\n    data\n  });\n});\n\n// ==========================================\n// REQUEST BODY — Nested & Complex Data\n// ==========================================\n// POST /mahasiswa\n// Body: { nama, nim, jurusan, kontak: { email, telepon }, hobi: ['coding', 'membaca'] }\nrouter.post('/', (req, res) => {\n  const { nama, nim, jurusan, kontak, hobi } = req.body;\n\n  // Validasi nested object\n  if (!kontak?.email) {\n    return res.status(400).json({ error: 'Email kontak wajib diisi' });\n  }\n\n  res.status(201).json({ sukses: true, pesan: 'Berhasil disimpan' });\n});",
+          "penjelasan": "Perhatikan default value di destructuring query string: const { halaman = 1, limit = 10 } = req.query. Ini cara elegan menangani parameter opsional tanpa banyak kondisi if."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Tiga Cara Kirim Data seperti Pemesanan Hotel",
+          "isi": "Route parameter seperti nomor kamar — spesifik dan wajib: 'saya mau kamar 302'. Query string seperti preferensi saat check-in — opsional: 'kalau ada, pilih lantai atas, non-smoking, view laut'. Request body seperti formulir check-in yang harus diisi lengkap — nama, nomor KTP, metode bayar — data sensitif yang tidak pantas ditulis di papan pengumuman (URL)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "URL Punya Batas Panjang",
+          "isi": "Inilah salah satu alasan mengapa data sensitif atau besar tidak boleh di query string: URL punya batas panjang. Standar HTTP tidak menetapkan batas resmi, tapi browser dan server punya batas praktisnya — Chrome membatasi URL hingga ~2MB, kebanyakan server sekitar 8KB. Selain itu, URL tersimpan di log server, browser history, dan cache — semua tempat di mana data sensitif tidak seharusnya berada."
+        }
+      ]
+    },
+    {
+      "id": "2.6",
+      "judul": "REST API — Prinsip & Desain",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu REST?",
+          "isi": "REST (Representational State Transfer) adalah gaya arsitektur untuk merancang API jaringan yang pertama kali diperkenalkan oleh Roy Fielding dalam disertasi PhD-nya tahun 2000. REST bukan protokol atau standar — melainkan seperangkat prinsip dan constraint yang jika diikuti menghasilkan API yang konsisten, scalable, dan mudah dipahami.\n\nEnam prinsip utama REST:\n\n1. Stateless — setiap request harus mengandung semua informasi yang dibutuhkan server untuk memprosesnya. Server tidak menyimpan state client antar request. Ini membuat scaling horizontal menjadi mudah.\n\n2. Client-Server separation — client dan server terpisah dan independen. Client tidak tahu detail implementasi server, server tidak tahu detail UI client. Mereka berkomunikasi hanya melalui API yang sudah disepakati.\n\n3. Uniform Interface — antarmuka yang konsisten dan standar. Ini mencakup: identifikasi resource via URI, manipulasi resource via representasi (JSON/XML), pesan yang self-descriptive, dan hypermedia as the engine of application state (HATEOAS).\n\n4. Cacheable — respons harus menandai dirinya sebagai cacheable atau non-cacheable. Caching yang baik mengurangi beban server dan meningkatkan performa.\n\n5. Layered System — client tidak perlu tahu apakah sedang berbicara langsung ke server atau melalui proxy/load balancer. Ini memungkinkan arsitektur yang fleksibel.\n\n6. Code on Demand (opsional) — server bisa mengirim kode yang dieksekusi client (seperti JavaScript). Ini opsional dan jarang diimplementasikan."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Konvensi Desain REST API yang Baik",
+          "isi": "Prinsip di atas kadang terasa abstrak. Berikut panduan praktis desain URL dan perilaku REST API yang baik:\n\nURL Resource:\n• Gunakan kata benda (noun), bukan kata kerja: /mahasiswa bukan /getMahasiswa\n• Gunakan huruf kecil dan tanda hubung: /mata-kuliah bukan /mataKuliah\n• Resource selalu jamak: /mahasiswa bukan /mahasisw\n• Relasi antar resource: /mahasiswa/:id/mata-kuliah — mata kuliah milik mahasiswa tertentu\n• Versi API di URL atau header: /api/v1/mahasiswa\n\nHTTP Methods:\n• GET untuk baca, idempoten, tidak mengubah data\n• POST untuk buat resource baru, tidak idempoten\n• PUT untuk ganti seluruh resource, idempoten\n• PATCH untuk ubah sebagian resource, idempoten\n• DELETE untuk hapus resource, idempoten\n\nStatus Code yang tepat:\n• 200 OK — request berhasil (GET, PUT, PATCH, DELETE)\n• 201 Created — resource baru berhasil dibuat (POST)\n• 204 No Content — berhasil tapi tidak ada body (DELETE)\n• 400 Bad Request — request tidak valid (validasi gagal)\n• 401 Unauthorized — belum autentikasi\n• 403 Forbidden — sudah autentikasi tapi tidak punya izin\n• 404 Not Found — resource tidak ditemukan\n• 409 Conflict — conflict (misal: email sudah ada)\n• 422 Unprocessable Entity — data valid secara format tapi tidak bisa diproses\n• 500 Internal Server Error — error di sisi server"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Contoh Desain REST API yang Baik",
+          "bahasa": "javascript",
+          "kode": "// ✅ URL yang baik (noun, lowercase, plural)\nGET    /api/v1/mahasiswa              // ambil semua\nGET    /api/v1/mahasiswa/42           // ambil satu\nPOST   /api/v1/mahasiswa              // buat baru\nPUT    /api/v1/mahasiswa/42           // ganti seluruh\nPATCH  /api/v1/mahasiswa/42           // ubah sebagian\nDELETE /api/v1/mahasiswa/42           // hapus\n\nGET    /api/v1/mahasiswa/42/nilai     // relasi nested\n\n// ❌ URL yang buruk (verb, mixed case, singular)\nGET    /api/v1/getMahasiswa\nPOST   /api/v1/tambahMahasiswaBaru\nDELETE /api/v1/hapus-mahasiswa?id=42\nGET    /api/v1/MataKuliah\nGET    /api/v1/mahasiswa/getNilaiById/3",
+          "penjelasan": "Perhatikan perbedaan: URL yang baik menggunakan kata benda jamak, huruf kecil, dan tanda hubung. Hindari kata kerja di URL — gunakan HTTP method untuk menunjukkan aksi."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Contoh Penamaan Endpoint REST API yang Baik dan Buruk",
+          "src": "/assets/backend/bab2/bab2_2.6.png",
+          "deskripsi_gambar": "Tabel berisi beberapa contoh URI REST API beserta status Good atau Bad. Ditampilkan perbandingan endpoint seperti /orders dan /users/{userId} yang dianggap baik karena menggunakan noun dan struktur hierarki yang benar, serta endpoint seperti /getOrder dan /getUser/{userId} yang dianggap buruk karena menggunakan verb dan camelCase. Kolom tambahan menjelaskan alasan setiap penilaian.",
+          "alt": "Tabel contoh endpoint REST API yang baik dan buruk beserta alasannya"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: REST seperti Bahasa Universal",
+          "isi": "REST seperti bahasa Inggris di penerbangan internasional — semua pilot dan ATC di seluruh dunia menggunakannya sebagai bahasa standar komunikasi. Meski pilot berasal dari berbagai negara (berbagai teknologi backend), semua berbicara dalam bahasa yang sama (REST conventions) sehingga semua orang bisa saling memahami tanpa kebingungan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Sebagian Besar API Tidak Benar-benar RESTful",
+          "isi": "Roy Fielding sendiri pernah menulis di blognya bahwa sebagian besar 'REST API' yang ada sebenarnya tidak memenuhi definisi REST yang sesungguhnya — terutama karena tidak mengimplementasikan HATEOAS (mengembalikan link ke aksi-aksi yang tersedia dalam respons). Apa yang kebanyakan developer sebut 'REST API' sebenarnya lebih tepat disebut 'HTTP API' atau 'JSON API'. Tapi karena istilah REST sudah terlanjur populer, semua tetap menyebutnya REST."
+        }
+      ]
+    },
+    {
+      "id": "2.7",
+      "judul": "Error Handling Middleware",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Menangani Error di Express",
+          "isi": "Error handling yang baik adalah tanda API yang matang dan profesional. User dan developer yang mengonsumsi API perlu mendapat pesan error yang informatif, konsisten, dan tidak membocorkan informasi sensitif tentang implementasi internal server.\n\nExpress memiliki mekanisme error handling khusus: Error-Handling Middleware — middleware dengan empat parameter (err, req, res, next). Express mengenali ini sebagai error handler karena memiliki tepat 4 parameter. Error handler harus didaftarkan setelah semua route dan middleware lainnya.\n\nAlur error di Express:\n1. Error dilempar atau diteruskan via next(err)\n2. Express melewati semua middleware biasa\n3. Express masuk ke error-handling middleware\n4. Error handler memformat dan mengirim response yang tepat\n\nBest practice error handling:\n• Buat class Error kustom untuk berbagai jenis error\n• Selalu log error di server (tapi jangan tampilkan detail ke client di production)\n• Bedakan antara operational error (bisa diprediksi: 404, validasi gagal) dan programming error (bug)\n• Gunakan satu format error response yang konsisten di seluruh API\n• Tangani async error dengan benar — Express 5 otomatis catch async errors, Express 4 perlu wrapper"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Error Handling Middleware Lengkap",
+          "bahasa": "javascript",
+          "kode": "const express = require('express');\nconst app = express();\n\n// ==========================================\n// CUSTOM ERROR CLASS\n// ==========================================\nclass AppError extends Error {\n  constructor(pesan, statusCode, kode = null) {\n    super(pesan);\n    this.statusCode = statusCode;\n    this.kode = kode;           // kode error untuk client\n    this.isOperational = true;  // error yang bisa diprediksi\n    Error.captureStackTrace(this, this.constructor);\n  }\n}\n\n// Error khusus yang sering dipakai\nclass NotFoundError extends AppError {\n  constructor(resource = 'Resource') {\n    super(`${resource} tidak ditemukan`, 404, 'NOT_FOUND');\n  }\n}\n\nclass ValidationError extends AppError {\n  constructor(pesan) {\n    super(pesan, 400, 'VALIDATION_ERROR');\n  }\n}\n\nclass UnauthorizedError extends AppError {\n  constructor() {\n    super('Anda harus login untuk mengakses ini', 401, 'UNAUTHORIZED');\n  }\n}\n\n// ==========================================\n// CONTOH ROUTE YANG MELEMPAR ERROR\n// ==========================================\napp.get('/mahasiswa/:id', async (req, res, next) => {\n  try {\n    const id = parseInt(req.params.id);\n\n    if (isNaN(id)) {\n      throw new ValidationError('ID harus berupa angka');\n    }\n\n    const mhs = await MahasiswaModel.findById(id);\n    if (!mhs) {\n      throw new NotFoundError('Mahasiswa');\n    }\n\n    res.json({ sukses: true, data: mhs });\n  } catch (err) {\n    next(err); // teruskan error ke error handler\n  }\n});\n\n// Async wrapper helper (untuk Express 4)\nconst asyncHandler = (fn) => (req, res, next) => {\n  Promise.resolve(fn(req, res, next)).catch(next);\n};\n\n// Pakai asyncHandler — tidak perlu try-catch di setiap route!\napp.delete('/mahasiswa/:id', asyncHandler(async (req, res) => {\n  const mhs = await MahasiswaModel.findByIdAndDelete(req.params.id);\n  if (!mhs) throw new NotFoundError('Mahasiswa');\n  res.json({ sukses: true, pesan: 'Berhasil dihapus' });\n}));\n\n// ==========================================\n// 404 HANDLER — untuk route yang tidak ada\n// ==========================================\napp.use((req, res, next) => {\n  next(new NotFoundError(`Endpoint ${req.method} ${req.path}`));\n});\n\n// ==========================================\n// ERROR HANDLING MIDDLEWARE (4 parameter!)\n// ==========================================\napp.use((err, req, res, next) => {\n  // Log error di server\n  console.error(`[ERROR] ${err.message}`, {\n    statusCode: err.statusCode,\n    path: req.path,\n    stack: err.stack\n  });\n\n  // Format response yang konsisten\n  const statusCode = err.statusCode || 500;\n  const isDev = process.env.NODE_ENV === 'development';\n\n  res.status(statusCode).json({\n    sukses: false,\n    error: {\n      kode: err.kode || 'SERVER_ERROR',\n      pesan: err.isOperational\n        ? err.message\n        : 'Terjadi kesalahan di server. Silakan coba lagi.', // sembunyikan detail\n      // Stack trace hanya di development!\n      ...(isDev && { stack: err.stack })\n    }\n  });\n});",
+          "penjelasan": "asyncHandler wrapper adalah pattern klasik di Express 4 untuk menghindari try-catch di setiap route async. Express 5 sudah menangani ini secara built-in — async errors otomatis diteruskan ke next()."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Alur Error Handling Middleware Express",
+          "src": "/assets/backend/bab2/bab2_2.7.png",
+          "deskripsi_gambar": "Diagram alur middleware Express.js. Request masuk ke Middleware 1 lalu Middleware 2 melalui next(). Jika terjadi error, middleware memanggil next(err) sehingga alur langsung berpindah ke Error Handler dan melewati middleware berikutnya. Jika tidak ada error, request diteruskan hingga Final Handler menghasilkan response.",
+          "alt": "Diagram alur error handling middleware Express dari throw error hingga response error"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Error Handler seperti Jaring Pengaman Sirkus",
+          "isi": "Artis sirkus (route handler) melakukan aksi berbahaya di ketinggian. Jika ada yang salah — mereka jatuh (throw error). Jaring pengaman (error handling middleware) menangkap mereka sebelum mencapai lantai (crash ke user). Jaring ada di bawah semua aksi dan selalu siap, tapi artis berharap tidak pernah membutuhkannya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Never Send Stack Trace ke Client di Production",
+          "isi": "Stack trace JavaScript mengekspos informasi sangat sensitif: nama file, struktur folder, library yang digunakan, bahkan baris kode yang error. Penyerang bisa menggunakan informasi ini untuk merencanakan serangan yang lebih terarah. Express di mode development menampilkan stack trace secara default — pastikan NODE_ENV=production di server agar perilaku ini dinonaktifkan."
+        }
+      ]
+    },
+    {
+      "id": "2.8",
+      "judul": "Static Files & Template Engine",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Menyajikan File Statis dan HTML Dinamis",
+          "isi": "Tidak semua yang dikembalikan server harus JSON. Ada dua kasus umum di luar JSON API:\n\nStatic File Serving — menyajikan file yang tidak berubah: gambar, CSS, JavaScript, file PDF, ikon, dll. Express menyediakan middleware express.static() yang sangat efisien untuk ini. Middleware ini langsung memeriksa apakah file yang diminta ada di folder yang ditentukan, lalu mengirimnya dengan header cache yang tepat tanpa harus menulis satu pun route handler.\n\nTemplate Engine — untuk aplikasi web yang masih menggunakan server-side rendering (SSR), template engine memungkinkan server membuat HTML yang sudah diisi data sebelum dikirim ke browser. Berbeda dengan SPA (React, Vue) yang rendering dilakukan di browser, SSR rendering dilakukan di server. Beberapa template engine populer untuk Express:\n\n• EJS (Embedded JavaScript) — sintaks mirip PHP/ASP dengan tag <%  %>. Paling mudah dipelajari.\n• Pug (sebelumnya Jade) — sintaks berbasis indentasi tanpa tag HTML. Compact tapi butuh adaptasi.\n• Handlebars — logika minimal di template, data dari controller. Promosikan pemisahan concerns.\n• Nunjucks — terinspirasi Jinja2 Python, fitur lengkap.\n\nKapan pilih SSR vs SPA?\n• SSR: blog, landing page, e-commerce — butuh SEO optimal dan first contentful paint cepat\n• SPA: dashboard, aplikasi interaktif — butuh pengalaman seperti aplikasi desktop"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Static Files dan Template Engine (EJS)",
+          "bahasa": "javascript",
+          "kode": "const express = require('express');\nconst path = require('path');\nconst app = express();\n\n// ==========================================\n// STATIC FILES\n// ==========================================\n// Folder 'public' akan menjadi root untuk file statis\n// File: public/css/style.css → akses via /css/style.css\n// File: public/images/logo.png → akses via /images/logo.png\napp.use(express.static(path.join(__dirname, 'public')));\n\n// Static dengan prefix URL\n// File: uploads/foto.jpg → akses via /uploads/foto.jpg\napp.use('/uploads', express.static(path.join(__dirname, 'uploads')));\n\n// Beberapa folder statis\napp.use(express.static(path.join(__dirname, 'public')));\napp.use(express.static(path.join(__dirname, 'assets')));\n\n// Opsi konfigurasi static\napp.use('/static', express.static(path.join(__dirname, 'public'), {\n  maxAge: '1d',          // cache selama 1 hari\n  etag: true,            // aktifkan ETag untuk conditional requests\n  index: 'index.html',   // file default untuk direktori\n  dotfiles: 'ignore'     // abaikan file berawalan titik (.env, .htaccess)\n}));\n\n// ==========================================\n// TEMPLATE ENGINE: EJS\n// ==========================================\n// Install: npm install ejs\n\napp.set('view engine', 'ejs');\napp.set('views', path.join(__dirname, 'views')); // folder template\n\n// Route yang merender template\napp.get('/halaman/mahasiswa', async (req, res) => {\n  const mahasiswaList = await MahasiswaModel.find();\n\n  // Render views/mahasiswa/daftar.ejs dengan data\n  res.render('mahasiswa/daftar', {\n    judul: 'Daftar Mahasiswa',\n    mahasiswa: mahasiswaList,\n    total: mahasiswaList.length,\n    user: req.user\n  });\n});\n\n// File: views/mahasiswa/daftar.ejs\n// <!DOCTYPE html>\n// <html>\n// <head><title><%= judul %></title></head>\n// <body>\n//   <h1><%= judul %></h1>\n//   <p>Total: <%= total %> mahasiswa</p>\n//   <ul>\n//     <% mahasiswa.forEach(mhs => { %>\n//       <li><%= mhs.nama %> — IPK: <%= mhs.ipk %></li>\n//     <% }) %>\n//   </ul>\n// </body>\n// </html>",
+          "penjelasan": "express.static() menggunakan HTTP caching headers (ETag, Last-Modified, Cache-Control) secara otomatis. Browser akan menyimpan file statis di cache lokal, mengurangi request ke server dan mempercepat loading halaman."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Express Tidak Punya Template Engine Bawaan",
+          "isi": "Berbeda dengan framework seperti Rails (ERB) atau Django (Jinja2) yang punya template engine bawaan, Express sengaja tidak memilih satu pun. Ini filosofi 'unopinionated' Express — kamu bebas pilih EJS, Pug, Handlebars, atau bahkan tidak pakai sama sekali (jika hanya membuat JSON API). Keputusan ini membuat Express lebih fleksibel tapi juga membuat developer harus belajar lebih banyak opsi."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: express.static seperti Kasir Self-Service",
+          "isi": "express.static seperti rak toko swalayan self-service — pelanggan (browser) bisa langsung mengambil barang (file statis) dari rak tanpa harus antri ke kasir (route handler) terlebih dahulu. Lebih cepat, lebih efisien, dan tidak membebani staf (Node.js event loop) untuk tugas yang sederhana."
+        }
+      ]
+    },
+    {
+      "id": "2.9",
+      "judul": "CORS & HTTP Headers",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "CORS: Kenapa Browser Menolak Request?",
+          "isi": "Pernahkah kamu membuat front-end React yang mencoba fetch data dari API Express, tapi dapat error di console: 'Access to fetch from origin has been blocked by CORS policy'? Ini adalah pengalaman yang hampir universal bagi developer web — dan memahami CORS adalah wajib.\n\nCORS (Cross-Origin Resource Sharing) adalah mekanisme keamanan browser yang membatasi halaman web agar tidak bisa melakukan request ke domain yang berbeda dari domain tempat halaman tersebut dimuat. Ini disebut Same-Origin Policy.\n\nDua URL dianggap 'berbeda origin' jika salah satu dari tiga hal berikut berbeda:\n• Protocol (http vs https)\n• Domain (example.com vs api.example.com — bahkan subdomain dianggap berbeda!)\n• Port (3000 vs 5173)\n\nJadi jika front-end React berjalan di http://localhost:5173 dan back-end Express di http://localhost:3000 — mereka berbeda origin karena port berbeda! Browser akan memblokir request tersebut kecuali server secara eksplisit mengizinkannya via header CORS.\n\nCORS bukan fitur server — ini fitur browser. Aplikasi server-to-server (seperti dua microservice yang berkomunikasi) tidak terkena pembatasan CORS. Hanya browser yang menerapkan kebijakan ini untuk melindungi pengguna dari serangan seperti CSRF.\n\nHTTP Headers penting lainnya yang perlu diketahui:\n• Content-Type — format data yang dikirim (application/json, multipart/form-data)\n• Authorization — kredensial autentikasi (Bearer token, Basic auth)\n• Accept — format respons yang diinginkan client\n• Cache-Control — instruksi caching untuk browser dan proxy\n• X-Request-ID — ID unik per request untuk tracing dan debugging\n• Strict-Transport-Security — paksa HTTPS (HSTS)\n• X-Content-Type-Options — cegah MIME type sniffing\n• X-Frame-Options — cegah clickjacking"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Konfigurasi CORS di Express",
+          "bahasa": "javascript",
+          "kode": "const express = require('express');\nconst cors = require('cors'); // npm install cors\nconst app = express();\n\n// ==========================================\n// CORS SEDERHANA — izinkan semua origin\n// ==========================================\napp.use(cors()); // HATI-HATI: jangan di production!\n\n// ==========================================\n// CORS SPESIFIK — hanya origin tertentu\n// ==========================================\nconst opsiCors = {\n  origin: [\n    'http://localhost:5173',           // Vite dev server\n    'http://localhost:3000',           // React dev server\n    'https://web-belajar.vercel.app',  // production frontend\n  ],\n  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],\n  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],\n  credentials: true,   // izinkan cookies dikirim bersama request\n  maxAge: 86400        // cache preflight response selama 24 jam\n};\n\napp.use(cors(opsiCors));\n\n// ==========================================\n// CORS DINAMIS — dari environment variable\n// ==========================================\nconst originsIzin = process.env.ALLOWED_ORIGINS?.split(',') || [];\n\napp.use(cors({\n  origin: (origin, callback) => {\n    // Izinkan jika tidak ada origin (misal Postman) atau ada di whitelist\n    if (!origin || originsIzin.includes(origin)) {\n      callback(null, true);\n    } else {\n      callback(new Error(`Origin ${origin} tidak diizinkan oleh CORS`));\n    }\n  }\n}));\n\n// ==========================================\n// MENGATUR RESPONSE HEADERS KUSTOM\n// ==========================================\napp.use((req, res, next) => {\n  // Header keamanan tambahan\n  res.set({\n    'X-Request-ID': require('crypto').randomUUID(),\n    'X-Powered-By': 'Web Belajar API',  // ganti nilai default 'Express'\n    'X-Content-Type-Options': 'nosniff',\n    'X-Frame-Options': 'SAMEORIGIN'\n  });\n  next();\n});\n\n// Atau gunakan Helmet untuk semua security headers sekaligus\n// npm install helmet\nconst helmet = require('helmet');\napp.use(helmet());",
+          "penjelasan": "Aktifkan credentials: true di CORS hanya jika front-end perlu mengirim cookies (misal untuk session). Jika menggunakan JWT di Authorization header, tidak perlu credentials: true."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: CORS seperti Satpam Kantor",
+          "isi": "CORS seperti satpam kantor (browser) yang mengecek ID badge setiap tamu. Tamu dari kantor yang sama (same origin) boleh masuk bebas. Tamu dari perusahaan lain (cross origin) harus punya surat izin dari pemilik kantor (server CORS headers). Tanpa surat izin, satpam menolak masuk — bukan tuan rumah yang menolak, tapi satpam yang bertugas melindungi."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Preflight Request — Request Tersembunyi",
+          "isi": "Untuk request yang dianggap 'tidak sederhana' (selain GET/POST biasa, atau dengan header kustom), browser secara otomatis mengirim OPTIONS request terlebih dahulu sebelum request aslinya. Ini disebut preflight request — browser 'bertanya izin' ke server terlebih dahulu. Kamu bisa melihatnya di tab Network DevTools sebagai request OPTIONS yang muncul sebelum request utama. Server harus merespons preflight dengan header CORS yang tepat, baru request aslinya dikirim."
+        }
+      ]
+    },
+    {
+      "id": "2.10",
+      "judul": "Struktur Folder Project Express",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Struktur Folder Penting?",
+          "isi": "Express adalah framework yang tidak memaksakan struktur folder apapun. Untuk proyek kecil, semua bisa di satu file app.js. Tapi seiring proyek berkembang dengan puluhan route, model, middleware, dan utility — kode yang tidak terstruktur dengan baik akan menjadi mimpi buruk untuk dipelihara.\n\nAda dua pendekatan populer untuk mengorganisir project Express:\n\nPendekatan 1 — Feature-based (direkomendasikan untuk proyek menengah-besar):\nOrganisir berdasarkan fitur/domain bisnis. Semua yang berhubungan dengan 'mahasiswa' (route, controller, model, service) ada dalam satu folder. Lebih mudah untuk menemukan dan memodifikasi fitur tertentu, lebih mudah untuk memisahkan menjadi microservice jika dibutuhkan.\n\nPendekatan 2 — Layer-based (umum di tutorial pemula):\nOrganisir berdasarkan lapisan teknologi. Semua route di folder /routes, semua model di /models, semua controller di /controllers. Lebih mudah dipahami pemula tapi semakin sulit dikelola saat fitur bertambah banyak.\n\nPola arsitektur yang paling umum digunakan di Express adalah MVC (Model-View-Controller) atau variannya:\n• Model — representasi data dan logika bisnis, berinteraksi dengan database\n• View — template HTML (jika SSR) atau tidak ada (jika pure API)\n• Controller — menerima request, memanggil service/model, mengirim response\n• Service — logika bisnis yang kompleks, dipisahkan dari controller agar bisa di-reuse dan di-test"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Struktur Folder Project Express Profesional",
+          "bahasa": "bash",
+          "kode": "api-web-belajar/\n├── src/\n│   ├── config/\n│   │   ├── database.js        # konfigurasi koneksi database\n│   │   └── app.js             # konfigurasi express app\n│   │\n│   ├── middleware/\n│   │   ├── auth.js            # middleware autentikasi JWT\n│   │   ├── errorHandler.js    # global error handler\n│   │   ├── logger.js          # request logger\n│   │   └── validator.js       # helper validasi input\n│   │\n│   ├── routes/\n│   │   ├── index.js           # gabungkan semua router\n│   │   ├── mahasiswa.routes.js\n│   │   ├── mataKuliah.routes.js\n│   │   └── auth.routes.js\n│   │\n│   ├── controllers/\n│   │   ├── mahasiswa.controller.js  # handle req, panggil service\n│   │   ├── mataKuliah.controller.js\n│   │   └── auth.controller.js\n│   │\n│   ├── services/              # logika bisnis\n│   │   ├── mahasiswa.service.js\n│   │   └── auth.service.js\n│   │\n│   ├── models/                # schema dan model database\n│   │   ├── Mahasiswa.js\n│   │   └── MataKuliah.js\n│   │\n│   └── utils/                 # helper functions\n│       ├── pagination.js\n│       ├── response.js        # format response standar\n│       └── validators.js\n│\n├── tests/\n│   ├── unit/\n│   └── integration/\n├── .env                       # ← di .gitignore!\n├── .env.example               # ← commit ini\n├── .gitignore\n├── package.json\n└── index.js                   # entry point: import app, listen",
+          "penjelasan": "Pisahkan index.js (yang memanggil app.listen) dari konfigurasi Express app. Ini memudahkan testing — test bisa import app tanpa menjalankan server, menggunakan supertest untuk simulasi HTTP request."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Pola Controller-Service yang Bersih",
+          "bahasa": "javascript",
+          "kode": "// ==========================================\n// services/mahasiswa.service.js\n// ==========================================\nconst Mahasiswa = require('../models/Mahasiswa');\nconst AppError = require('../utils/AppError');\n\nconst getMahasiswaById = async (id) => {\n  const mhs = await Mahasiswa.findById(id);\n  if (!mhs) throw new AppError('Mahasiswa tidak ditemukan', 404);\n  return mhs;\n};\n\nconst buatMahasiswa = async (data) => {\n  const sudahAda = await Mahasiswa.findOne({ nim: data.nim });\n  if (sudahAda) throw new AppError('NIM sudah terdaftar', 409);\n  return await Mahasiswa.create(data);\n};\n\nmodule.exports = { getMahasiswaById, buatMahasiswa };\n\n// ==========================================\n// controllers/mahasiswa.controller.js\n// ==========================================\nconst mahasiswaService = require('../services/mahasiswa.service');\nconst asyncHandler = require('../utils/asyncHandler');\n\nconst getById = asyncHandler(async (req, res) => {\n  const mhs = await mahasiswaService.getMahasiswaById(req.params.id);\n  res.json({ sukses: true, data: mhs });\n});\n\nconst create = asyncHandler(async (req, res) => {\n  const mhsBaru = await mahasiswaService.buatMahasiswa(req.body);\n  res.status(201).json({ sukses: true, data: mhsBaru });\n});\n\nmodule.exports = { getById, create };\n\n// ==========================================\n// routes/mahasiswa.routes.js\n// ==========================================\nconst router = require('express').Router();\nconst { getById, create } = require('../controllers/mahasiswa.controller');\nconst { cekAuth } = require('../middleware/auth');\n\nrouter.get('/:id', getById);\nrouter.post('/', cekAuth, create);\n\nmodule.exports = router;",
+          "penjelasan": "Pola Controller-Service memisahkan tanggung jawab dengan jelas: controller hanya mengurus request/response, service hanya mengurus logika bisnis. Hasilnya: service bisa di-test tanpa HTTP, dan controller tetap tipis dan mudah dibaca."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Struktur Folder Project Express.js",
+          "src": "/assets/backend/bab2/bab2_2.10.png",
+          "deskripsi_gambar": "Diagram struktur folder project Express.js dengan pendekatan MVC dan service layer. Menampilkan folder controllers, services, models, routes, middlewares, config, public, serta file konfigurasi utama seperti package.json dan app.js beserta fungsi masing-masing.",
+          "alt": "Diagram struktur folder project Express.js dengan controllers, services, models, routes, dan middleware"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Struktur Project seperti Departemen Perusahaan",
+          "isi": "Bayangkan perusahaan tanpa departemen — semua karyawan melakukan semua hal. Kacau. Routes adalah departemen resepsionis — menerima tamu dan mengarahkan ke departemen yang tepat. Controllers adalah manajer departemen — mengkoordinasikan pekerjaan. Services adalah staf spesialis — mengerjakan tugas spesifik. Models adalah sistem arsip — menyimpan dan mengambil data. Semua punya peran jelas dan tidak saling bercampur."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "NestJS — Express Tapi Lebih Terstruktur",
+          "isi": "Jika Express terlalu 'bebas' dan kamu ingin struktur yang lebih dipaksakan, NestJS adalah jawabannya. NestJS adalah framework Node.js yang dibangun di atas Express (atau Fastify) dengan menambahkan sistem dekorator, dependency injection, dan modul yang terinspirasi dari Angular. TypeScript adalah bahasa utamanya. Banyak perusahaan enterprise memilih NestJS karena strukturnya yang konsisten dan skalabilitasnya yang baik."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "path": "Front End",
+    "deskripsi": "Rekomendasi link belajar tambahan untuk pengguna web belajar. Dibagi menjadi tiga level: Beginner, Intermediate, dan Advanced. Setiap level berisi 5 link dari berbagai sumber (website, YouTube, GitHub, dll).",
+    "catatan": "Link ini ditampilkan sebagai rekomendasi lanjutan setelah user menyelesaikan materi di web belajar."
+  },
+
+  "rekomendasi": {
+
+    "beginner": {
+      "label": "Beginner",
+      "deskripsi": "Untuk kamu yang baru mulai belajar web development. Materi ringan, interaktif, dan langsung bisa dicoba.",
+      "link": [
+        {
+          "id": "b1",
+          "judul": "freeCodeCamp – Responsive Web Design Certification",
+          "url": "https://www.freecodecamp.org/learn/2022/responsive-web-design/",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 1 – HTML", "Bab 2 – CSS"],
+          "deskripsi": "Kurikulum interaktif gratis dari freeCodeCamp untuk belajar HTML dan CSS dari nol sampai membuat proyek nyata. Ada sertifikat di akhir."
+        },
+        {
+          "id": "b2",
+          "judul": "The Odin Project – Foundations Path",
+          "url": "https://www.theodinproject.com/paths/foundations/courses/foundations",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 1 – HTML", "Bab 2 – CSS", "Bab 3 – JavaScript"],
+          "deskripsi": "Kurikulum open source full-stack yang sangat terstruktur. Cocok untuk pemula yang ingin jalur belajar yang jelas dari HTML hingga JavaScript."
+        },
+        {
+          "id": "b3",
+          "judul": "YouTube – HTML & CSS Full Course (SuperSimpleDev)",
+          "url": "https://www.youtube.com/watch?v=G3e-cpL7ofc",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": ["Bab 1 – HTML", "Bab 2 – CSS"],
+          "deskripsi": "Video full course HTML dan CSS sepanjang 6+ jam dari SuperSimpleDev. Penjelasan sangat lambat dan detail, ideal untuk pemula absolut."
+        },
+        {
+          "id": "b4",
+          "judul": "W3Schools – HTML & CSS Tutorial",
+          "url": "https://www.w3schools.com/html/",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 1 – HTML", "Bab 2 – CSS"],
+          "deskripsi": "Referensi cepat dan interaktif untuk HTML dan CSS. Tersedia editor online Try It Yourself sehingga bisa langsung mencoba kode di browser."
+        },
+        {
+          "id": "b5",
+          "judul": "YouTube – JavaScript for Beginners (Programming with Mosh)",
+          "url": "https://www.youtube.com/watch?v=W6NZfCO5SIk",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": ["Bab 3 – JavaScript Dasar"],
+          "deskripsi": "Tutorial JavaScript 1 jam dari Mosh Hamedani. Cocok sebagai pengantar sebelum menyelami JavaScript lebih dalam. Penjelasan sangat jelas dan to the point."
+        }
+      ]
+    },
+
+    "intermediate": {
+      "label": "Intermediate",
+      "deskripsi": "Untuk kamu yang sudah paham dasar HTML, CSS, dan JavaScript dan ingin naik level ke DOM, async, dan framework.",
+      "link": [
+        {
+          "id": "i1",
+          "judul": "javascript.info – The Modern JavaScript Tutorial",
+          "url": "https://javascript.info",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 3 – JavaScript", "Bab 4 – DOM & Event"],
+          "deskripsi": "Salah satu tutorial JavaScript terlengkap dan terbaik di internet. Penjelasan mendalam dari dasar hingga topik advanced seperti prototype, async, dan DOM. Gratis sepenuhnya."
+        },
+        {
+          "id": "i2",
+          "judul": "YouTube – JavaScript DOM Manipulation (Traversy Media)",
+          "url": "https://www.youtube.com/watch?v=5fb2aPlgoys",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": ["Bab 4 – DOM & Event"],
+          "deskripsi": "Crash course DOM manipulation dari Brad Traversy. Mencakup querySelector, event listener, manipulasi elemen, dan proyek sederhana dalam satu video."
+        },
+        {
+          "id": "i3",
+          "judul": "CSS Tricks – A Complete Guide to Flexbox",
+          "url": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 2 – CSS Flexbox"],
+          "deskripsi": "Panduan visual Flexbox paling populer di internet. Setiap properti dijelaskan dengan diagram interaktif yang sangat mudah dipahami. Wajib di-bookmark."
+        },
+        {
+          "id": "i4",
+          "judul": "YouTube – Async JavaScript Crash Course (Traversy Media)",
+          "url": "https://www.youtube.com/watch?v=PoRJizFvM7s",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": ["Bab 4 – Async & Promise", "Bab 4 – Fetch API"],
+          "deskripsi": "Video 1.5 jam yang mencakup callbacks, promises, async/await, dan Fetch API secara komprehensif. Dari Traversy Media, salah satu channel JavaScript terbaik."
+        },
+        {
+          "id": "i5",
+          "judul": "MDN Web Docs – JavaScript Reference",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 3 – JavaScript", "Bab 4 – DOM & Event"],
+          "deskripsi": "Dokumentasi resmi dan terlengkap untuk JavaScript. Jadikan ini referensi utama ketika butuh memahami detail suatu method, property, atau API JavaScript."
+        }
+      ]
+    },
+
+    "advanced": {
+      "label": "Advanced",
+      "deskripsi": "Untuk kamu yang sudah menguasai dasar dan ingin mendalami React, performa, dan praktik profesional.",
+      "link": [
+        {
+          "id": "a1",
+          "judul": "react.dev – Official React Documentation",
+          "url": "https://react.dev/learn",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 5 – React"],
+          "deskripsi": "Dokumentasi resmi React yang telah dirombak total pada 2023. Mencakup semua konsep React modern dengan contoh interaktif. Wajib dibaca setiap developer React."
+        },
+        {
+          "id": "a2",
+          "judul": "YouTube – React Full Course 2024 (Dave Gray)",
+          "url": "https://www.youtube.com/watch?v=RVFAyFWO4go",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": ["Bab 5 – React"],
+          "deskripsi": "Full course React terbaru dari Dave Gray, mencakup hooks, React Router, Context API, dan proyek nyata. Update dan relevan dengan React 18."
+        },
+        {
+          "id": "a3",
+          "judul": "GitHub – Awesome React (Repository Komunitas)",
+          "url": "https://github.com/enaqx/awesome-react",
+          "tipe": "github",
+          "ikon": "🐙",
+          "bab_relevan": ["Bab 5 – React"],
+          "deskripsi": "Kumpulan resource React terbaik yang dikurasi komunitas: library, tools, tutorial, artikel, dan proyek open source. Jadikan referensi untuk memperluas ekosistem React."
+        },
+        {
+          "id": "a4",
+          "judul": "web.dev – Learn CSS (Google)",
+          "url": "https://web.dev/learn/css",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 2 – CSS"],
+          "deskripsi": "Kurikulum CSS mendalam dari Google, mencakup semua aspek CSS modern termasuk layout, animasi, custom properties, dan performa. Sangat terstruktur dan mendalam."
+        },
+        {
+          "id": "a5",
+          "judul": "Frontend Masters – Free Courses (Frontend Development)",
+          "url": "https://frontendmasters.com/learn/beginner/",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": ["Bab 1 – HTML", "Bab 2 – CSS", "Bab 3 – JavaScript", "Bab 4 – DOM", "Bab 5 – React"],
+          "deskripsi": "Platform premium dengan beberapa kursus gratis berkualitas tinggi dari instruktur industri terbaik. Cocok untuk yang ingin belajar dengan standar profesional dunia kerja."
+        }
+      ]
+    }
+
+  }
+}

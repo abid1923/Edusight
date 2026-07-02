@@ -1,0 +1,389 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "bab": 3,
+    "judul_bab": "Unsupervised Learning & Dimensionality Reduction",
+    "deskripsi": "Materi lengkap unsupervised learning — K-Means & Elbow Method, Hierarchical Clustering & Dendrogram, DBSCAN, PCA, t-SNE & UMAP, Gaussian Mixture Models, Association Rules (Apriori & FP-Growth), Anomaly Detection, Silhouette Score & Davies-Bouldin Index, hingga Autoencoder untuk feature learning.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "scikit-learn Official Documentation – Unsupervised Learning",
+        "url": "https://scikit-learn.org/stable/unsupervised_learning.html",
+        "lisensi": "BSD-3-Clause"
+      },
+      {
+        "nama": "Google ML Crash Course – Clustering",
+        "url": "https://developers.google.com/machine-learning/clustering",
+        "lisensi": "CC-BY 4.0"
+      },
+      {
+        "nama": "d2l.ai – Dive into Deep Learning",
+        "url": "https://d2l.ai",
+        "lisensi": "CC-BY-SA 4.0 untuk teks, MIT untuk kode"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+  "sub_bab": [
+    {
+      "id": "3.1",
+      "judul": "K-Means Clustering & Elbow Method",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "K-Means: Algoritma Clustering Paling Populer",
+          "isi": "K-Means adalah algoritma unsupervised learning yang mengelompokkan data ke dalam K cluster berdasarkan kemiripan (jarak), tanpa memerlukan label sama sekali. Tujuannya: meminimalkan total jarak kuadrat antara setiap titik data dengan centroid (titik pusat) cluster-nya.\n\nCara kerja K-Means (algoritma Lloyd):\n1. Inisialisasi K centroid secara acak (atau dengan K-Means++ untuk hasil lebih baik)\n2. Assignment step — setiap titik data ditugaskan ke centroid terdekat\n3. Update step — hitung ulang posisi setiap centroid sebagai rata-rata semua titik dalam cluster tersebut\n4. Ulangi langkah 2-3 sampai centroid tidak berubah signifikan (konvergen)\n\nMetrik objektif yang diminimalkan disebut Within-Cluster Sum of Squares (WCSS) atau Inertia:\nWCSS = Σ Σ ||x - centroid_k||²\n\nMenentukan jumlah cluster (K) yang tepat — Elbow Method:\nKarena K-Means membutuhkan K ditentukan di awal, Elbow Method membantu memilih K optimal dengan cara:\n1. Jalankan K-Means untuk berbagai nilai K (misal 1 sampai 10)\n2. Plot nilai inertia terhadap K\n3. Cari titik 'siku' (elbow) — titik dimana penurunan inertia mulai melambat drastis\n4. Nilai K di titik siku tersebut adalah kandidat K optimal\n\nKeunggulan K-Means:\n• Sederhana dan cepat — kompleksitas O(n×k×i×d)\n• Bekerja baik untuk cluster berbentuk bulat (spherical) dan berukuran mirip\n• Mudah diinterpretasikan\n\nKeterbatasan:\n• Harus menentukan K di awal\n• Sensitif terhadap inisialisasi centroid awal (gunakan K-Means++ atau n_init>1)\n• Asumsi cluster berbentuk bulat — gagal untuk cluster berbentuk non-konveks atau memanjang\n• Sensitif terhadap skala fitur — wajib normalisasi/standardisasi\n• Sensitif terhadap outlier"
+        },
+        {
+          "tipe": "kode",
+          "judul": "K-Means Clustering dan Elbow Method",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.cluster import KMeans\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.datasets import make_blobs\n\n# Data contoh: segmentasi pelanggan berdasarkan frekuensi belanja dan total spending\nnp.random.seed(42)\nX, y_true = make_blobs(n_samples=300, centers=4, cluster_std=1.2, random_state=42)\n\n# Wajib scaling sebelum K-Means\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\n# ==========================================\n# ELBOW METHOD\n# ==========================================\ninertias = []\nk_range = range(1, 11)\n\nfor k in k_range:\n    km = KMeans(n_clusters=k, init='k-means++', n_init=10, random_state=42)\n    km.fit(X_scaled)\n    inertias.append(km.inertia_)\n\nplt.figure(figsize=(8, 4))\nplt.plot(k_range, inertias, marker='o')\nplt.xlabel('Jumlah Cluster (K)')\nplt.ylabel('Inertia (WCSS)')\nplt.title('Elbow Method untuk Menentukan K Optimal')\nplt.xticks(k_range)\nplt.grid(True)\nplt.tight_layout()\nplt.savefig('elbow_method.png', dpi=100)\n\n# ==========================================\n# FIT K-MEANS DENGAN K TERPILIH\n# ==========================================\nk_optimal = 4\nkmeans = KMeans(n_clusters=k_optimal, init='k-means++', n_init=10, random_state=42)\nlabels = kmeans.fit_predict(X_scaled)\n\nprint(f'Inertia final: {kmeans.inertia_:.2f}')\nprint(f'Jumlah anggota per cluster: {np.bincount(labels)}')\nprint(f'Posisi centroid (skala standar):\\n{kmeans.cluster_centers_}')\n\n# Visualisasi hasil clustering\nplt.figure(figsize=(8, 6))\nplt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=labels, cmap='viridis', alpha=0.6)\nplt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1],\n            c='red', marker='X', s=200, label='Centroids')\nplt.title(f'K-Means Clustering (K={k_optimal})')\nplt.legend()\nplt.tight_layout()\nplt.savefig('kmeans_result.png', dpi=100)",
+          "penjelasan": "n_init=10 menjalankan K-Means 10 kali dengan inisialisasi centroid berbeda dan memilih hasil dengan inertia terendah — ini penting karena K-Means rentan terjebak di local minimum. init='k-means++' memilih centroid awal secara cerdas (tersebar) agar konvergensi lebih cepat dan stabil dibanding inisialisasi acak penuh."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Elbow Method: Mencari Titik Siku",
+          "src": "/assets/ml/bab3/bab3_3.1.png",
+          "deskripsi_gambar": "Grafik line plot yang menampilkan nilai inertia (WCSS) pada sumbu vertikal dan jumlah cluster K pada sumbu horizontal. Kurva menurun tajam dari K kecil ke titik tertentu, kemudian melandai. Titik perubahan dari menurun tajam ke melandai menunjukkan jumlah cluster optimal.",
+          "alt": "Grafik elbow method menunjukkan titik siku sebagai jumlah cluster optimal"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: K-Means seperti Membagi Kelompok Belajar",
+          "isi": "Bayangkan kamu punya 100 mahasiswa di sebuah aula dan diminta membaginya menjadi K kelompok belajar berdasarkan kedekatan tempat duduk mereka. Caranya: tunjuk K orang secara acak sebagai 'ketua kelompok' (centroid awal). Semua orang lain bergabung ke ketua terdekat. Lalu setiap kelompok memilih titik tengah barunya sebagai ketua baru (rata-rata posisi anggota). Proses ini diulang sampai tidak ada lagi orang yang pindah kelompok. Elbow Method seperti mencoba membagi aula menjadi 1, 2, 3, ... kelompok dan melihat pada angka berapa pembagian mulai 'tidak terlalu membantu lagi' — itulah jumlah kelompok ideal."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "K-Means Berusia Lebih dari 60 Tahun",
+          "isi": "Algoritma K-Means pertama kali diusulkan oleh Stuart Lloyd di Bell Labs pada 1957 (meski baru dipublikasikan tahun 1982), dan secara independen oleh James MacQueen pada 1967 yang memberikan nama 'k-means'. Meski sudah berusia lebih dari enam dekade dan banyak algoritma clustering baru bermunculan, K-Means tetap menjadi salah satu algoritma clustering yang paling banyak digunakan di industri karena kesederhanaan, kecepatan, dan hasilnya yang mudah dijelaskan ke stakeholder non-teknis."
+        }
+      ]
+    },
+    {
+      "id": "3.2",
+      "judul": "Hierarchical Clustering & Dendrogram",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Hierarchical Clustering: Membangun Hierarki Cluster",
+          "isi": "Berbeda dengan K-Means yang membutuhkan jumlah cluster K ditentukan sejak awal, Hierarchical Clustering membangun hierarki cluster bertingkat yang divisualisasikan sebagai pohon yang disebut dendrogram. Jumlah cluster final bisa dipilih belakangan dengan 'memotong' dendrogram pada ketinggian tertentu.\n\nAda dua pendekatan utama:\n\n1. Agglomerative (Bottom-Up) — paling umum digunakan:\n• Mulai dengan setiap titik data sebagai cluster sendiri\n• Pada setiap iterasi, gabungkan dua cluster yang paling mirip/dekat\n• Ulangi sampai semua titik tergabung dalam satu cluster besar\n\n2. Divisive (Top-Down) — kurang umum:\n• Mulai dengan semua data dalam satu cluster\n• Pisahkan cluster secara rekursif menjadi sub-cluster yang lebih kecil\n\nLinkage Criteria — cara mengukur 'jarak' antar cluster (bukan antar titik):\n• Single linkage — jarak minimum antara anggota dua cluster (rentan chaining effect)\n• Complete linkage — jarak maksimum antara anggota dua cluster (cluster lebih compact)\n• Average linkage — rata-rata jarak semua pasangan antar cluster\n• Ward linkage — minimalkan peningkatan variance total saat dua cluster digabung (paling populer, menghasilkan cluster berukuran seimbang)\n\nDendrogram adalah representasi visual berbentuk pohon yang menunjukkan urutan penggabungan cluster dan 'jarak' (ketinggian) di setiap penggabungan. Memotong dendrogram secara horizontal pada ketinggian tertentu akan menghasilkan sejumlah cluster — semakin rendah potongan, semakin banyak cluster yang dihasilkan.\n\nKeunggulan Hierarchical Clustering:\n• Tidak perlu menentukan jumlah cluster di awal\n• Dendrogram memberikan wawasan visual tentang struktur data pada berbagai skala\n• Bisa menangkap cluster bersarang (nested)\n\nKeterbatasan:\n• Kompleksitas komputasi tinggi — O(n²) atau O(n³), tidak cocok untuk dataset sangat besar\n• Keputusan penggabungan bersifat 'greedy' dan tidak bisa dibatalkan (tidak ada langkah mundur)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Agglomerative Clustering dan Dendrogram",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.cluster.hierarchy import dendrogram, linkage, fcluster\nfrom sklearn.cluster import AgglomerativeClustering\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.datasets import make_blobs\n\n# Data contoh\nnp.random.seed(42)\nX, _ = make_blobs(n_samples=60, centers=3, cluster_std=0.8, random_state=42)\nX_scaled = StandardScaler().fit_transform(X)\n\n# ==========================================\n# MEMBUAT DENDROGRAM DENGAN SCIPY\n# ==========================================\n# Hitung linkage matrix dengan metode Ward\nZ = linkage(X_scaled, method='ward')\n\nplt.figure(figsize=(12, 5))\ndendrogram(Z)\nplt.title('Dendrogram (Ward Linkage)')\nplt.xlabel('Indeks Sampel')\nplt.ylabel('Jarak (Ward)')\nplt.axhline(y=7, color='red', linestyle='--', label='Garis Potong')\nplt.legend()\nplt.tight_layout()\nplt.savefig('dendrogram.png', dpi=100)\n\n# ==========================================\n# AGGLOMERATIVE CLUSTERING DENGAN SCIKIT-LEARN\n# ==========================================\nagg = AgglomerativeClustering(n_clusters=3, linkage='ward')\nlabels = agg.fit_predict(X_scaled)\n\nprint(f'Jumlah anggota per cluster: {np.bincount(labels)}')\n\n# Alternatif: tentukan cluster dari hasil linkage dengan memotong di jarak tertentu\nlabels_cut = fcluster(Z, t=7, criterion='distance')\nprint(f'Jumlah cluster hasil pemotongan pada jarak=7: {len(set(labels_cut))}')\n\n# Visualisasi hasil clustering\nplt.figure(figsize=(8, 6))\nplt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=labels, cmap='viridis')\nplt.title('Hasil Agglomerative Clustering (Ward, K=3)')\nplt.tight_layout()\nplt.savefig('agglomerative_result.png', dpi=100)",
+          "penjelasan": "Linkage matrix Z dari scipy menyimpan seluruh riwayat penggabungan cluster — ini memungkinkan kita memotong dendrogram pada ketinggian (jarak) berapa pun tanpa perlu menjalankan ulang algoritma. fcluster dengan criterion='distance' memotong dendrogram pada jarak tertentu, sedangkan criterion='maxclust' memotong berdasarkan jumlah cluster yang diinginkan."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Dendrogram: Pohon Penggabungan Cluster",
+          "src": "/assets/ml/bab3/bab3_3.2.png",
+          "deskripsi_gambar": "Diagram pohon terbalik yang menampilkan hierarki penggabungan cluster. Sumbu horizontal menunjukkan indeks sampel data, sumbu vertikal menunjukkan jarak atau dissimilarity antar cluster saat digabungkan. Garis horizontal dapat digunakan untuk memotong dendrogram pada ketinggian tertentu untuk mendapatkan jumlah cluster yang diinginkan.",
+          "alt": "Dendrogram menampilkan hierarki penggabungan cluster dengan garis potong"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Hierarchical Clustering seperti Pohon Keluarga",
+          "isi": "Hierarchical Clustering seperti menyusun pohon keluarga besar dari bawah ke atas. Mula-mula setiap orang adalah individu sendiri. Dua orang yang paling dekat hubungannya (misal kakak-adik) digabung menjadi satu unit kecil. Unit-unit kecil ini kemudian digabung lagi menjadi keluarga inti, lalu keluarga besar, lalu marga, hingga akhirnya seluruh populasi tergabung dalam satu 'pohon' besar. Dendrogram adalah gambar pohon keluarga ini — dan kita bisa memilih untuk 'memotong' pada level tertentu, misalnya hanya melihat sampai level keluarga inti (menghasilkan banyak cluster kecil) atau sampai level marga (menghasilkan sedikit cluster besar)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Hierarchical Clustering Digunakan dalam Bioinformatika",
+          "isi": "Salah satu aplikasi paling terkenal dari hierarchical clustering adalah dalam analisis ekspresi gen (gene expression analysis) di bioinformatika. Dendrogram digunakan untuk mengelompokkan gen-gen dengan pola ekspresi serupa atau mengelompokkan sampel pasien berdasarkan profil genetik mereka — sering divisualisasikan sebagai 'heatmap dengan dendrogram' di kedua sisi (baris dan kolom). Teknik ini juga menjadi dasar dari konstruksi pohon filogenetik (phylogenetic tree) yang menggambarkan hubungan evolusi antar spesies."
+        }
+      ]
+    },
+    {
+      "id": "3.3",
+      "judul": "DBSCAN: Density-Based Clustering",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "DBSCAN: Clustering Berdasarkan Kepadatan, Bukan Jarak ke Centroid",
+          "isi": "DBSCAN (Density-Based Spatial Clustering of Applications with Noise) adalah algoritma clustering yang mengelompokkan titik data berdasarkan kepadatan (density) — area dengan banyak titik data yang berdekatan dianggap sebagai cluster, sementara titik-titik terisolasi dianggap sebagai noise/outlier.\n\nDua parameter utama DBSCAN:\n• eps (epsilon) — radius maksimum untuk menganggap dua titik sebagai 'tetangga'\n• min_samples — jumlah minimum titik dalam radius eps agar suatu titik disebut core point\n\nKlasifikasi titik dalam DBSCAN:\n• Core point — titik yang memiliki minimal min_samples tetangga dalam radius eps\n• Border point — titik yang berada dalam radius eps dari core point, tapi tidak memenuhi syarat core point sendiri\n• Noise point (outlier) — titik yang bukan core point maupun border point — tidak masuk cluster manapun, diberi label -1\n\nAlgoritma DBSCAN:\n1. Untuk setiap titik yang belum dikunjungi, periksa apakah ia core point (punya ≥min_samples tetangga dalam radius eps)\n2. Jika core point, mulai cluster baru dan secara rekursif tambahkan semua titik yang terhubung secara density (density-reachable)\n3. Jika bukan core point dan tidak terhubung ke cluster manapun, tandai sebagai noise\n4. Ulangi sampai semua titik diproses\n\nKeunggulan DBSCAN:\n• Tidak perlu menentukan jumlah cluster di awal\n• Bisa menemukan cluster dengan bentuk arbitrer (non-bulat, memanjang, dll)\n• Secara otomatis mengidentifikasi outlier sebagai noise — sangat berguna untuk deteksi anomali\n• Robust terhadap outlier dibanding K-Means\n\nKeterbatasan:\n• Sulit menentukan eps dan min_samples yang tepat\n• Kesulitan dengan cluster yang memiliki kepadatan sangat berbeda-beda\n• Performa menurun pada data berdimensi tinggi (curse of dimensionality memengaruhi konsep 'jarak')"
+        },
+        {
+          "tipe": "kode",
+          "judul": "DBSCAN untuk Clustering dan Deteksi Outlier",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.cluster import DBSCAN\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.datasets import make_moons\nfrom sklearn.neighbors import NearestNeighbors\n\n# Data contoh: dua bulan sabit (cluster non-bulat) + noise\nnp.random.seed(42)\nX, _ = make_moons(n_samples=300, noise=0.08, random_state=42)\nX_scaled = StandardScaler().fit_transform(X)\n\n# ==========================================\n# MENCARI EPS OPTIMAL DENGAN K-DISTANCE GRAPH\n# ==========================================\nmin_samples = 5\nneighbors = NearestNeighbors(n_neighbors=min_samples)\nneighbors_fit = neighbors.fit(X_scaled)\ndistances, indices = neighbors_fit.kneighbors(X_scaled)\n\n# Urutkan jarak ke-k tetangga, lalu plot\nk_distances = np.sort(distances[:, -1])\n\nplt.figure(figsize=(8, 4))\nplt.plot(k_distances)\nplt.xlabel('Titik data (diurutkan)')\nplt.ylabel(f'Jarak ke tetangga ke-{min_samples}')\nplt.title('K-Distance Graph untuk Menentukan eps')\nplt.grid(True)\nplt.tight_layout()\nplt.savefig('k_distance_graph.png', dpi=100)\n\n# ==========================================\n# FIT DBSCAN\n# ==========================================\ndbscan = DBSCAN(eps=0.2, min_samples=min_samples)\nlabels = dbscan.fit_predict(X_scaled)\n\nn_clusters = len(set(labels)) - (1 if -1 in labels else 0)\nn_noise = list(labels).count(-1)\n\nprint(f'Jumlah cluster: {n_clusters}')\nprint(f'Jumlah titik noise: {n_noise}')\nprint(f'Persentase noise: {n_noise / len(labels):.1%}')\n\n# Visualisasi\nplt.figure(figsize=(8, 6))\nunique_labels = set(labels)\nfor lbl in unique_labels:\n    mask = labels == lbl\n    if lbl == -1:\n        plt.scatter(X_scaled[mask, 0], X_scaled[mask, 1], c='black', marker='x', label='Noise')\n    else:\n        plt.scatter(X_scaled[mask, 0], X_scaled[mask, 1], label=f'Cluster {lbl}')\nplt.title(f'DBSCAN (eps=0.2, min_samples={min_samples})')\nplt.legend()\nplt.tight_layout()\nplt.savefig('dbscan_result.png', dpi=100)",
+          "penjelasan": "K-Distance Graph membantu memilih eps secara visual: urutkan jarak setiap titik ke tetangga ke-k-nya, lalu cari 'siku' pada grafik — nilai jarak di titik siku itu menjadi kandidat eps yang baik. Jika eps terlalu kecil, banyak titik dianggap noise; jika terlalu besar, cluster-cluster berbeda bisa tergabung jadi satu."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "DBSCAN: Core, Border, dan Noise Points",
+          "src": "/assets/ml/bab3/bab3_3.3.png",
+          "deskripsi_gambar": "Diagram yang mengilustrasikan tiga jenis titik dalam algoritma DBSCAN. Area dengan kepadatan tinggi menunjukkan core points yang memiliki cukup tetangga dalam radius tertentu. Titik di tepi area kepadatan menunjukkan border points. Titik yang terisolasi jauh dari area kepadatan menunjukkan noise points.",
+          "alt": "Diagram DBSCAN menunjukkan core point, border point, dan noise point"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: DBSCAN seperti Mengidentifikasi Kerumunan di Lapangan",
+          "isi": "Bayangkan kamu melihat dari atas sebuah lapangan luas tempat orang-orang berkumpul dalam beberapa kerumunan dengan bentuk dan ukuran berbeda — ada yang bulat, ada yang memanjang seperti antrean. DBSCAN seperti aturan: 'Jika seseorang dikelilingi minimal 5 orang lain dalam radius 2 meter, dia bagian dari kerumunan'. Orang yang berdiri sendirian jauh dari siapapun (misalnya satu orang yang sedang lewat) diberi label 'orang nyasar' (noise) — tidak dipaksa masuk ke kerumunan manapun. Pendekatan ini secara natural menangkap kerumunan berbentuk apapun, tidak harus bulat seperti pada K-Means."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "DBSCAN Memenangkan Test of Time Award",
+          "isi": "DBSCAN diperkenalkan pada 1996 oleh Martin Ester, Hans-Peter Kriegel, Jörg Sander, dan Xiaowei Xu. Pada 2014, algoritma ini menerima Test of Time Award dari konferensi KDD (Knowledge Discovery and Data Mining) — penghargaan yang diberikan untuk paper dengan dampak jangka panjang terbesar setidaknya 10 tahun setelah dipublikasikan. DBSCAN menjadi salah satu algoritma clustering paling banyak disitasi dalam sejarah data mining, dan menjadi dasar bagi algoritma-algoritma turunan seperti OPTICS dan HDBSCAN yang menangani cluster dengan kepadatan bervariasi."
+        }
+      ]
+    },
+    {
+      "id": "3.4",
+      "judul": "Principal Component Analysis (PCA)",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "PCA: Mengurangi Dimensi Tanpa Kehilangan Informasi Penting",
+          "isi": "Principal Component Analysis (PCA) adalah teknik dimensionality reduction yang paling populer — mentransformasikan data berdimensi tinggi menjadi dimensi lebih rendah sambil mempertahankan sebanyak mungkin variansi (informasi) dari data asli.\n\nIde utama PCA: temukan sumbu-sumbu baru (disebut Principal Component atau PC) yang merupakan kombinasi linear dari fitur-fitur asli, dimana:\n• PC1 (komponen pertama) adalah arah dengan variansi data terbesar\n• PC2 adalah arah dengan variansi terbesar kedua, yang tegak lurus (orthogonal) terhadap PC1\n• Dan seterusnya — setiap PC berikutnya tegak lurus terhadap semua PC sebelumnya\n\nLangkah-langkah PCA secara matematis:\n1. Standardisasi data (mean=0, variance=1) — wajib karena PCA sensitif terhadap skala\n2. Hitung covariance matrix dari data\n3. Hitung eigenvector dan eigenvalue dari covariance matrix\n4. Eigenvector dengan eigenvalue terbesar = PC1, eigenvalue terbesar kedua = PC2, dst.\n5. Proyeksikan data asli ke eigenvector-eigenvector terpilih\n\nExplained Variance Ratio menunjukkan proporsi variansi total data yang ditangkap oleh setiap PC. Dengan menjumlahkan explained variance ratio dari beberapa PC pertama, kita bisa menentukan berapa banyak komponen yang dibutuhkan untuk mempertahankan, misalnya, 95% variansi data asli.\n\nManfaat PCA:\n• Visualisasi data berdimensi tinggi dalam 2D atau 3D\n• Mengurangi noise dan redundansi antar fitur yang berkorelasi\n• Mempercepat training model ML pada data berdimensi sangat tinggi\n• Mengurangi risiko overfitting dengan mengurangi jumlah fitur\n• Preprocessing sebelum clustering atau visualisasi (t-SNE/UMAP)\n\nKeterbatasan:\n• Komponen hasil PCA adalah kombinasi linear fitur asli — sulit diinterpretasikan secara langsung\n• Hanya menangkap hubungan linear antar fitur\n• Informasi yang hilang (variansi kecil) bisa saja tetap penting untuk task tertentu"
+        },
+        {
+          "tipe": "kode",
+          "judul": "PCA untuk Reduksi Dimensi dan Visualisasi",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.decomposition import PCA\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.datasets import load_breast_cancer\n\nbunch = load_breast_cancer()\nX, y = bunch.data, bunch.target\nfitur = bunch.feature_names\n\n# Wajib standardisasi sebelum PCA\nX_scaled = StandardScaler().fit_transform(X)\n\n# ==========================================\n# EXPLAINED VARIANCE — MENENTUKAN JUMLAH KOMPONEN\n# ==========================================\npca_full = PCA().fit(X_scaled)\ncum_var = np.cumsum(pca_full.explained_variance_ratio_)\n\nplt.figure(figsize=(8, 4))\nplt.plot(range(1, len(cum_var) + 1), cum_var, marker='o')\nplt.axhline(y=0.95, color='red', linestyle='--', label='95% variansi')\nplt.xlabel('Jumlah Principal Component')\nplt.ylabel('Cumulative Explained Variance')\nplt.title('Scree Plot — Explained Variance Cumulative')\nplt.legend()\nplt.grid(True)\nplt.tight_layout()\nplt.savefig('pca_scree_plot.png', dpi=100)\n\nn_components_95 = np.argmax(cum_var >= 0.95) + 1\nprint(f'Jumlah komponen untuk 95% variansi: {n_components_95}')\nprint(f'(dari total {X.shape[1]} fitur asli)')\n\n# ==========================================\n# PCA UNTUK VISUALISASI 2D\n# ==========================================\npca_2d = PCA(n_components=2)\nX_pca = pca_2d.fit_transform(X_scaled)\n\nprint(f'\\nExplained variance PC1: {pca_2d.explained_variance_ratio_[0]:.2%}')\nprint(f'Explained variance PC2: {pca_2d.explained_variance_ratio_[1]:.2%}')\nprint(f'Total (PC1+PC2): {sum(pca_2d.explained_variance_ratio_):.2%}')\n\nplt.figure(figsize=(8, 6))\nscatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='coolwarm', alpha=0.6)\nplt.xlabel(f'PC1 ({pca_2d.explained_variance_ratio_[0]:.1%} variansi)')\nplt.ylabel(f'PC2 ({pca_2d.explained_variance_ratio_[1]:.1%} variansi)')\nplt.title('Visualisasi PCA 2D — Breast Cancer Dataset')\nplt.colorbar(scatter, label='Kelas')\nplt.tight_layout()\nplt.savefig('pca_2d_visualization.png', dpi=100)\n\n# ==========================================\n# KONTRIBUSI FITUR ASLI PADA PC1 DAN PC2\n# ==========================================\nloadings = pca_2d.components_\nprint('\\nFitur dengan kontribusi terbesar pada PC1:')\ntop_pc1 = np.argsort(np.abs(loadings[0]))[::-1][:5]\nfor i in top_pc1:\n    print(f'  {fitur[i]:30s}: {loadings[0][i]:+.4f}')",
+          "penjelasan": "Scree plot membantu menentukan jumlah komponen yang dipertahankan dengan trade-off antara kompresi dimensi dan retensi informasi. pca.components_ berisi 'loadings' — bobot setiap fitur asli dalam membentuk setiap PC, yang berguna untuk memahami apa yang direpresentasikan oleh setiap PC."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "PCA: Proyeksi ke Arah Variansi Maksimum",
+          "src": "/assets/ml/bab3/bab3_3.4.png",
+          "deskripsi_gambar": "Diagram yang menampilkan data berdimensi tinggi diproyeksikan ke dua arah utama. Arah pertama menunjukkan variansi terbesar data, arah kedua tegak lurus dengan arah pertama. Proyeksi ini mengurangi dimensi data sambil mempertahankan informasi paling signifikan.",
+          "alt": "Diagram PCA menunjukkan proyeksi data ke arah variansi maksimum"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: PCA seperti Memotret dari Sudut Terbaik",
+          "isi": "Bayangkan kamu punya objek 3D — misalnya sebuah pesawat mainan — dan kamu hanya bisa mengambil satu foto 2D untuk merepresentasikannya sebaik mungkin. Kamu akan mencari sudut pemotretan di mana bentuk pesawat paling terlihat jelas (variansi/informasi terbanyak) — mungkin dari samping, bukan dari atas dimana pesawat terlihat seperti garis tipis. PCA melakukan hal serupa secara matematis: mencari 'sudut pandang' (kombinasi fitur) di mana data terlihat paling 'tersebar' dan informatif, lalu memproyeksikan data ke sudut pandang tersebut."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "PCA Ditemukan Sebelum Era Komputer",
+          "isi": "PCA pertama kali diperkenalkan oleh Karl Pearson pada 1901 — lebih dari 50 tahun sebelum komputer digital pertama digunakan untuk komputasi ilmiah secara luas. Saat itu, perhitungan eigenvector untuk dataset besar dilakukan secara manual dan sangat melelahkan. Baru pada 1933, Harold Hotelling mengembangkan formulasi PCA yang lebih dikenal saat ini. PCA sekarang menjadi salah satu teknik fundamental yang diajarkan di hampir semua kursus statistik, ML, dan data science di dunia."
+        }
+      ]
+    },
+    {
+      "id": "3.5",
+      "judul": "t-SNE & UMAP untuk Visualisasi",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Visualisasi Data Berdimensi Tinggi: Melampaui PCA",
+          "isi": "PCA sangat baik untuk reduksi dimensi linear, tapi sering gagal mengungkap struktur non-linear yang kompleks (misalnya cluster yang melengkung atau bersarang). t-SNE dan UMAP adalah dua teknik dimensionality reduction non-linear yang dirancang khusus untuk visualisasi — biasanya mereduksi data ke 2D atau 3D agar bisa dilihat manusia.\n\nt-SNE (t-Distributed Stochastic Neighbor Embedding):\nt-SNE bekerja dengan mempertahankan hubungan ketetanggaan lokal — titik-titik yang berdekatan di ruang dimensi tinggi tetap berdekatan di ruang dimensi rendah. Caranya:\n1. Hitung probabilitas kemiripan antar titik di ruang asli (menggunakan distribusi Gaussian)\n2. Hitung probabilitas kemiripan antar titik di ruang rendah (menggunakan distribusi t dengan ekor lebih panjang)\n3. Minimalkan perbedaan (KL divergence) antara kedua distribusi probabilitas tersebut\n\nParameter penting: perplexity — mengontrol jumlah efektif tetangga yang dipertimbangkan untuk setiap titik (biasanya 5-50).\n\nUMAP (Uniform Manifold Approximation and Projection):\nUMAP adalah alternatif yang lebih baru dan umumnya lebih cepat dari t-SNE, berdasarkan teori topological data analysis. UMAP juga mempertahankan struktur lokal, tapi sering dianggap lebih baik dalam mempertahankan struktur global (jarak relatif antar cluster) dibanding t-SNE.\n\nParameter penting UMAP: n_neighbors (mirip perplexity di t-SNE) dan min_dist (mengontrol seberapa rapat titik bisa dikemas dalam embedding).\n\nPeringatan penting saat menginterpretasi t-SNE/UMAP:\n• Jarak antar cluster dalam plot t-SNE TIDAK merepresentasikan jarak sebenarnya — hanya struktur ketetanggaan lokal yang bermakna\n• Ukuran cluster dalam plot t-SNE/UMAP tidak selalu merepresentasikan kepadatan asli\n• Hasil bisa berubah signifikan dengan random seed dan hyperparameter berbeda — selalu coba beberapa konfigurasi\n• t-SNE dan UMAP adalah alat VISUALISASI, bukan untuk dijadikan fitur input model selanjutnya (gunakan PCA untuk itu)\n\nPerbandingan kecepatan: UMAP umumnya jauh lebih cepat dari t-SNE untuk dataset besar dan bisa diterapkan pada data baru (transform), sementara t-SNE harus dijalankan ulang untuk setiap dataset baru."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Visualisasi dengan t-SNE dan UMAP",
+          "bahasa": "python",
+          "kode": "# pip install umap-learn\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.manifold import TSNE\nimport umap\nfrom sklearn.datasets import load_digits\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\n\n# Dataset digit tulisan tangan (64 fitur = 8x8 piksel)\ndigits = load_digits()\nX, y = digits.data, digits.target\n\nX_scaled = StandardScaler().fit_transform(X)\n\n# ==========================================\n# REDUKSI AWAL DENGAN PCA (best practice sebelum t-SNE/UMAP)\n# ==========================================\nX_pca = PCA(n_components=30, random_state=42).fit_transform(X_scaled)\n\n# ==========================================\n# T-SNE\n# ==========================================\ntsne = TSNE(\n    n_components=2,\n    perplexity=30,\n    learning_rate='auto',\n    init='pca',\n    random_state=42\n)\nX_tsne = tsne.fit_transform(X_pca)\n\n# ==========================================\n# UMAP\n# ==========================================\nreducer = umap.UMAP(\n    n_components=2,\n    n_neighbors=15,\n    min_dist=0.1,\n    random_state=42\n)\nX_umap = reducer.fit_transform(X_pca)\n\n# ==========================================\n# VISUALISASI PERBANDINGAN\n# ==========================================\nfig, axes = plt.subplots(1, 2, figsize=(14, 6))\n\nsc1 = axes[0].scatter(X_tsne[:, 0], X_tsne[:, 1], c=y, cmap='tab10', s=10)\naxes[0].set_title('t-SNE Visualization')\nplt.colorbar(sc1, ax=axes[0], label='Digit')\n\nsc2 = axes[1].scatter(X_umap[:, 0], X_umap[:, 1], c=y, cmap='tab10', s=10)\naxes[1].set_title('UMAP Visualization')\nplt.colorbar(sc2, ax=axes[1], label='Digit')\n\nplt.tight_layout()\nplt.savefig('tsne_umap_comparison.png', dpi=100)\nprint('Visualisasi t-SNE dan UMAP tersimpan!')",
+          "penjelasan": "Menjalankan PCA terlebih dahulu (misal ke 30-50 komponen) sebelum t-SNE/UMAP adalah praktik umum: ini mengurangi noise dan mempercepat komputasi secara signifikan tanpa kehilangan banyak struktur penting untuk visualisasi akhir."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Perbandingan PCA, t-SNE, dan UMAP",
+          "src": "/assets/ml/bab3/bab3_3.5.png",
+          "deskripsi_gambar": "Dua visualisasi data berdimensi tinggi yang direduksi ke 2D menggunakan teknik berbeda. Visualisasi pertama menunjukkan hasil reduksi linear, dua visualisasi berikutnya menunjukkan hasil reduksi non-linear dengan pendekatan berbeda. Perbandingan ini menunjukkan kemampuan masing-masing teknik dalam memisahkan cluster data.",
+          "alt": "Perbandingan visualisasi PCA, t-SNE, dan UMAP pada dataset"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: t-SNE/UMAP seperti Menata Ulang Foto Kelompok Pertemanan",
+          "isi": "Bayangkan kamu punya data tentang ratusan orang dari berbagai kota dan lingkaran pertemanan yang kompleks (ruang berdimensi tinggi), dan diminta menyusun mereka berdiri di satu lapangan datar (2D) sedemikian rupa sehingga teman dekat tetap saling berdekatan. t-SNE seperti aturan: 'fokuskan energi untuk menjaga kelompok pertemanan kecil tetap rapat berkumpul', meski itu berarti dua kelompok pertemanan yang sebenarnya saling kenal jadi terlihat jauh terpisah di lapangan. UMAP sedikit lebih memperhatikan 'kelompok mana yang lebih dekat dengan kelompok mana' secara keseluruhan. Yang penting diingat: jarak antar kelompok di lapangan ini tidak benar-benar merepresentasikan seberapa jauh hubungan mereka di dunia nyata — hanya pengelompokan lokalnya yang bisa dipercaya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "t-SNE Menjadi Viral Setelah Visualisasi MNIST",
+          "isi": "t-SNE diperkenalkan oleh Laurens van der Maaten dan Geoffrey Hinton pada 2008 sebagai pengembangan dari teknik Stochastic Neighbor Embedding sebelumnya. Popularitasnya melonjak drastis setelah para peneliti menunjukkan bahwa t-SNE bisa memvisualisasikan dataset MNIST (digit tulisan tangan) menjadi 10 gumpalan terpisah yang sangat jelas dalam 2D — sesuatu yang tidak bisa dilakukan PCA dengan baik. Sejak itu, t-SNE menjadi alat standar di hampir setiap paper deep learning untuk memvisualisasikan embedding atau representasi internal model. UMAP, yang diperkenalkan tahun 2018 oleh Leland McInnes, kini banyak menggantikan t-SNE karena kecepatannya yang jauh lebih unggul pada dataset besar."
+        }
+      ]
+    },
+    {
+      "id": "3.6",
+      "judul": "Gaussian Mixture Models (GMM)",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "GMM: Clustering Probabilistik dengan Soft Assignment",
+          "isi": "Gaussian Mixture Model (GMM) adalah model probabilistik yang mengasumsikan data dihasilkan dari campuran (mixture) beberapa distribusi Gaussian (normal) dengan parameter berbeda. Berbeda dengan K-Means yang melakukan 'hard assignment' (setiap titik pasti masuk ke satu cluster), GMM melakukan 'soft assignment' — setiap titik diberi probabilitas keanggotaan ke setiap cluster.\n\nSetiap komponen Gaussian dalam GMM memiliki tiga parameter:\n• Mean (μ) — pusat/lokasi distribusi (mirip centroid di K-Means)\n• Covariance (Σ) — bentuk dan orientasi distribusi (memungkinkan cluster berbentuk elips, tidak harus bulat seperti K-Means)\n• Weight (π) — proporsi/bobot komponen tersebut dalam keseluruhan campuran\n\nGMM dilatih menggunakan algoritma EM (Expectation-Maximization):\n1. Expectation step (E-step) — hitung probabilitas setiap titik berasal dari setiap komponen Gaussian (berdasarkan parameter saat ini)\n2. Maximization step (M-step) — update parameter (mean, covariance, weight) setiap komponen untuk memaksimalkan likelihood berdasarkan probabilitas dari E-step\n3. Ulangi E-step dan M-step sampai konvergen (log-likelihood tidak lagi meningkat signifikan)\n\nMemilih jumlah komponen (K):\nSeperti K-Means, GMM membutuhkan jumlah komponen ditentukan. Karena GMM adalah model probabilistik, kita bisa menggunakan kriteria informasi seperti:\n• AIC (Akaike Information Criterion)\n• BIC (Bayesian Information Criterion) — umumnya lebih disukai karena memberi penalti lebih besar untuk kompleksitas model\nKedua kriteria ini menyeimbangkan goodness-of-fit dengan kompleksitas model — pilih K yang meminimalkan AIC/BIC.\n\nKeunggulan GMM dibanding K-Means:\n• Bisa menangkap cluster berbentuk elips/oval, tidak hanya bulat\n• Soft assignment memberi informasi 'tingkat kepercayaan' keanggotaan cluster\n• Berbasis probabilistik — bisa digunakan untuk generative modeling (membuat sampel baru)\n• Bisa digunakan untuk deteksi anomali (titik dengan likelihood sangat rendah)\n\nKeterbatasan:\n• Lebih lambat dibanding K-Means\n• Bisa konvergen ke local optimum — perlu beberapa kali run dengan inisialisasi berbeda\n• Asumsi distribusi Gaussian mungkin tidak sesuai untuk semua dataset"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Gaussian Mixture Models: Clustering dan Pemilihan K dengan BIC",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.mixture import GaussianMixture\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.datasets import make_blobs\n\n# Data contoh dengan cluster berbentuk elips (variansi berbeda per arah)\nnp.random.seed(42)\nX, y_true = make_blobs(n_samples=400, centers=3, cluster_std=[1.0, 2.5, 0.5], random_state=42)\nX_scaled = StandardScaler().fit_transform(X)\n\n# ==========================================\n# MEMILIH JUMLAH KOMPONEN DENGAN BIC DAN AIC\n# ==========================================\nn_components_range = range(1, 8)\nbics, aics = [], []\n\nfor n in n_components_range:\n    gmm = GaussianMixture(n_components=n, covariance_type='full', random_state=42, n_init=5)\n    gmm.fit(X_scaled)\n    bics.append(gmm.bic(X_scaled))\n    aics.append(gmm.aic(X_scaled))\n\nplt.figure(figsize=(8, 4))\nplt.plot(n_components_range, bics, marker='o', label='BIC')\nplt.plot(n_components_range, aics, marker='s', label='AIC')\nplt.xlabel('Jumlah Komponen')\nplt.ylabel('Skor (semakin rendah semakin baik)')\nplt.title('Pemilihan Jumlah Komponen GMM dengan BIC/AIC')\nplt.legend()\nplt.grid(True)\nplt.tight_layout()\nplt.savefig('gmm_bic_aic.png', dpi=100)\n\nbest_n = n_components_range[np.argmin(bics)]\nprint(f'Jumlah komponen optimal berdasarkan BIC: {best_n}')\n\n# ==========================================\n# FIT GMM DENGAN K TERPILIH\n# ==========================================\ngmm = GaussianMixture(n_components=best_n, covariance_type='full', random_state=42, n_init=5)\ngmm.fit(X_scaled)\n\nlabels = gmm.predict(X_scaled)\nprobs = gmm.predict_proba(X_scaled)  # soft assignment\n\nprint(f'\\nContoh probabilitas soft assignment (5 titik pertama):')\nprint(np.round(probs[:5], 3))\n\n# Deteksi anomali: titik dengan log-likelihood sangat rendah\nscores = gmm.score_samples(X_scaled)\nthreshold = np.percentile(scores, 1)  # 1% terbawah dianggap anomali\nanomalies = scores < threshold\nprint(f'\\nJumlah anomali terdeteksi: {anomalies.sum()}')\n\n# Visualisasi\nplt.figure(figsize=(8, 6))\nplt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=labels, cmap='viridis', alpha=0.6)\nplt.scatter(X_scaled[anomalies, 0], X_scaled[anomalies, 1], c='red', marker='x', s=100, label='Anomali')\nplt.title(f'GMM Clustering (K={best_n}) dengan Deteksi Anomali')\nplt.legend()\nplt.tight_layout()\nplt.savefig('gmm_result.png', dpi=100)",
+          "penjelasan": "covariance_type='full' memungkinkan setiap komponen memiliki bentuk elips dengan orientasi bebas — paling fleksibel tapi butuh lebih banyak parameter. Opsi lain: 'tied' (semua komponen berbagi bentuk covariance yang sama), 'diag' (covariance diagonal, lebih sederhana), dan 'spherical' (setara dengan K-Means probabilistik)."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "GMM: Cluster Berbentuk Elips dengan Soft Assignment",
+          "src": "/assets/ml/bab3/bab3_3.6.png",
+          "deskripsi_gambar": "Diagram yang menampilkan beberapa distribusi Gaussian yang saling tumpang tindih. Setiap distribusi merepresentasikan satu cluster dengan bentuk dan orientasi yang berbeda. Area tumpang tindih antar distribusi menunjukkan titik data yang memiliki probabilitas keanggotaan ganda pada beberapa cluster.",
+          "alt": "Diagram GMM menunjukkan cluster berbentuk elips dengan kontur probabilitas"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: GMM seperti Mendeskripsikan Suhu Beberapa Kota Sekaligus",
+          "isi": "Bayangkan kamu mengumpulkan data suhu harian dari banyak kota tanpa label nama kota. K-Means seperti memutuskan secara tegas: 'data ini pasti dari Kota A, titik' — bahkan untuk hari-hari di mana suhu sebenarnya ambigu (bisa jadi Kota A atau Kota B). GMM lebih bijak: 'data suhu hari ini punya 70% kemungkinan dari Kota A dan 30% dari Kota B' — mengakui ketidakpastian. Selain itu, GMM juga mengakui bahwa suhu di Kota A mungkin lebih bervariasi (variансi tinggi, 'elips lebar') dibanding Kota B yang cuacanya sangat stabil (variансi rendah, 'elips kecil') — sesuatu yang tidak bisa ditangkap K-Means yang mengasumsikan semua cluster berbentuk bulat dan berukuran sama."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Algoritma EM Digunakan di Banyak Bidang Selain Clustering",
+          "isi": "Algoritma Expectation-Maximization (EM) yang menjadi jantung dari GMM dipublikasikan secara formal oleh Arthur Dempster, Nan Laird, dan Donald Rubin pada 1977, meski ide-ide serupa sudah muncul sebelumnya di berbagai bidang. EM bukan hanya digunakan untuk GMM — algoritma ini menjadi fondasi untuk Hidden Markov Models (digunakan dalam speech recognition), penanganan data hilang (missing data imputation), dan berbagai model statistik lain di mana ada variabel 'tersembunyi' (latent) yang tidak teramati secara langsung. EM adalah salah satu algoritma paling berpengaruh dalam sejarah statistik komputasional."
+        }
+      ]
+    },
+    {
+      "id": "3.7",
+      "judul": "Association Rules: Apriori & FP-Growth",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Association Rule Mining: Menemukan Pola 'Jika Ini, Maka Itu'",
+          "isi": "Association Rule Mining adalah teknik unsupervised learning untuk menemukan hubungan atau pola menarik antar item dalam dataset transaksional — paling terkenal dalam konteks 'market basket analysis' (analisis keranjang belanja), seperti menemukan bahwa 'pembeli yang membeli roti dan mentega cenderung juga membeli susu'.\n\nMetrik utama dalam association rules:\n• Support — proporsi transaksi yang mengandung itemset tertentu: Support(A) = jumlah transaksi mengandung A / total transaksi\n• Confidence — probabilitas membeli item B jika sudah membeli item A: Confidence(A→B) = Support(A∪B) / Support(A)\n• Lift — mengukur seberapa kuat hubungan A dan B dibanding jika keduanya independen: Lift(A→B) = Confidence(A→B) / Support(B)\n  - Lift > 1 → A dan B berkorelasi positif (sering dibeli bersamaan lebih dari kebetulan)\n  - Lift = 1 → A dan B independen\n  - Lift < 1 → A dan B berkorelasi negatif\n\nAlgoritma Apriori:\nApriori menggunakan prinsip 'Apriori property' — jika sebuah itemset tidak frequent (support rendah), maka semua superset-nya juga pasti tidak frequent. Ini memungkinkan pruning (pemangkasan) ruang pencarian secara drastis.\nLangkah-langkah:\n1. Hitung support untuk semua itemset berukuran 1, simpan yang melebihi min_support\n2. Generate kandidat itemset berukuran 2 dari itemset frequent berukuran 1, hitung support, simpan yang frequent\n3. Ulangi untuk itemset berukuran 3, 4, dst., sampai tidak ada itemset frequent baru\n4. Dari itemset frequent, generate association rules yang memenuhi min_confidence\n\nKeterbatasan Apriori: harus melakukan banyak scan database dan menghasilkan banyak kandidat — bisa lambat untuk dataset besar.\n\nAlgoritma FP-Growth (Frequent Pattern Growth):\nFP-Growth adalah alternatif yang jauh lebih efisien — tidak menghasilkan kandidat sama sekali. Ia membangun struktur data kompak bernama FP-Tree yang merepresentasikan database transaksi, lalu menambang pola frequent secara rekursif dari struktur ini. FP-Growth umumnya jauh lebih cepat dari Apriori, terutama untuk dataset besar dengan banyak item.\n\nAplikasi association rules: rekomendasi produk e-commerce, optimasi tata letak toko/rak, analisis log clickstream website, deteksi pola dalam data medis (kombinasi gejala/diagnosis), dan cross-selling strategy."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Association Rule Mining dengan Apriori dan FP-Growth",
+          "bahasa": "python",
+          "kode": "# pip install mlxtend\nimport pandas as pd\nfrom mlxtend.frequent_patterns import apriori, fpgrowth, association_rules\nfrom mlxtend.preprocessing import TransactionEncoder\n\n# Data contoh: transaksi belanja\ntransaksi = [\n    ['roti', 'mentega', 'susu'],\n    ['roti', 'mentega'],\n    ['susu', 'telur'],\n    ['roti', 'mentega', 'susu', 'telur'],\n    ['roti', 'telur'],\n    ['mentega', 'susu'],\n    ['roti', 'mentega', 'susu', 'kopi'],\n    ['kopi', 'susu'],\n    ['roti', 'mentega', 'kopi'],\n    ['roti', 'mentega', 'susu', 'telur', 'kopi']\n]\n\n# Encode transaksi menjadi format one-hot\nte = TransactionEncoder()\nte_array = te.fit_transform(transaksi)\ndf = pd.DataFrame(te_array, columns=te.columns_)\n\nprint('Format one-hot transaksi:')\nprint(df.astype(int).head())\n\n# ==========================================\n# APRIORI\n# ==========================================\nfrequent_itemsets_apriori = apriori(df, min_support=0.3, use_colnames=True)\nprint(f'\\nJumlah frequent itemsets (Apriori): {len(frequent_itemsets_apriori)}')\n\n# ==========================================\n# FP-GROWTH (lebih cepat untuk dataset besar)\n# ==========================================\nfrequent_itemsets_fp = fpgrowth(df, min_support=0.3, use_colnames=True)\nprint(f'Jumlah frequent itemsets (FP-Growth): {len(frequent_itemsets_fp)}')\n\n# ==========================================\n# GENERATE ASSOCIATION RULES\n# ==========================================\nrules = association_rules(frequent_itemsets_fp, metric='lift', min_threshold=1.0)\nrules = rules.sort_values('lift', ascending=False)\n\nprint('\\nTop association rules (diurutkan berdasarkan lift):')\nprint(rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']].head(5).to_string(index=False))\n\n# Interpretasi salah satu rule terkuat\ntop_rule = rules.iloc[0]\nprint(f'\\nContoh interpretasi:')\nprint(f'  Jika membeli {set(top_rule[\"antecedents\"])}, ')\nprint(f'  maka {top_rule[\"confidence\"]:.0%} kemungkinan juga membeli {set(top_rule[\"consequents\"])}')\nprint(f'  (Lift={top_rule[\"lift\"]:.2f}x lebih sering dari kebetulan)')",
+          "penjelasan": "min_support dan min_threshold (untuk metric seperti confidence/lift) adalah hyperparameter penting — terlalu rendah menghasilkan terlalu banyak rule yang tidak bermakna ('rule explosion'), terlalu tinggi bisa melewatkan pola menarik yang jarang tapi penting. Selalu cek lift, bukan hanya confidence — confidence tinggi bisa menyesatkan jika item konsekuen memang sangat populer secara umum."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Market Basket Analysis: Support, Confidence, Lift",
+          "src": "/assets/ml/bab3/bab3_3.7.png",
+          "deskripsi_gambar": "Ilustrasi konsep association rule mining dalam analisis keranjang belanja. Diagram menunjukkan hubungan antar item yang sering dibeli bersamaan dengan metrik statistik yang mengukur kekuatan hubungan tersebut.",
+          "alt": "Ilustrasi market basket analysis dengan metrik support, confidence, dan lift"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Association Rules seperti Pengamatan Kasir Berpengalaman",
+          "isi": "Bayangkan seorang kasir supermarket yang sudah bekerja 10 tahun. Tanpa data formal, dia 'merasakan' bahwa pelanggan yang membeli popok bayi sering juga membeli tisu basah dan susu formula — pola yang ia amati berulang kali. Association rule mining melakukan hal yang sama secara sistematis dan terukur pada jutaan transaksi: Support memberi tahu 'seberapa sering kombinasi ini terjadi secara keseluruhan', Confidence memberi tahu 'jika sudah ada popok di keranjang, seberapa besar kemungkinan ada tisu basah juga', dan Lift memberi tahu 'apakah hubungan ini benar-benar istimewa, atau hanya karena kedua item itu memang sama-sama populer secara terpisah'."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Asal Mula 'Beer and Diapers' Story",
+          "isi": "Salah satu cerita paling terkenal (meski kebenarannya diperdebatkan) dalam dunia data mining adalah temuan bahwa pembeli bir dan popok bayi sering muncul dalam transaksi yang sama di supermarket pada akhir pekan — diduga karena ayah yang disuruh membeli popok juga membeli bir untuk dirinya sendiri. Cerita ini menjadi contoh klasik yang sering digunakan untuk menjelaskan konsep association rule mining sejak awal 1990-an, meski beberapa sumber menyebutnya sebagai legenda urban di dunia data mining yang dibesar-besarkan untuk keperluan pemasaran konsultan analitik."
+        }
+      ]
+    },
+    {
+      "id": "3.8",
+      "judul": "Anomaly Detection & Outlier Detection",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Anomaly Detection: Menemukan yang Tidak Biasa",
+          "isi": "Anomaly Detection (deteksi anomali) adalah tugas mengidentifikasi titik data, peristiwa, atau observasi yang secara signifikan berbeda dari mayoritas data — sering disebut juga outlier detection. Anomali bisa mengindikasikan transaksi fraud, kerusakan mesin, intrusi jaringan, atau kesalahan sensor.\n\nJenis-jenis anomali:\n• Point anomaly — satu titik data individual yang menyimpang jauh dari titik lain\n• Contextual anomaly — titik data yang normal dalam satu konteks tapi anomali dalam konteks lain (misalnya suhu 30°C normal di musim panas tapi anomali di musim dingin)\n• Collective anomaly — sekumpulan titik data yang bersama-sama menyimpang dari pola normal, meski masing-masing titik secara individual tidak terlihat anomali\n\nBeberapa pendekatan utama untuk anomaly detection:\n\n1. Statistical methods — menggunakan Z-score atau IQR (Interquartile Range): titik dianggap outlier jika berada lebih dari beberapa standar deviasi dari mean, atau di luar rentang Q1-1.5×IQR sampai Q3+1.5×IQR.\n\n2. Isolation Forest — membangun banyak pohon keputusan acak (mirip Random Forest) yang secara acak memisahkan (isolate) titik data. Intuisinya: anomali lebih mudah 'diisolasi' karena berada di area jarang — membutuhkan lebih sedikit pemisahan (path length lebih pendek dalam pohon) dibanding titik normal.\n\n3. Local Outlier Factor (LOF) — mengukur kepadatan lokal suatu titik dibandingkan dengan kepadatan lokal tetangga-tetangganya. Titik dengan kepadatan jauh lebih rendah dari tetangganya dianggap outlier. Berguna untuk dataset dengan kepadatan yang bervariasi antar region.\n\n4. One-Class SVM — mempelajari boundary yang membungkus mayoritas data 'normal'; titik di luar boundary ini dianggap anomali.\n\n5. Autoencoder-based — melatih autoencoder pada data normal, lalu menggunakan reconstruction error sebagai skor anomali (akan dibahas lebih detail di sub-bab 3.10).\n\nEvaluasi anomaly detection:\nKarena anomali biasanya sangat jarang (highly imbalanced), metrik seperti accuracy tidak berguna. Gunakan precision, recall, F1-score pada kelas anomali, atau Precision-Recall AUC. Jika ada label ground truth tersedia (semi-supervised setting), evaluasi seperti klasifikasi imbalanced pada umumnya."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Anomaly Detection dengan Isolation Forest dan LOF",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.ensemble import IsolationForest\nfrom sklearn.neighbors import LocalOutlierFactor\nfrom sklearn.svm import OneClassSVM\nfrom sklearn.preprocessing import StandardScaler\n\n# Data contoh: data normal + beberapa anomali yang disisipkan\nnp.random.seed(42)\nX_normal = np.random.normal(loc=0, scale=1, size=(300, 2))\nX_anomalies = np.random.uniform(low=-6, high=6, size=(15, 2))\nX = np.vstack([X_normal, X_anomalies])\ny_true = np.array([0] * 300 + [1] * 15)  # 1 = anomali (hanya untuk evaluasi)\n\nX_scaled = StandardScaler().fit_transform(X)\n\n# ==========================================\n# ISOLATION FOREST\n# ==========================================\niso_forest = IsolationForest(\n    n_estimators=100,\n    contamination=0.05,  # estimasi proporsi anomali (~5%)\n    random_state=42\n)\n# fit_predict: 1 = normal (inlier), -1 = anomali (outlier)\npred_iso = iso_forest.fit_predict(X_scaled)\nanomaly_scores_iso = iso_forest.score_samples(X_scaled)  # semakin rendah = semakin anomali\n\nn_anomali_iso = (pred_iso == -1).sum()\nprint(f'Isolation Forest mendeteksi {n_anomali_iso} anomali')\n\n# ==========================================\n# LOCAL OUTLIER FACTOR (LOF)\n# ==========================================\nlof = LocalOutlierFactor(n_neighbors=20, contamination=0.05)\npred_lof = lof.fit_predict(X_scaled)\nn_anomali_lof = (pred_lof == -1).sum()\nprint(f'LOF mendeteksi {n_anomali_lof} anomali')\n\n# ==========================================\n# ONE-CLASS SVM\n# ==========================================\nocsvm = OneClassSVM(kernel='rbf', gamma='auto', nu=0.05)\npred_ocsvm = ocsvm.fit_predict(X_scaled)\nn_anomali_svm = (pred_ocsvm == -1).sum()\nprint(f'One-Class SVM mendeteksi {n_anomali_svm} anomali')\n\n# ==========================================\n# VISUALISASI HASIL ISOLATION FOREST\n# ==========================================\nplt.figure(figsize=(8, 6))\nnormal_mask = pred_iso == 1\nplt.scatter(X_scaled[normal_mask, 0], X_scaled[normal_mask, 1],\n            c='steelblue', alpha=0.6, label='Normal')\nplt.scatter(X_scaled[~normal_mask, 0], X_scaled[~normal_mask, 1],\n            c='red', marker='x', s=100, label='Anomali')\nplt.title('Deteksi Anomali dengan Isolation Forest')\nplt.legend()\nplt.tight_layout()\nplt.savefig('isolation_forest_result.png', dpi=100)",
+          "penjelasan": "Parameter contamination (Isolation Forest, LOF) dan nu (One-Class SVM) adalah estimasi proporsi anomali yang diharapkan dalam data — sebaiknya diatur berdasarkan pengetahuan domain. Jika tidak diketahui, gunakan score_samples atau decision_function untuk mendapatkan skor kontinu dan tentukan threshold berdasarkan analisis distribusi skor."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Isolation Forest: Memisahkan Anomali dengan Lebih Sedikit Langkah",
+          "src": "/assets/ml/bab3/bab3_3.8.jpg",
+          "deskripsi_gambar": "Diagram yang mengilustrasikan cara kerja Isolation Forest. Titik data normal yang berada di area padat membutuhkan banyak pemisahan untuk diisolasi. Titik anomali yang terisolasi secara natural hanya membutuhkan sedikit pemisahan untuk diidentifikasi.",
+          "alt": "Diagram Isolation Forest menunjukkan path length pendek untuk anomali"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Anomaly Detection seperti Petugas Keamanan Bandara",
+          "isi": "Bayangkan petugas keamanan bandara yang mengamati ribuan penumpang setiap hari. Sebagian besar penumpang berperilaku 'normal': membawa koper standar, berjalan dengan tenang, mengikuti antrean. Petugas tidak punya daftar lengkap 'semua jenis kelakuan mencurigakan yang mungkin terjadi' (tidak ada label lengkap untuk anomali) — tapi mereka terlatih mengenali pola normal dengan sangat baik, sehingga apapun yang menyimpang signifikan dari pola itu langsung menarik perhatian. Isolation Forest bekerja serupa: ia tidak perlu tahu 'seperti apa anomali itu', cukup belajar bahwa titik-titik di area jarang/terisolasi 'membutuhkan sedikit pertanyaan untuk dibedakan dari yang lain' — itulah ciri anomali."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Isolation Forest Tidak Membutuhkan Konsep Jarak atau Densitas",
+          "isi": "Isolation Forest, yang diperkenalkan oleh Fei Tony Liu, Kai Ming Ting, dan Zhi-Hua Zhou pada 2008, unik karena merupakan salah satu algoritma anomaly detection pertama yang tidak bergantung pada perhitungan jarak atau densitas sama sekali — berbeda dari kebanyakan metode sebelumnya seperti LOF atau k-NN based methods. Pendekatan berbasis 'isolasi acak' ini membuatnya jauh lebih cepat dan scalable untuk dataset besar dan berdimensi tinggi, dan kini menjadi salah satu pilihan default untuk anomaly detection di banyak pipeline production, termasuk untuk deteksi fraud pada transaksi finansial skala besar."
+        }
+      ]
+    },
+    {
+      "id": "3.9",
+      "judul": "Silhouette Score & Davies-Bouldin Index",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengevaluasi Kualitas Clustering Tanpa Label",
+          "isi": "Salah satu tantangan terbesar dalam unsupervised learning adalah: bagaimana mengevaluasi apakah hasil clustering 'bagus' jika tidak ada label ground truth? Dua metrik internal yang paling populer untuk menjawab ini adalah Silhouette Score dan Davies-Bouldin Index — keduanya mengukur seberapa baik cluster terbentuk berdasarkan kekompakan (cohesion) dan pemisahan (separation) antar cluster, tanpa membutuhkan label asli.\n\nSilhouette Score:\nUntuk setiap titik data i, hitung:\n• a(i) — rata-rata jarak titik i ke semua titik lain dalam cluster yang sama (cohesion)\n• b(i) — rata-rata jarak titik i ke semua titik di cluster terdekat lainnya (separation)\n\nSilhouette coefficient untuk titik i:\ns(i) = (b(i) - a(i)) / max(a(i), b(i))\n\nNilai s(i) berkisar dari -1 sampai 1:\n• Mendekati +1 — titik berada jauh dari cluster tetangga dan sangat dekat dengan cluster sendiri (clustering sangat baik)\n• Mendekati 0 — titik berada di perbatasan antara dua cluster\n• Mendekati -1 — titik mungkin ditugaskan ke cluster yang salah\n\nSilhouette Score keseluruhan adalah rata-rata s(i) untuk semua titik. Skor di atas 0.5 umumnya dianggap baik, di atas 0.7 sangat baik.\n\nDavies-Bouldin Index (DBI):\nDBI mengukur rasio rata-rata antara 'sebaran dalam cluster' (within-cluster scatter) dengan 'jarak antar cluster' (between-cluster separation). Untuk setiap pasangan cluster i dan j:\nR(i,j) = (s_i + s_j) / d(c_i, c_j)\ndimana s_i adalah rata-rata jarak titik dalam cluster i ke centroidnya, dan d(c_i, c_j) adalah jarak antar centroid.\n\nDBI = rata-rata, untuk setiap cluster, dari nilai R(i,j) maksimum terhadap cluster lain.\n\nBerbeda dengan Silhouette Score, untuk DBI semakin RENDAH nilainya semakin baik — nilai 0 menunjukkan clustering sempurna (cluster sangat compact dan saling terpisah jauh).\n\nMenggunakan kedua metrik untuk memilih K:\nKedua metrik ini sering digunakan bersama Elbow Method untuk memilih jumlah cluster K — jalankan clustering untuk berbagai K, hitung Silhouette Score (cari yang maksimum) dan DBI (cari yang minimum), lalu bandingkan hasilnya. Jika ketiga metrik (elbow, silhouette, DBI) sepakat pada K yang sama, itu sinyal kuat bahwa K tersebut adalah pilihan baik."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Evaluasi Clustering dengan Silhouette Score dan Davies-Bouldin Index",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.cluster import KMeans\nfrom sklearn.metrics import silhouette_score, davies_bouldin_score, silhouette_samples\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.datasets import make_blobs\nimport matplotlib.cm as cm\n\n# Data contoh\nnp.random.seed(42)\nX, _ = make_blobs(n_samples=400, centers=4, cluster_std=1.0, random_state=42)\nX_scaled = StandardScaler().fit_transform(X)\n\n# ==========================================\n# BANDINGKAN BEBERAPA NILAI K\n# ==========================================\nk_range = range(2, 8)\nsilhouette_scores = []\ndbi_scores = []\n\nfor k in k_range:\n    km = KMeans(n_clusters=k, n_init=10, random_state=42)\n    labels = km.fit_predict(X_scaled)\n    silhouette_scores.append(silhouette_score(X_scaled, labels))\n    dbi_scores.append(davies_bouldin_score(X_scaled, labels))\n\nfig, axes = plt.subplots(1, 2, figsize=(12, 4))\naxes[0].plot(k_range, silhouette_scores, marker='o', color='green')\naxes[0].set(xlabel='K', ylabel='Silhouette Score', title='Silhouette Score (semakin tinggi semakin baik)')\naxes[0].grid(True)\n\naxes[1].plot(k_range, dbi_scores, marker='o', color='orange')\naxes[1].set(xlabel='K', ylabel='Davies-Bouldin Index', title='DBI (semakin rendah semakin baik)')\naxes[1].grid(True)\n\nplt.tight_layout()\nplt.savefig('silhouette_dbi_comparison.png', dpi=100)\n\nbest_k_sil = list(k_range)[np.argmax(silhouette_scores)]\nbest_k_dbi = list(k_range)[np.argmin(dbi_scores)]\nprint(f'K terbaik berdasarkan Silhouette Score: {best_k_sil} (skor={max(silhouette_scores):.4f})')\nprint(f'K terbaik berdasarkan DBI: {best_k_dbi} (skor={min(dbi_scores):.4f})')\n\n# ==========================================\n# SILHOUETTE PLOT PER-SAMPLE UNTUK K TERBAIK\n# ==========================================\nkm_best = KMeans(n_clusters=best_k_sil, n_init=10, random_state=42)\nlabels_best = km_best.fit_predict(X_scaled)\nsample_silhouette = silhouette_samples(X_scaled, labels_best)\n\nplt.figure(figsize=(8, 6))\ny_lower = 10\nfor i in range(best_k_sil):\n    cluster_silhouette = sample_silhouette[labels_best == i]\n    cluster_silhouette.sort()\n    size_cluster_i = cluster_silhouette.shape[0]\n    y_upper = y_lower + size_cluster_i\n    color = cm.viridis(float(i) / best_k_sil)\n    plt.fill_betweenx(np.arange(y_lower, y_upper), 0, cluster_silhouette, facecolor=color, alpha=0.7)\n    y_lower = y_upper + 10\n\nplt.axvline(x=np.mean(sample_silhouette), color='red', linestyle='--', label='Rata-rata Silhouette')\nplt.xlabel('Silhouette Coefficient')\nplt.ylabel('Cluster')\nplt.title(f'Silhouette Plot per Sampel (K={best_k_sil})')\nplt.legend()\nplt.tight_layout()\nplt.savefig('silhouette_plot.png', dpi=100)",
+          "penjelasan": "Silhouette plot per-sampel sangat berguna untuk mendiagnosis cluster mana yang bermasalah — cluster dengan banyak nilai silhouette negatif atau mendekati 0 menunjukkan cluster tersebut tumpang tindih dengan cluster lain dan mungkin perlu digabung atau dipecah ulang."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Silhouette Plot per Cluster",
+          "src": "/assets/ml/bab3/bab3_3.9.png",
+          "deskripsi_gambar": "Grafik horizontal yang menampilkan koefisien silhouette untuk setiap titik data dalam setiap cluster. Nilai positif menunjukkan titik berada di cluster yang tepat, nilai negatif menunjukkan kemungkinan salah cluster. Garis vertikal menunjukkan rata-rata silhouette score keseluruhan.",
+          "alt": "Silhouette plot menampilkan skor silhouette per cluster"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Silhouette Score seperti Menilai Seberapa 'Pas' Seseorang dalam Timnya",
+          "isi": "Bayangkan kamu membagi sekelompok orang menjadi beberapa tim berdasarkan keahlian mereka, tanpa tahu pembagian 'yang benar'. Untuk setiap orang, kamu bertanya dua hal: 'seberapa cocok orang ini dengan rekan-rekan setimnya saat ini?' (a) dan 'seberapa cocok orang ini dengan anggota tim lain yang paling mirip?' (b). Jika seseorang jauh lebih cocok dengan timnya sendiri dibanding tim lain manapun, silhouette score-nya mendekati +1 — pembagian timnya bagus. Jika seseorang ternyata lebih cocok dengan tim sebelah, skornya negatif — pertanda dia salah tim. Davies-Bouldin Index melakukan hal serupa tapi dari sudut pandang 'tim': tim yang anggotanya sangat mirip satu sama lain (compact) dan sangat berbeda dari tim lain (terpisah jauh) akan menghasilkan DBI rendah — pertanda pembagian tim yang baik."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Silhouette Score Bisa Digunakan untuk Algoritma Clustering Apapun",
+          "isi": "Silhouette Score, yang diperkenalkan oleh Peter Rousseeuw pada 1987, memiliki keunggulan unik: ia hanya membutuhkan matriks jarak antar titik data dan label cluster — sehingga bisa digunakan untuk mengevaluasi dan membandingkan hasil dari algoritma clustering manapun (K-Means, Hierarchical, DBSCAN, GMM, dll), bahkan untuk membandingkan algoritma yang sama sekali berbeda satu sama lain pada dataset yang sama. Ini membuatnya menjadi salah satu 'metrik universal' paling banyak digunakan dalam evaluasi unsupervised learning, dan tersedia secara built-in di hampir semua library ML modern."
+        }
+      ]
+    },
+    {
+      "id": "3.10",
+      "judul": "Autoencoder untuk Feature Learning",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Autoencoder: Neural Network yang Belajar Mengompresi Data Sendiri",
+          "isi": "Autoencoder adalah jenis neural network unsupervised yang dilatih untuk merekonstruksi inputnya sendiri sebagai output. Tujuannya bukan untuk 'menyalin' data secara trivial, tapi untuk memaksa network belajar representasi (encoding) yang ringkas dan bermakna dari data — sehingga autoencoder sering disebut sebagai teknik dimensionality reduction berbasis deep learning, alternatif non-linear dari PCA.\n\nArsitektur Autoencoder terdiri dari dua bagian:\n• Encoder — jaringan yang mengompresi input berdimensi tinggi menjadi representasi laten (latent representation/bottleneck) berdimensi lebih rendah\n• Decoder — jaringan yang merekonstruksi data asli dari representasi laten tersebut\n\nKarena bottleneck (latent space) memiliki dimensi lebih kecil dari input, network dipaksa untuk membuang informasi yang tidak penting dan hanya mempertahankan fitur-fitur paling esensial untuk merekonstruksi data — inilah proses 'feature learning' yang terjadi secara otomatis (unsupervised).\n\nLoss function yang umum digunakan: Mean Squared Error (MSE) atau Binary Cross-Entropy antara input asli dan rekonstruksi — disebut reconstruction loss/error.\n\nVarian-varian Autoencoder:\n• Vanilla/Standard Autoencoder — encoder-decoder sederhana dengan fully connected layers\n• Denoising Autoencoder — dilatih untuk merekonstruksi input asli dari versi input yang telah 'dirusak' dengan noise — memaksa model belajar fitur yang lebih robust\n• Sparse Autoencoder — menambahkan penalti sparsity pada latent representation, mendorong hanya sedikit neuron aktif pada satu waktu\n• Variational Autoencoder (VAE) — versi probabilistik yang memodelkan latent space sebagai distribusi, memungkinkan generasi data baru (generative model)\n• Convolutional Autoencoder — menggunakan layer konvolusi, cocok untuk data gambar\n\nAplikasi Autoencoder:\n• Dimensionality reduction dan visualisasi (alternatif PCA untuk hubungan non-linear)\n• Denoising — menghilangkan noise dari gambar atau sinyal\n• Anomaly detection — data normal memiliki reconstruction error rendah; data anomali (yang tidak pernah dilihat saat training) menghasilkan reconstruction error tinggi\n• Pretraining/feature extraction — representasi laten bisa digunakan sebagai fitur input untuk model supervised learning lain\n• Image compression dan generative modeling (terutama VAE)\n\nAutoencoder menjadi jembatan penting antara unsupervised learning klasik (Bab 3) dan deep learning yang lebih kompleks (Bab 4) — menunjukkan bahwa neural network bisa belajar pola dari data tanpa label sama sekali."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Autoencoder Sederhana dengan Keras/TensorFlow",
+          "bahasa": "python",
+          "kode": "# pip install tensorflow\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport tensorflow as tf\nfrom tensorflow import keras\nfrom tensorflow.keras import layers\nfrom sklearn.datasets import load_digits\nfrom sklearn.preprocessing import MinMaxScaler\nfrom sklearn.model_selection import train_test_split\n\n# Dataset digit tulisan tangan (64 fitur = 8x8 piksel)\ndigits = load_digits()\nX = digits.data\ny = digits.target\n\n# Normalisasi ke rentang 0-1 (penting untuk autoencoder dengan sigmoid output)\nX_scaled = MinMaxScaler().fit_transform(X)\nX_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)\n\ninput_dim = X_train.shape[1]   # 64\nlatent_dim = 2                 # dikompresi menjadi 2 dimensi untuk visualisasi\n\n# ==========================================\n# MEMBANGUN AUTOENCODER\n# ==========================================\n# Encoder\nencoder_input = keras.Input(shape=(input_dim,))\nx = layers.Dense(32, activation='relu')(encoder_input)\nlatent = layers.Dense(latent_dim, activation='relu', name='latent')(x)\n\n# Decoder\nx = layers.Dense(32, activation='relu')(latent)\ndecoder_output = layers.Dense(input_dim, activation='sigmoid')(x)\n\n# Model autoencoder lengkap (encoder + decoder)\nautoencoder = keras.Model(encoder_input, decoder_output, name='autoencoder')\n# Model encoder saja, untuk ekstraksi fitur\nencoder = keras.Model(encoder_input, latent, name='encoder')\n\nautoencoder.compile(optimizer='adam', loss='mse')\nautoencoder.summary()\n\n# ==========================================\n# TRAINING (unsupervised — X sebagai input DAN target)\n# ==========================================\nhistory = autoencoder.fit(\n    X_train, X_train,   # input = target (rekonstruksi diri sendiri)\n    epochs=50,\n    batch_size=32,\n    validation_data=(X_test, X_test),\n    verbose=0\n)\n\n# Plot training history\nplt.figure(figsize=(8, 4))\nplt.plot(history.history['loss'], label='Training Loss')\nplt.plot(history.history['val_loss'], label='Validation Loss')\nplt.xlabel('Epoch')\nplt.ylabel('Reconstruction Loss (MSE)')\nplt.title('Autoencoder Training History')\nplt.legend()\nplt.grid(True)\nplt.tight_layout()\nplt.savefig('autoencoder_loss.png', dpi=100)\n\n# ==========================================\n# VISUALISASI LATENT SPACE 2D\n# ==========================================\nX_latent = encoder.predict(X_test)\n\nplt.figure(figsize=(8, 6))\nscatter = plt.scatter(X_latent[:, 0], X_latent[:, 1], c=y_test, cmap='tab10', s=15)\nplt.xlabel('Latent Dimension 1')\nplt.ylabel('Latent Dimension 2')\nplt.title('Representasi Laten Autoencoder (2D)')\nplt.colorbar(scatter, label='Digit')\nplt.tight_layout()\nplt.savefig('autoencoder_latent_space.png', dpi=100)\n\n# ==========================================\n# RECONSTRUCTION ERROR UNTUK ANOMALY DETECTION\n# ==========================================\nX_reconstructed = autoencoder.predict(X_test)\nreconstruction_errors = np.mean((X_test - X_reconstructed) ** 2, axis=1)\nthreshold = np.percentile(reconstruction_errors, 95)\nprint(f'\\nThreshold reconstruction error (persentil 95): {threshold:.4f}')\nprint(f'Jumlah sampel di atas threshold (potensi anomali): {(reconstruction_errors > threshold).sum()}')",
+          "penjelasan": "Bottleneck layer (latent_dim) menentukan seberapa agresif kompresi yang dipaksakan — semakin kecil, semakin banyak informasi yang harus 'dipilih' oleh model untuk dipertahankan. Untuk anomaly detection, autoencoder dilatih HANYA pada data normal; data anomali pada saat inferensi akan menghasilkan reconstruction error yang jauh lebih tinggi karena model 'tidak familiar' dengan polanya."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Arsitektur Autoencoder: Encoder-Bottleneck-Decoder",
+          "src": "/assets/ml/bab3/bab3_3.10.png",
+          "deskripsi_gambar": "Diagram neural network berbentuk jam pasir simetris. Bagian kiri menunjukkan encoder yang mengompresi input ke representasi laten. Bagian tengah menunjukkan bottleneck dengan dimensi terkecil. Bagian kanan menunjukkan decoder yang merekonstruksi data dari representasi laten.",
+          "alt": "Diagram arsitektur autoencoder dengan encoder, bottleneck, dan decoder"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Autoencoder seperti Meringkas Lalu Menulis Ulang Cerita",
+          "isi": "Bayangkan kamu diminta membaca sebuah cerita panjang, lalu meringkasnya menjadi hanya beberapa kalimat kunci (encoder → latent space), dan kemudian — tanpa melihat cerita aslinya lagi — menulis ulang cerita itu selengkap mungkin HANYA berdasarkan ringkasanmu (decoder). Jika ringkasanmu bagus (menangkap inti cerita), tulisan ulangmu akan sangat mirip dengan aslinya (reconstruction error rendah). Jika kamu diminta meringkas ke dalam HANYA SATU KATA (latent dimension sangat kecil), kamu dipaksa memilih kata yang paling merepresentasikan esensi cerita — itulah 'fitur paling penting' yang dipelajari autoencoder. Untuk deteksi anomali: jika tiba-tiba kamu diminta menulis ulang cerita dari genre yang sangat berbeda (misalnya resep masakan) menggunakan 'gaya ringkasan' yang dilatih untuk cerita fiksi, hasilnya akan terlihat sangat aneh dan tidak akurat — itulah 'reconstruction error tinggi' yang menandakan anomali."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Autoencoder Adalah Dasar dari Banyak Model Generative Modern",
+          "isi": "Konsep autoencoder pertama kali dieksplorasi pada akhir 1980-an sebagai cara neural network melakukan dimensionality reduction non-linear. Namun, dampak terbesarnya muncul jauh kemudian: Variational Autoencoder (VAE), yang diperkenalkan oleh Diederik Kingma dan Max Welling pada 2013, menjadi salah satu fondasi awal dari model generative modern. Meski model image generation terkini umumnya didominasi oleh diffusion models, banyak di antaranya tetap menggunakan komponen mirip autoencoder (disebut 'VAE component') untuk mengompresi gambar ke latent space berukuran lebih kecil sebelum proses generasi — sehingga jauh lebih efisien secara komputasi dibanding bekerja langsung pada gambar resolusi penuh."
+        }
+      ]
+    }
+  ]
+}

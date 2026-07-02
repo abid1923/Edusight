@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "bab": 4,
+    "judul_bab": "Deep Learning dengan TensorFlow & PyTorch",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "4.1",
+      "pertanyaan": "Sebuah perceptron tunggal (tanpa hidden layer) dicoba dilatih untuk mempelajari fungsi logika XOR. Setelah ribuan epoch, model tidak pernah konvergen. Mengapa hal ini terjadi, dan apa solusinya?",
+      "opsi": {
+        "A": "Karena learning rate yang digunakan terlalu besar; solusinya cukup menurunkan learning rate hingga sangat kecil",
+        "B": "Karena XOR bukan problem yang linearly separable — tidak ada satu garis lurus yang bisa memisahkan kelas dengan benar; solusinya menggunakan Multi-Layer Perceptron (MLP) dengan minimal satu hidden layer dan activation function non-linear",
+        "C": "Karena jumlah data training XOR terlalu sedikit (hanya 4 sampel); solusinya memperbanyak data hingga ribuan sampel",
+        "D": "Karena perceptron hanya bisa digunakan untuk regresi, bukan klasifikasi"
+      },
+      "jawaban": "B",
+      "penjelasan": "Perceptron tunggal hanya mampu mempelajari decision boundary berupa garis lurus (linear), karena ia pada dasarnya menghitung kombinasi linear dari input lalu menerapkan fungsi step. XOR adalah problem klasik yang TIDAK linearly separable — tidak ada satu garis lurus yang bisa memisahkan (0,0)&(1,1) dari (0,1)&(1,0). Masalah ini dipopulerkan oleh Minsky & Papert (1969) dan memicu 'AI Winter' pertama. Solusinya bukan menurunkan learning rate atau menambah data, melainkan menambahkan hidden layer dengan activation function non-linear (misalnya ReLU) — MLP dengan satu hidden layer saja sudah cukup untuk membentuk decision boundary melengkung yang memisahkan XOR dengan sempurna. Ini adalah esensi mengapa 'kedalaman' (depth) penting dalam neural network."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "4.2",
+      "pertanyaan": "Sebuah neural network untuk klasifikasi 5 kelas (multi-class, mutually exclusive) memiliki output layer dengan 5 neuron. Activation function apa yang paling tepat untuk output layer ini, dan apa karakteristik utamanya?",
+      "opsi": {
+        "A": "Sigmoid pada setiap neuron, karena menghasilkan nilai 0-1 yang bisa dijadikan probabilitas independen untuk masing-masing kelas",
+        "B": "ReLU, karena hidden layer dan output layer sebaiknya selalu menggunakan activation function yang sama",
+        "C": "Softmax, karena mengubah 5 logits menjadi distribusi probabilitas yang menjumlah ke 1 — sehingga kelas dengan probabilitas tertinggi bisa dipilih sebagai prediksi tunggal",
+        "D": "Tanh, karena outputnya zero-centered sehingga cocok untuk semua jenis output layer"
+      },
+      "jawaban": "C",
+      "penjelasan": "Untuk klasifikasi multi-class yang mutually exclusive (setiap sampel hanya punya satu kelas benar), Softmax adalah pilihan standar pada output layer: f(xᵢ) = e^(xᵢ) / Σⱼ e^(xⱼ), yang mengubah vektor logits mentah menjadi distribusi probabilitas yang menjumlah ke 1. Sigmoid (opsi A) cocok untuk multi-label classification (kelas tidak mutually exclusive, setiap kelas punya probabilitas independen) atau binary classification dengan 1 neuron output, bukan untuk 5 kelas mutually exclusive karena tidak ada constraint bahwa total probabilitas = 1. ReLU dan Tanh tidak sesuai untuk output klasifikasi karena tidak menghasilkan distribusi probabilitas yang interpretable."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "4.3",
+      "pertanyaan": "Saat melatih sebuah deep neural network dengan activation function Sigmoid di semua hidden layer-nya, terlihat bahwa layer-layer awal (paling dekat dengan input) hampir tidak mengalami update parameter sama sekali, sementara layer-layer akhir berubah cukup signifikan. Apa nama fenomena ini dan apa penyebab utamanya?",
+      "opsi": {
+        "A": "Exploding gradient — disebabkan oleh learning rate yang terlalu besar pada layer awal",
+        "B": "Vanishing gradient — pada backpropagation, gradien Sigmoid yang mendekati 0 untuk input ekstrem dikalikan berulang kali (chain rule) saat disebarkan mundur melewati banyak layer, sehingga gradien di layer awal menjadi sangat kecil",
+        "C": "Dying ReLU — neuron-neuron pada layer awal memiliki input negatif sehingga selalu menghasilkan output 0",
+        "D": "Overfitting — model terlalu menghafal data training sehingga layer awal berhenti belajar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Ini adalah contoh klasik vanishing gradient. Backpropagation menghitung gradien layer awal dengan mengalikan secara berantai (chain rule) gradien-gradien dari semua layer setelahnya. Gradien Sigmoid, f'(x) = f(x)(1-f(x)), bernilai maksimum hanya 0.25 dan mendekati 0 untuk input yang sangat positif/negatif. Ketika nilai-nilai kecil ini dikalikan berulang kali melintasi banyak layer, hasilnya menyusut secara eksponensial — sehingga gradien yang mencapai layer awal menjadi sangat kecil dan parameter di layer tersebut hampir tidak diupdate ('belajar sangat lambat atau berhenti'). Dying ReLU (opsi C) adalah masalah berbeda yang spesifik untuk activation ReLU, bukan Sigmoid. Solusi umum: gunakan ReLU/variannya pada hidden layer, yang memiliki gradien konstan = 1 untuk input positif."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "4.4",
+      "pertanyaan": "Dalam sebuah CNN, terdapat layer Conv2D dengan 32 filter berukuran 3x3, diikuti oleh MaxPooling2D dengan pool_size=2. Mengapa kombinasi 'Convolution lalu Pooling' ini begitu umum, dan apa keunggulan 'parameter sharing' pada convolution dibanding fully connected layer?",
+      "opsi": {
+        "A": "Pooling digunakan untuk menambah jumlah parameter agar model lebih ekspresif, sementara parameter sharing membuat setiap piksel memiliki bobot uniknya sendiri",
+        "B": "MaxPooling mengurangi dimensi spasial feature map (mengurangi komputasi dan memberi invariansi translasi kecil); parameter sharing membuat filter yang sama digunakan di seluruh posisi gambar, sehingga jumlah parameter jauh lebih kecil dibanding fully connected yang menghubungkan setiap piksel ke setiap neuron",
+        "C": "Pooling hanya digunakan pada layer terakhir CNN, dan parameter sharing berarti semua layer dalam CNN harus memiliki jumlah filter yang sama",
+        "D": "Convolution dan Pooling memiliki fungsi yang identik, hanya berbeda nama; keduanya tidak memengaruhi jumlah parameter"
+      },
+      "jawaban": "B",
+      "penjelasan": "MaxPooling mengurangi dimensi spasial (misalnya dari 32x32 menjadi 16x16 dengan pool_size=2) dengan mengambil nilai maksimum dari setiap region kecil — ini mengurangi komputasi untuk layer-layer berikutnya, mengurangi risiko overfitting, dan memberi sedikit invariansi terhadap translasi (objek yang sedikit bergeser posisinya tetap bisa terdeteksi). Parameter sharing adalah konsep kunci convolution: satu filter (misal 3x3x3 = 27 bobot + bias) digunakan secara identik di SELURUH posisi gambar untuk menghasilkan satu feature map — drastis berbeda dari fully connected layer yang membutuhkan bobot unik untuk setiap koneksi piksel-ke-neuron (jumlahnya bisa jutaan untuk gambar berukuran besar). Kombinasi parameter sharing dan local connectivity inilah yang membuat CNN jauh lebih efisien dan cocok untuk data gambar dibanding MLP biasa."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "4.5",
+      "pertanyaan": "Sebuah tim memiliki dataset gambar berlabel yang sangat kecil (hanya 300 gambar untuk 2 kelas) dan ingin membangun classifier dengan akurasi tinggi menggunakan transfer learning dari MobileNetV2 (pre-trained ImageNet). Strategi mana yang PALING SESUAI untuk situasi ini, dan mengapa fine-tuning penuh berisiko?",
+      "opsi": {
+        "A": "Fine-tuning penuh (unfreeze semua layer base model) dengan learning rate besar, agar model cepat menyesuaikan diri dengan dataset baru",
+        "B": "Feature Extraction — bekukan (freeze) seluruh base model, hanya latih layer klasifikasi baru di atasnya; fine-tuning penuh pada dataset sangat kecil berisiko overfitting parah dan 'merusak' fitur generik yang berguna dari ImageNet (catastrophic forgetting)",
+        "C": "Melatih MobileNetV2 dari nol (weights=None) menggunakan 300 gambar tersebut, karena transfer learning hanya berguna untuk dataset besar",
+        "D": "Mengganti seluruh arsitektur MobileNetV2 dengan model custom yang lebih besar agar kapasitasnya cukup untuk belajar dari 300 gambar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Dengan dataset yang sangat kecil (300 gambar), Feature Extraction (membekukan seluruh base model dan hanya melatih layer klasifikasi baru di atasnya) adalah strategi paling sesuai — jumlah parameter trainable jauh lebih kecil, sehingga risiko overfitting jauh berkurang meski data sedikit. Fine-tuning penuh dengan learning rate besar (opsi A) pada dataset kecil sangat berisiko: gradien besar bisa 'merusak' fitur-fitur generik berguna (tepi, tekstur, bentuk) yang sudah dipelajari dari 1.2 juta gambar ImageNet — disebut catastrophic forgetting — dan model bisa overfit parah pada 300 gambar. Melatih dari nol (opsi C) jelas tidak realistis dengan data sekecil itu. Jika fine-tuning tetap diinginkan, hanya sebagian kecil layer akhir yang di-unfreeze dengan learning rate sangat kecil (misal 1e-5), dan biasanya dilakukan setelah feature extraction awal."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "4.6",
+      "pertanyaan": "Sebuah Vanilla RNN dilatih pada sekuens teks yang sangat panjang (ratusan kata), dan model gagal mempelajari hubungan antara kata di awal kalimat dengan kata di akhir kalimat. Setelah diganti dengan LSTM, performa meningkat signifikan. Apa mekanisme dalam LSTM yang menjadi kunci perbaikan ini?",
+      "opsi": {
+        "A": "LSTM tidak menggunakan backpropagation sama sekali sehingga tidak ada masalah vanishing gradient",
+        "B": "LSTM menambahkan cell state (memori jangka panjang) terpisah dari hidden state, dikontrol oleh forget gate, input gate, dan output gate — memungkinkan informasi penting dipertahankan secara selektif melintasi banyak timestep tanpa hilang akibat vanishing gradient",
+        "C": "LSTM memproses seluruh sekuens sekaligus secara paralel seperti CNN, sehingga urutan kata tidak lagi penting",
+        "D": "LSTM menghapus bobot W_hh yang dibagi antar timestep, sehingga setiap timestep memiliki bobot independen"
+      },
+      "jawaban": "B",
+      "penjelasan": "Masalah utama Vanilla RNN pada sekuens panjang adalah vanishing/exploding gradient saat Backpropagation Through Time (BPTT) — gradien yang dikalikan berulang kali melintasi banyak timestep menyusut (atau meledak) secara eksponensial, sehingga dependensi jarak jauh tidak bisa dipelajari. LSTM (Hochreiter & Schmidhuber, 1997) mengatasi ini dengan menambahkan cell state — jalur memori terpisah yang relatif 'terlindungi' dari vanishing gradient — yang dikontrol oleh tiga gate: forget gate (memutuskan informasi lama yang dibuang), input gate (memutuskan informasi baru yang disimpan), dan output gate (memutuskan bagian cell state yang digunakan untuk output saat ini). Mekanisme gating ini memungkinkan informasi dari awal sekuens 'dijaga' hingga timestep jauh di kemudian hari. LSTM tetap menggunakan backpropagation (opsi A salah), tetap memproses sekuensial per timestep (opsi C salah), dan tetap berbagi bobot antar timestep (opsi D salah)."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "4.7",
+      "pertanyaan": "Seorang developer ingin membangun model dengan dua input berbeda (data gambar dan data tabular) yang digabung di tengah network, lalu menghasilkan dua output sekaligus (klasifikasi kelas dan skor numerik). API Keras mana yang HARUS digunakan, dan mengapa Sequential API tidak bisa memenuhi kebutuhan ini?",
+      "opsi": {
+        "A": "Sequential API, karena cukup menambahkan dua objek keras.Input() di awal list layer",
+        "B": "Functional API, karena Sequential API hanya merepresentasikan tumpukan layer linear dengan satu input dan satu output, sementara Functional API mendefinisikan model sebagai graph komputasi yang mendukung multiple input, multiple output, dan operasi penggabungan seperti Concatenate",
+        "C": "Tidak ada API Keras yang mendukung multi-input/output; harus menggunakan PyTorch",
+        "D": "Sequential API, dengan menambahkan layer Concatenate sebagai elemen pertama dalam list"
+      },
+      "jawaban": "B",
+      "penjelasan": "Sequential API secara fundamental hanya bisa merepresentasikan arsitektur berupa tumpukan layer linear — satu input mengalir berurutan melalui satu jalur layer hingga satu output, tanpa percabangan. Untuk arsitektur dengan multiple input (gambar + tabular), multiple output (klasifikasi + skor), shared layers, atau skip connection, dibutuhkan Functional API — di mana setiap layer adalah objek yang dipanggil pada tensor, dan model didefinisikan sebagai graph dari keras.Input() ke output melalui keras.Model(inputs=[...], outputs=[...]). Operasi seperti layers.Concatenate()([branch1, branch2]) memungkinkan dua cabang tensor digabung — sesuatu yang tidak bisa direpresentasikan dalam struktur list linear Sequential."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "4.8",
+      "pertanyaan": "Dalam kode PyTorch berikut, urutan operasi dalam training loop ditulis: forward pass → hitung loss → loss.backward() → optimizer.step(), TANPA memanggil optimizer.zero_grad() sebelum forward pass pada setiap iterasi. Apa dampak dari kelalaian ini?",
+      "opsi": {
+        "A": "Tidak ada dampak, karena PyTorch secara otomatis mereset gradien sebelum setiap forward pass",
+        "B": "Gradien dari iterasi-iterasi sebelumnya akan terakumulasi (ditambahkan) dengan gradien iterasi saat ini, karena PyTorch mengakumulasi gradien secara default — menghasilkan update parameter yang salah/tidak stabil",
+        "C": "Model akan otomatis berhenti training (early stopping) karena dianggap error",
+        "D": "Loss akan selalu bernilai nol karena gradien tidak terdefinisi"
+      },
+      "jawaban": "B",
+      "penjelasan": "Di PyTorch, gradien yang dihitung oleh .backward() bersifat AKUMULATIF secara default — setiap pemanggilan .backward() menambahkan gradien baru ke gradien yang sudah ada di tensor.grad, bukan menggantikannya. Jika optimizer.zero_grad() tidak dipanggil di awal setiap iterasi, gradien dari batch-batch sebelumnya akan terus menumpuk bersama gradien batch saat ini, sehingga optimizer.step() akan mengupdate parameter berdasarkan gradien gabungan yang salah — bisa menyebabkan training yang sangat tidak stabil atau gagal konvergen. Ini adalah salah satu bug paling umum bagi pemula PyTorch. PyTorch TIDAK mereset gradien otomatis (opsi A salah), dan kelalaian ini tidak memicu early stopping maupun membuat loss menjadi nol (opsi C dan D salah)."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "4.9",
+      "pertanyaan": "Saat memantau training curve sebuah model, terlihat bahwa training loss terus menurun secara konsisten hingga epoch ke-50, sementara validation loss menurun hingga epoch ke-15, lalu mulai naik secara bertahap setelahnya. Apa yang sebaiknya dilakukan, dan callback apa yang paling relevan?",
+      "opsi": {
+        "A": "Lanjutkan training hingga epoch ke-50 karena training loss masih menurun, yang menunjukkan model semakin baik secara keseluruhan",
+        "B": "Ini adalah sinyal overfitting — model mulai 'menghafal' data training; gunakan EarlyStopping (monitor val_loss, dengan restore_best_weights) untuk menghentikan training di sekitar epoch ke-15 dan ModelCheckpoint untuk menyimpan bobot model pada titik val_loss terbaik",
+        "C": "Naikkan learning rate secara drastis agar training loss turun lebih cepat dan validation loss ikut turun",
+        "D": "Hapus seluruh data validasi karena hanya mengganggu proses training"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pola di mana training loss terus menurun tapi validation loss mulai naik setelah titik tertentu (epoch ke-15) adalah ciri khas overfitting — model semakin baik memprediksi data training yang sudah 'dihafal', tapi semakin buruk dalam generalisasi ke data baru. Melanjutkan training hingga epoch ke-50 (opsi A) hanya akan memperburuk overfitting. Solusi standar adalah EarlyStopping dengan monitor='val_loss' dan patience tertentu, dikombinasikan dengan restore_best_weights=True agar model dikembalikan ke kondisi terbaiknya (sekitar epoch ke-15), serta ModelCheckpoint (save_best_only=True) untuk menyimpan bobot terbaik tersebut ke disk. Menaikkan learning rate (opsi C) tidak mengatasi akar masalah overfitting, dan menghapus data validasi (opsi D) justru menghilangkan satu-satunya sinyal yang memungkinkan kita mendeteksi overfitting ini sejak awal."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "4.10",
+      "pertanyaan": "Sebuah model klasifikasi dilatih menggunakan data yang sebelumnya telah di-scale dengan StandardScaler. Setelah model disimpan dan di-deploy ke REST API, ternyata prediksi yang dihasilkan jauh berbeda dari hasil saat evaluasi di notebook, meski model dan bobotnya identik. Apa kemungkinan besar penyebabnya, dan bagaimana mencegahnya?",
+      "opsi": {
+        "A": "Model yang disimpan mengalami korupsi data secara acak; solusinya melatih ulang model dari awal",
+        "B": "Training-serving skew — scaler (StandardScaler) yang digunakan saat training tidak ikut disimpan dan digunakan saat inferensi di API, sehingga data mentah (belum di-scale) langsung dimasukkan ke model; solusinya menyimpan scaler (misal dengan joblib) dan menerapkannya secara konsisten pada data input sebelum prediksi",
+        "C": "REST API secara inheren tidak bisa menghasilkan prediksi yang konsisten dengan notebook karena perbedaan bahasa pemrograman",
+        "D": "Masalah ini hanya bisa diatasi dengan mengganti framework dari Keras ke PyTorch"
+      },
+      "jawaban": "B",
+      "penjelasan": "Ini adalah contoh klasik 'training-serving skew' — salah satu bug paling umum dan sulit dilacak di sistem ML production. Jika preprocessing (seperti StandardScaler) yang diterapkan pada data saat training tidak disertakan dan diterapkan secara identik saat inferensi, model akan menerima data dengan distribusi/skala yang sangat berbeda dari yang dipelajarinya, menghasilkan prediksi yang jauh meleset — meski arsitektur dan bobot model itu sendiri identik dan tidak 'rusak'. Solusinya adalah menyimpan seluruh pipeline preprocessing (misalnya scaler.fit() pada data training disimpan dengan joblib.dump(), lalu di-load dan diterapkan via scaler.transform() pada setiap request inferensi di API) sehingga konsistensi antara training dan serving terjaga. Masalah ini tidak ada hubungannya dengan korupsi data, bahasa pemrograman, atau pemilihan framework."
+    }
+  ]
+}

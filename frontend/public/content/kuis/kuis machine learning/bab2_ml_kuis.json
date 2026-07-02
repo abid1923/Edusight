@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "bab": 2,
+    "judul_bab": "Supervised Learning",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "2.1",
+      "pertanyaan": "Perhatikan model regresi linear berikut:\n\ny = 2.5 + 0.8x₁ + 1.2x₂\n\nJika x₁ = 3 (jam belajar) dan x₂ = 70 (nilai sebelumnya), berapa prediksi y (IPK)?",
+      "opsi": {
+        "A": "2.5 + 0.8(3) + 1.2(70) = 2.5 + 2.4 + 84 = 88.9",
+        "B": "2.5 + 0.8(3) + 1.2(70) = 2.5 + 2.4 + 84 = 88.9, lalu dibatasi maksimal 4.0",
+        "C": "2.5 + 0.8 + 1.2 = 4.5",
+        "D": "0.8(3) + 1.2(70) = 2.4 + 84 = 86.4"
+      },
+      "jawaban": "B",
+      "penjelasan": "Perhitungan matematis: y = 2.5 + 0.8(3) + 1.2(70) = 2.5 + 2.4 + 84 = 88.9. Tapi dalam konteks IPK, nilai harus dibatasi (clip) antara 0 dan 4.0 karena IPK tidak bisa melebihi 4.0. Ini menunjukkan pentingnya domain knowledge dalam ML — model matematis murni tidak selalu menghasilkan prediksi yang masuk akal secara real-world. Dalam kode, ini diatasi dengan np.clip(ipk, 0, 4)."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "2.2",
+      "pertanyaan": "Perhatikan fungsi sigmoid berikut:\n\nσ(z) = 1 / (1 + e^(-z))\n\nJika z = 0, berapa nilai σ(z)? Dan jika z sangat besar (positif), kemana nilai σ(z) mendekat?",
+      "opsi": {
+        "A": "σ(0) = 0, dan σ(z) → 0 saat z sangat besar",
+        "B": "σ(0) = 0.5, dan σ(z) → 1 saat z sangat besar",
+        "C": "σ(0) = 1, dan σ(z) → 0.5 saat z sangat besar",
+        "D": "σ(0) = 0.5, dan σ(z) → 0 saat z sangat besar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Fungsi sigmoid memiliki properti simetris: σ(0) = 1/(1+e⁰) = 1/2 = 0.5. Saat z sangat besar positif, e^(-z) mendekati 0, sehingga σ(z) mendekati 1/(1+0) = 1. Saat z sangat besar negatif, e^(-z) mendekati ∞, sehingga σ(z) mendekati 0. Inilah mengapa sigmoid sangat cocok untuk output probabilitas — nilainya selalu terjebak di antara 0 dan 1. Threshold klasifikasi default adalah 0.5: di atasnya prediksi kelas 1, di bawahnya kelas 0."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "2.3",
+      "pertanyaan": "Mengapa Random Forest secara konsisten lebih baik dari satu Decision Tree tunggal?",
+      "opsi": {
+        "A": "Karena Random Forest menggunakan algoritma yang sama sekali berbeda dari Decision Tree",
+        "B": "Karena Random Forest menggabungkan banyak Decision Tree yang dilatih dengan bootstrap sampling dan random features, sehingga error saling mengoreksi",
+        "C": "Karena Random Forest tidak memerlukan hyperparameter tuning, sementara Decision Tree memerlukannya",
+        "D": "Karena Random Forest hanya bisa digunakan untuk klasifikasi, bukan regresi"
+      },
+      "jawaban": "B",
+      "penjelasan": "Random Forest adalah ensemble yang menggabungkan banyak Decision Tree. Dua mekanisme utamanya: (1) Bootstrap sampling — setiap pohon dilatih pada subset acak data (sampling dengan pengembalian), dan (2) Random feature subspace — di setiap split, hanya subset acak fitur yang dipertimbangkan. Dua mekanisme ini memastikan pohon-pohon saling tidak berkorelasi, sehingga error individu saling mengoreksi (bukan saling memperkuat) saat digabung dengan voting. Decision Tree tunggal sangat mudah overfit — pohon yang dalam bisa 'menghafal' setiap training sample."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "2.4",
+      "pertanyaan": "Dalam SVM dengan kernel RBF, parameter gamma mengontrol seberapa jauh pengaruh satu training sample. Apa yang terjadi jika gamma terlalu besar?",
+      "opsi": {
+        "A": "Model menjadi sangat smooth dan underfit — hanya bisa menangkap pola global",
+        "B": "Model menjadi terlalu kompleks dan overfit — setiap training sample memiliki pengaruh lokal yang sangat sempit",
+        "C": "Model tidak bisa memprediksi probabilitas kelas",
+        "D": "Training menjadi sangat cepat karena komputasi lebih sederhana"
+      },
+      "jawaban": "B",
+      "penjelasan": "Gamma besar berarti pengaruh satu training sample sangat lokal — hanya data yang sangat dekat yang terpengaruh. Ini membuat decision boundary sangat bergerigi dan kompleks, mengelilingi setiap training point secara individual — tanda khas overfitting. Gamma kecil berarti pengaruh lebih jauh (global), menghasilkan boundary yang lebih smooth. Parameter C juga penting: C kecil = regularisasi kuat (margin lebih lebar, lebih general), C besar = regularisasi lemah (mencoba klasifikasi benar semua training point, lebih kompleks). Scaling fitur WAJIB untuk SVM karena SVM sangat sensitif terhadap perbedaan skala."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "2.5",
+      "pertanyaan": "Dalam KNN, mengapa nilai K yang terlalu kecil (misal K=1) cenderung menyebabkan overfitting?",
+      "opsi": {
+        "A": "Karena K=1 membuat model terlalu sederhana dan tidak bisa menangkap pola kompleks",
+        "B": "Karena K=1 membuat model sangat sensitif terhadap noise — prediksi hanya bergantung pada satu tetangga terdekat yang bisa jadi outlier",
+        "C": "Karena K=1 memperlambat proses prediksi secara signifikan",
+        "D": "Karena K=1 memerlukan lebih banyak memori untuk menyimpan training data"
+      },
+      "jawaban": "B",
+      "penjelasan": "K=1 berarti prediksi hanya bergantung pada satu tetangga terdekat. Jika tetangga terdekat itu adalah outlier atau noise, prediksi akan salah. Ini membuat decision boundary sangat bergerigi dan kompleks — mengelilingi setiap titik data secara individual — yang merupakan tanda overfitting. Sebaliknya, K terlalu besar membuat model terlalu smooth (underfit) karena prediksi menjadi rata-rata dari banyak tetangga yang mungkin berasal dari kelas berbeda. Aturan praktis: K = √n (akar dari jumlah training samples) sebagai titik awal, lalu validasi dengan cross-validation. K ganjil untuk klasifikasi biner menghindari tie (seri)."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "2.6",
+      "pertanyaan": "Naive Bayes mengasumsikan bahwa semua fitur saling independen satu sama lain. Meski asumsi ini hampir selalu salah di dunia nyata, mengapa Naive Bayes tetap sering bekerja dengan baik?",
+      "opsi": {
+        "A": "Karena asumsi independensi sebenarnya selalu benar untuk data nyata",
+        "B": "Karena Naive Bayes hanya membutuhkan estimasi probabilitas yang cukup baik untuk klasifikasi, bukan estimasi probabilitas yang sempurna",
+        "C": "Karena Naive Bayes secara otomatis memperbaiki asumsi independensi selama training",
+        "D": "Karena Naive Bayes tidak menggunakan probabilitas sama sekali"
+      },
+      "jawaban": "B",
+      "penjelasan": "Naive Bayes adalah classifier, bukan estimator probabilitas yang akurat. Untuk klasifikasi, kita hanya perlu mengetahui kelas mana yang punya probabilitas posterior tertinggi — bukan nilai probabilitas yang tepat. Meski asumsi independensi menyebabkan estimasi probabilitas individual tidak akurat, ranking antar kelas sering tetap benar. Inilah mengapa Naive Bayes mengejutkan efektif untuk klasifikasi teks (spam detection, sentiment analysis) meski kata-kata dalam kalimat jelas tidak independen. Laplace smoothing (alpha=1.0) mencegah probabilitas nol ketika fitur tidak muncul di training data untuk kelas tertentu."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "2.7",
+      "pertanyaan": "Perhatikan konfigurasi XGBoost berikut:\n\nxgb_model = XGBClassifier(\n    n_estimators=200,\n    max_depth=4,\n    learning_rate=0.1,\n    subsample=0.8,\n    reg_alpha=0.1,\n    reg_lambda=1.0\n)\n\nApa fungsi dari parameter subsample=0.8?",
+      "opsi": {
+        "A": "Menggunakan 80% fitur per pohon untuk mengurangi korelasi antar pohon",
+        "B": "Menggunakan 80% sampel (baris data) per pohon untuk stochastic gradient boosting",
+        "C": "Mengatur 80% data untuk training dan 20% untuk validation",
+        "D": "Membatasi kedalaman pohon menjadi 80% dari n_estimators"
+      },
+      "jawaban": "B",
+      "penjelasan": "subsample=0.8 berarti setiap pohon dilatih pada 80% sampel (baris data) yang dipilih secara acak — ini adalah stochastic gradient boosting. Mekanisme ini mirip dengan bootstrap di Random Forest: mengurangi korelasi antar pohon sekuensial dan mencegah overfitting. Untuk fitur, parameter yang setara adalah colsample_bytree (proporsi fitur per pohon). reg_alpha adalah L1 regularization (mendorong bobot menjadi nol), reg_lambda adalah L2 regularization (mendorong bobot mendekati nol). learning_rate (shrinkage) mengontrol kontribusi setiap pohon — kecil = lebih banyak pohon dibutuhkan tapi lebih stabil."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "2.8",
+      "pertanyaan": "Dalam MLP (Multi-Layer Perceptron), mengapa activation function ReLU (Rectified Linear Unit) lebih populer daripada Sigmoid untuk hidden layer?",
+      "opsi": {
+        "A": "Karena ReLU menghasilkan output antara 0 dan 1, sementara Sigmoid bisa menghasilkan nilai negatif",
+        "B": "Karena ReLU lebih cepat dihitung dan mencegah vanishing gradient — masalah yang serius pada Sigmoid saat jaringan dalam",
+        "C": "Karena ReLU memerlukan lebih sedikit parameter bobot dibandingkan Sigmoid",
+        "D": "Karena ReLU hanya bisa digunakan untuk klasifikasi biner, sementara Sigmoid untuk multi-class"
+      },
+      "jawaban": "B",
+      "penjelasan": "ReLU: f(x) = max(0, x) — sangat sederhana (hanya perbandingan dengan 0), tidak terbatas pada rentang tertentu, dan tidak mengalami vanishing gradient untuk input positif. Sigmoid: f(x) = 1/(1+e^(-x)) — untuk input ekstrem (sangat positif/negatif), gradient mendekati 0 (vanishing gradient). Saat jaringan dalam (banyak layer), gradient Sigmoid menjadi sangat kecil di layer awal — membuat training hampir tidak mungkin. Inilah mengapa ReLU menjadi default untuk hidden layer di deep learning. Keterbatasan ReLU: 'dying ReLU' — neuron dengan input negatif selalu output 0 dan tidak bisa pulih. Solusi: Leaky ReLU, PReLU, ELU."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "2.9",
+      "pertanyaan": "Perhatikan pernyataan berikut tentang ROC Curve dan AUC:\n\n1. ROC Curve menampilkan trade-off antara True Positive Rate dan False Positive Rate pada berbagai threshold\n2. AUC = 0.5 berarti model setara dengan prediksi acak\n3. AUC tidak terpengaruh oleh class imbalance\n4. Precision-Recall Curve lebih informatif dari ROC Curve untuk dataset yang sangat seimbang\n\nPernyataan mana yang BENAR?",
+      "opsi": {
+        "A": "Hanya 1 dan 2",
+        "B": "Hanya 1, 2, dan 3",
+        "C": "Hanya 3 dan 4",
+        "D": "Semua pernyataan benar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pernyataan 4 salah: Precision-Recall Curve lebih informatif untuk dataset yang sangat TIDAK SEIMBANG (imbalanced), bukan seimbang. Untuk dataset seimbang, ROC Curve sudah cukup informatif. Pernyataan 1, 2, dan 3 benar: ROC Curve menampilkan TPR vs FPR, AUC=0.5 adalah random classifier (garis diagonal), dan AUC tidak terpengaruh class imbalance karena TPR dan FPR adalah rasio per kelas. Untuk dataset imbalanced (1% positif), ROC Curve bisa terlihat bagus padahal model gagal menemukan sebagian besar positif — di sinilah Precision-Recall Curve lebih jujur karena Precision langsung terpengaruh oleh jumlah False Positive."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "2.10",
+      "pertanyaan": "Sebuah dataset memiliki 500 fitur, tapi banyak di antaranya berkorelasi tinggi satu sama lain atau tidak relevan dengan target. Tim data scientist ingin mengurangi fitur menjadi 50 yang paling penting. Manakah pendekatan yang PALING EFEKTIF untuk kasus ini?",
+      "opsi": {
+        "A": "Filter Method — menghitung korelasi setiap fitur dengan target secara independen",
+        "B": "Wrapper Method — menggunakan Recursive Feature Elimination (RFE) yang secara rekursif menghapus fitur paling tidak penting berdasarkan performa model",
+        "C": "Embedded Method — menggunakan Lasso (L1 regularization) yang otomatis membuat bobot fitur tidak penting menjadi nol",
+        "D": "Semua pendekatan sama efektifnya untuk kasus ini"
+      },
+      "jawaban": "B",
+      "penjelasan": "Wrapper Method (RFE) adalah pilihan terbaik untuk kasus ini karena: (1) mempertimbangkan interaksi antar fitur — fitur yang tidak berkorelasi dengan target secara individual bisa jadi sangat penting ketika dikombinasikan dengan fitur lain, (2) evaluasi berdasarkan performa model sebenarnya, bukan statistik independen. Filter Method (A) tidak menangkap interaksi fitur. Embedded Method (C) dengan Lasso efektif tapi terbatas pada model linear — untuk hubungan non-linear, RFE dengan tree-based model lebih baik. Untuk 500 fitur, RFE mungkin lambat — alternatif: gunakan feature importance dari Random Forest/XGBoost sebagai filter awal, lalu RFE pada subset teratas."
+    }
+  ]
+}

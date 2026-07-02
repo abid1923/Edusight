@@ -1,0 +1,347 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "bab": 1,
+    "judul_bab": "Dasar Machine Learning",
+    "deskripsi": "Materi lengkap pengantar Machine Learning — dari pengertian dan cara kerja ML, jenis-jenis ML, manajemen dataset, feature engineering, metrik evaluasi, overfitting vs underfitting, cross-validation, tools Python, scikit-learn, hingga Jupyter Notebook & Google Colab.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "Google ML Crash Course",
+        "url": "https://developers.google.com/machine-learning/crash-course",
+        "lisensi": "CC-BY 4.0"
+      },
+      {
+        "nama": "scikit-learn Official Documentation",
+        "url": "https://scikit-learn.org/stable/user_guide.html",
+        "lisensi": "BSD-3-Clause"
+      },
+      {
+        "nama": "fast.ai – Practical Deep Learning for Coders",
+        "url": "https://course.fast.ai",
+        "lisensi": "Apache 2.0"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+  "sub_bab": [
+    {
+      "id": "1.1",
+      "judul": "Apa itu Machine Learning & Cara Kerjanya",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Pengertian Machine Learning",
+          "isi": "Machine Learning (ML) adalah cabang dari kecerdasan buatan (Artificial Intelligence) yang memberikan kemampuan kepada komputer untuk belajar dari data tanpa harus diprogram secara eksplisit untuk setiap tugas. Definisi klasik dari Arthur Samuel (1959): 'Machine Learning adalah bidang studi yang memberi komputer kemampuan untuk belajar tanpa diprogram secara eksplisit.'\n\nPemrograman tradisional vs Machine Learning — inilah perbedaan fundamentalnya:\n\nPemrograman Tradisional:\n• Manusia menulis aturan (rules) secara eksplisit\n• Input data + Aturan → Output\n• Contoh: 'jika email mengandung kata GRATIS dan MENANG, tandai sebagai spam'\n• Masalah: butuh ribuan aturan manual, mudah di-bypass\n\nMachine Learning:\n• Komputer menemukan aturan sendiri dari contoh data\n• Input data + Output yang diketahui → Model (aturan yang dipelajari)\n• Contoh: berikan ribuan email spam dan bukan spam, biarkan model menemukan polanya sendiri\n• Keunggulan: bisa menemukan pola yang terlalu kompleks untuk ditulis manual\n\nML sangat berguna untuk masalah yang:\n• Terlalu kompleks untuk diprogram dengan aturan manual (pengenalan wajah, terjemahan bahasa)\n• Aturannya terus berubah seiring waktu (deteksi fraud, rekomendasi konten)\n• Butuh personalisasi untuk jutaan pengguna sekaligus\n• Datanya sangat besar dan mengandung pola yang tidak terlihat oleh manusia"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Cara Kerja Machine Learning",
+          "isi": "Secara fundamental, semua model ML belajar dengan cara yang sama: menemukan fungsi matematika yang memetakan input (fitur) ke output (prediksi) berdasarkan data latih.\n\nAlur kerja ML secara umum:\n1. Kumpulkan data — kualitas dan kuantitas data menentukan segalanya\n2. Persiapkan data — bersihkan, transformasi, bagi menjadi training/validation/test set\n3. Pilih algoritma — sesuaikan dengan tipe masalah dan karakteristik data\n4. Latih model — algoritma 'belajar' dari training data dengan meminimalkan error\n5. Evaluasi model — ukur performa pada data yang belum pernah dilihat model\n6. Tuning — optimasi parameter untuk meningkatkan performa\n7. Deploy — gunakan model untuk prediksi data baru di dunia nyata\n\nSemua tahap ini saling terkait dan sering dilakukan berulang (iteratif) — bukan sekali jalan."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Pemrograman Tradisional vs Machine Learning",
+          "src": "/assets/ml/bab1/bab1_1.1.png",
+          "deskripsi_gambar": "Diagram perbandingan dua paradigma pemrograman. Bagian atas menunjukkan alur tradisional: data dan aturan manual diproses untuk menghasilkan output. Bagian bawah menunjukkan alur machine learning: data dan output yang diharapkan diproses untuk menghasilkan aturan yang dipelajari secara otomatis.",
+          "alt": "Perbandingan diagram pemrograman tradisional dengan machine learning"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: ML seperti Belajar Mengenal Kucing",
+          "isi": "Pemrograman tradisional seperti mendeskripsikan kucing: 'berkaki empat, berbulu, bersuara meong, punya kumis, ekor panjang'. Tapi kucing albino, kucing tanpa kaki, atau kucing anggora akan membingungkan aturan ini. Machine Learning seperti menunjukkan ribuan foto kucing dan bukan kucing kepada anak kecil — tanpa menjelaskan aturan apapun, anak itu akhirnya bisa mengenali kucing baru yang belum pernah dilihatnya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "ML Sudah Ada Sejak 1950-an",
+          "isi": "Alan Turing, 'bapak komputasi modern', sudah membayangkan mesin yang bisa belajar di papernya tahun 1950. Frank Rosenblatt menciptakan Perceptron — cikal bakal neural network — pada 1957. Tapi ML baru meledak popularitasnya setelah 2012 ketika AlexNet (deep neural network) menghancurkan kompetisi pengenalan gambar ImageNet dengan margin yang tidak terduga — menandai dimulainya era deep learning modern."
+        }
+      ]
+    },
+    {
+      "id": "1.2",
+      "judul": "Tipe ML: Supervised, Unsupervised, Reinforcement",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Tiga Paradigma Utama Machine Learning",
+          "isi": "Machine Learning dibagi menjadi tiga paradigma besar berdasarkan cara model belajar dari data. Memilih paradigma yang tepat adalah langkah pertama yang krusial sebelum memilih algoritma.\n\nSupervised Learning (Pembelajaran Terawasi):\nModel belajar dari data yang sudah diberi label (jawaban benar). Seperti belajar dari buku pelajaran yang sudah ada kunci jawabannya. Ini adalah paradigma yang paling umum dan paling banyak digunakan.\n• Input: pasangan (fitur X, label Y) — X adalah data, Y adalah jawaban benar\n• Tujuan: pelajari fungsi f sehingga f(X) ≈ Y untuk data baru yang belum pernah dilihat\n• Dua tipe utama: Klasifikasi (Y adalah kategori) dan Regresi (Y adalah angka kontinu)\n• Contoh: prediksi harga rumah, deteksi spam, klasifikasi gambar, diagnosis penyakit\n\nUnsupervised Learning (Pembelajaran Tak Terawasi):\nModel menemukan struktur atau pola tersembunyi dalam data tanpa label. Seperti diberikan kumpulan benda acak dan diminta mengelompokkannya sendiri berdasarkan kemiripan.\n• Input: hanya fitur X — tidak ada label Y\n• Tujuan: temukan struktur tersembunyi, cluster, atau representasi yang bermakna\n• Tipe utama: Clustering, Dimensionality Reduction, Anomaly Detection, Generative Models\n• Contoh: segmentasi pelanggan, kompresi data, deteksi penipuan, rekomendasi produk\n\nReinforcement Learning (Pembelajaran Penguatan):\nAgen belajar dengan cara berinteraksi langsung dengan lingkungan, menerima reward (hadiah) atau penalty (hukuman) berdasarkan aksinya. Seperti mengajarkan anjing trik — diberi snack saat melakukan hal yang benar.\n• Komponen: Agen, Lingkungan, State, Action, Reward\n• Tujuan: maksimalkan total reward jangka panjang\n• Contoh: AlphaGo bermain Go, robot belajar berjalan, trading otomatis, game AI\n• Lebih kompleks dan butuh lebih banyak data/waktu dari supervised learning"
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Tiga Tipe Machine Learning",
+          "src": "/assets/ml/bab1/bab1_1.2.png",
+          "deskripsi_gambar": "Diagram tiga panel yang menampilkan paradigma pembelajaran mesin. Panel kiri menunjukkan supervised learning dengan data berlabel. Panel tengah menunjukkan unsupervised learning dengan data tanpa label. Panel kanan menunjukkan reinforcement learning dengan agen berinteraksi dengan lingkungan.",
+          "alt": "Diagram tiga tipe machine learning: supervised, unsupervised, dan reinforcement learning"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Klasifikasi vs Regresi dalam Supervised Learning",
+          "isi": "Dua sub-tipe paling umum di supervised learning yang perlu dibedakan dengan jelas:\n\nKlasifikasi — output adalah kategori diskrit:\n• Binary classification: dua kelas (spam/bukan spam, sakit/sehat, lulus/tidak lulus)\n• Multi-class classification: lebih dari dua kelas (jenis bunga, angka 0-9, jenis tumor)\n• Multi-label classification: satu input bisa punya banyak label (tag artikel berita)\n• Metrik utama: Accuracy, Precision, Recall, F1-Score, AUC-ROC\n\nRegresi — output adalah angka kontinu:\n• Simple regression: satu fitur input\n• Multiple regression: banyak fitur input\n• Contoh: prediksi harga saham, estimasi waktu pengiriman, prediksi konsumsi energi\n• Metrik utama: MAE (Mean Absolute Error), MSE (Mean Squared Error), RMSE, R²"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Self-Supervised Learning — Paradigma Keempat",
+          "isi": "Yann LeCun (Chief AI Scientist Meta) mempopulerkan konsep Self-Supervised Learning — paradigma di mana model membuat label sendiri dari data yang tidak berlabel. GPT (bahasa) dan BERT belajar dengan cara ini: diberikan kalimat, model diminta memprediksi kata berikutnya atau kata yang hilang. Tanpa anotasi manusia sama sekali, model ini bisa belajar representasi bahasa yang sangat kaya. Ini dianggap sebagai masa depan AI karena data berlabel sangat mahal, sementara data tak berlabel ada di mana-mana."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Tiga Tipe ML seperti Tiga Cara Belajar",
+          "isi": "Supervised Learning seperti belajar dari guru dengan buku latihan berjawaban — setiap soal punya kunci yang benar. Unsupervised Learning seperti pelajar yang diberikan tumpukan kartu berisi fakta acak dan diminta menemukan sendiri topik-topik yang berkaitan. Reinforcement Learning seperti belajar bermain game dari nol — coba terus, setiap skor naik artinya kamu melakukan hal yang benar."
+        }
+      ]
+    },
+    {
+      "id": "1.3",
+      "judul": "Dataset: Training, Validation, Test Split",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Data Harus Dibagi?",
+          "isi": "Salah satu prinsip paling fundamental dalam Machine Learning adalah bahwa model harus dievaluasi pada data yang belum pernah dilihat selama proses pelatihan. Jika model dievaluasi pada data yang sama dengan yang digunakan untuk melatihnya, kita tidak bisa mengetahui apakah model benar-benar 'paham' atau hanya menghafal.\n\nAda tiga bagian dataset yang harus dipahami:\n\nTraining Set (60-80% data):\n• Data yang digunakan model untuk 'belajar' — menyesuaikan parameter internal (bobot)\n• Model melihat data ini berulang kali selama proses training\n• Semakin besar training set, semakin baik model bisa belajar\n\nValidation Set (10-20% data):\n• Data yang digunakan untuk tuning hyperparameter dan memilih model terbaik\n• Model tidak belajar dari data ini, tapi kita menggunakannya untuk membuat keputusan\n• Keputusan seperti: arsitektur model mana yang terbaik? learning rate berapa yang optimal?\n• Karena kita membuat banyak keputusan berdasarkan validation set, ada kebocoran informasi tidak langsung\n\nTest Set (10-20% data):\n• Data yang HANYA digunakan sekali di akhir — untuk estimasi performa di dunia nyata\n• Anggap ini sebagai 'ujian akhir' yang tidak boleh dilihat sebelumnya\n• JANGAN pernah membuat keputusan apapun berdasarkan test set\n• Jika kamu melihat test set dan lalu memodifikasi model, test set itu sudah 'terkontaminasi'\n\nAturan emas: urutan adalah SELALU — train dulu, validate untuk tuning, test HANYA di akhir sebagai evaluasi final."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Membagi Dataset dengan scikit-learn",
+          "bahasa": "python",
+          "kode": "import numpy as np\nfrom sklearn.model_selection import train_test_split\n\n# Data contoh: 1000 sampel, 10 fitur\nX = np.random.rand(1000, 10)  # fitur\ny = np.random.randint(0, 2, 1000)  # label biner\n\n# ==========================================\n# SPLIT SEDERHANA: 80% train, 20% test\n# ==========================================\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y,\n    test_size=0.2,       # 20% untuk test\n    random_state=42,     # seed agar reproducible\n    stratify=y           # pastikan proporsi kelas sama di semua split\n)\n\nprint(f'Training:  {X_train.shape[0]} sampel')   # 800\nprint(f'Test:      {X_test.shape[0]} sampel')    # 200\n\n# ==========================================\n# SPLIT TIGA BAGIAN: 60% train, 20% val, 20% test\n# ==========================================\n# Step 1: pisahkan test set dulu\nX_temp, X_test, y_temp, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# Step 2: dari sisa, pisahkan validation\nX_train, X_val, y_train, y_val = train_test_split(\n    X_temp, y_temp, test_size=0.25, random_state=42, stratify=y_temp\n    # 0.25 dari 80% = 20% dari total\n)\n\nprint(f'\\nTraining:   {X_train.shape[0]} sampel ({X_train.shape[0]/len(X)*100:.0f}%)')\nprint(f'Validation: {X_val.shape[0]} sampel ({X_val.shape[0]/len(X)*100:.0f}%)')\nprint(f'Test:       {X_test.shape[0]} sampel ({X_test.shape[0]/len(X)*100:.0f}%)')",
+          "penjelasan": "Atribut stratify=y memastikan proporsi kelas (misal 60% positif, 40% negatif) terjaga di setiap split. Tanpa ini, bisa saja test set kebetulan berisi mayoritas satu kelas sehingga evaluasi tidak representatif."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Train, Validation, Test Split",
+          "src": "/assets/ml/bab1/bab1_1.3.png",
+          "deskripsi_gambar": "Diagram pembagian dataset menjadi tiga bagian. Bagian terbesar untuk training set digunakan model untuk belajar. Bagian menengah untuk validation set digunakan untuk tuning hyperparameter. Bagian terkecil untuk test set digunakan untuk evaluasi final sekali saja.",
+          "alt": "Diagram pembagian dataset menjadi training, validation, dan test set"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Split Data seperti Sistem Ujian",
+          "isi": "Training set seperti buku pelajaran dan soal latihan — pelajar (model) belajar dari sini sebanyak mungkin. Validation set seperti tryout atau simulasi ujian — dipakai untuk mengetahui strategi belajar mana yang paling efektif dan menyesuaikan diri. Test set seperti ujian nasional yang sebenarnya — satu kesempatan, tidak boleh bocor sebelumnya. Jika kamu sudah tahu soal ujian nasional sebelumnya (data leakage), nilai 100-mu tidak mencerminkan kemampuan sesungguhnya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Kaggle Menyembunyikan Label Test Set",
+          "isi": "Di kompetisi machine learning Kaggle, test set yang diberikan ke peserta tidak punya label — peserta mengirimkan prediksi dan Kaggle menghitung skornya di server. Bahkan ada 'public leaderboard' (20% test set) dan 'private leaderboard' (80% test set) yang baru diungkap di akhir kompetisi. Ini untuk mencegah peserta overfitting ke public leaderboard dengan mencoba ribuan submission — pola yang disebut 'leaderboard overfitting'."
+        }
+      ]
+    },
+    {
+      "id": "1.4",
+      "judul": "Feature Engineering & Preprocessing",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Feature Engineering: Seni Mempersiapkan Data",
+          "isi": "Feature engineering adalah proses mengubah data mentah menjadi representasi yang lebih bermakna dan berguna untuk algoritma ML. Ini adalah salah satu keterampilan paling penting — dan paling banyak memakan waktu — dalam praktik data science nyata.\n\nPepatah terkenal di dunia ML: 'Garbage in, garbage out' — model sebaik apapun tidak akan menghasilkan prediksi yang baik jika input datanya buruk.\n\nTeknik preprocessing yang paling umum:\n\nMenangani Missing Values (Data yang Hilang):\n• Hapus baris/kolom yang terlalu banyak nilainya hilang\n• Imputasi mean/median/modus — sederhana tapi bisa bias\n• Imputasi dengan algoritma (KNN Imputer, IterativeImputer) — lebih akurat\n• Buat fitur baru 'is_missing' untuk menandai baris yang punya nilai hilang\n\nScaling (Normalisasi/Standardisasi):\n• Standardization (Z-score): (x - mean) / std → rata-rata 0, std 1. Berguna untuk algoritma berbasis jarak (SVM, KNN) dan neural network.\n• Min-Max Scaling: (x - min) / (max - min) → rentang [0, 1]. Berguna ketika distribusi tidak normal.\n• Robust Scaling: (x - median) / IQR. Tahan terhadap outlier.\n\nEncoding Variabel Kategorikal:\n• Label Encoding: ubah kategori menjadi angka (Merah→0, Hijau→1, Biru→2). Hanya untuk variabel ordinal (ada urutan).\n• One-Hot Encoding: buat kolom biner per kategori. Untuk variabel nominal (tidak ada urutan). Bisa menyebabkan 'curse of dimensionality' jika kategorinya banyak.\n• Target Encoding: ganti kategori dengan rata-rata target. Efektif tapi rentan data leakage.\n\nPenanganan Outlier:\n• IQR method: hapus/cap nilai di luar Q1 - 1.5*IQR dan Q3 + 1.5*IQR\n• Z-score method: hapus nilai dengan |z-score| > 3"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Preprocessing Pipeline dengan scikit-learn",
+          "bahasa": "python",
+          "kode": "import pandas as pd\nimport numpy as np\nfrom sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.compose import ColumnTransformer\n\n# Data contoh\ndf = pd.DataFrame({\n    'usia':    [25, np.nan, 30, 22, 35],\n    'gaji':    [5000000, 8000000, np.nan, 3500000, 12000000],\n    'kota':    ['Jakarta', 'Bandung', 'Jakarta', np.nan, 'Surabaya'],\n    'lulus':   [1, 1, 0, 0, 1]  # target\n})\n\nX = df.drop('lulus', axis=1)\ny = df['lulus']\n\n# Pisahkan kolom numerik dan kategorikal\nkol_numerik    = ['usia', 'gaji']\nkol_kategorikal = ['kota']\n\n# Pipeline untuk kolom numerik\nnumerical_pipeline = Pipeline([\n    ('imputer', SimpleImputer(strategy='median')),  # isi NaN dengan median\n    ('scaler',  StandardScaler())                   # standardisasi\n])\n\n# Pipeline untuk kolom kategorikal\ncategorical_pipeline = Pipeline([\n    ('imputer', SimpleImputer(strategy='most_frequent')),  # isi NaN dengan modus\n    ('encoder', OneHotEncoder(handle_unknown='ignore', sparse_output=False))\n])\n\n# Gabungkan keduanya\npreprocessor = ColumnTransformer([\n    ('num', numerical_pipeline,    kol_numerik),\n    ('cat', categorical_pipeline,  kol_kategorikal)\n])\n\n# Fit dan transform\nX_transformed = preprocessor.fit_transform(X)\nprint('Shape setelah preprocessing:', X_transformed.shape)\n# (5, 5) — 2 numerik + 3 one-hot kota",
+          "penjelasan": "Pipeline scikit-learn adalah cara terbaik untuk preprocessing — ia mengingat parameter yang dipelajari dari training data (mean, std, kategori) dan menerapkannya konsisten ke validation dan test data. Ini mencegah data leakage."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Feature Engineering seperti Mise en Place",
+          "isi": "Mise en place adalah istilah masak Prancis — memotong, mengukur, dan menyiapkan semua bahan sebelum mulai memasak. Chef profesional menghabiskan lebih banyak waktu untuk mise en place daripada memasak itu sendiri. Feature engineering persis seperti itu: menyiapkan data dengan benar sebelum 'memasukkannya ke algoritma'. Chef yang buruk langsung melempar bahan mentah ke wajan — hasilnya tidak enak meski pancinya mahal."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "80% Waktu Data Scientist untuk Preprocessing",
+          "isi": "Survei demi survei menunjukkan hal yang sama: data scientist menghabiskan 60-80% waktunya untuk mengumpulkan, membersihkan, dan mempersiapkan data — bukan untuk modeling. Pekerjaan 'glamor' membangun model hanya 20% dari total pekerjaan. Inilah mengapa kemampuan data wrangling dengan Pandas, SQL, dan feature engineering jauh lebih sering dipakai di dunia nyata dibandingkan kemampuan membangun arsitektur neural network yang kompleks."
+        }
+      ]
+    },
+    {
+      "id": "1.5",
+      "judul": "Evaluasi Model: Accuracy, Precision, Recall, F1",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Confusion Matrix: Fondasi Semua Metrik Klasifikasi",
+          "isi": "Sebelum memahami metrik evaluasi, kita perlu memahami Confusion Matrix — tabel yang menunjukkan prediksi model vs label asli untuk masalah klasifikasi.\n\nUntuk klasifikasi biner (positif/negatif), ada empat kemungkinan:\n• True Positive (TP) — prediksi positif, aslinya positif ✓\n• True Negative (TN) — prediksi negatif, aslinya negatif ✓\n• False Positive (FP) — prediksi positif, aslinya negatif ✗ (Type I Error / False Alarm)\n• False Negative (FN) — prediksi negatif, aslinya positif ✗ (Type II Error / Miss)\n\nDari keempat nilai ini, semua metrik klasifikasi utama bisa diturunkan:\n\n• Accuracy = (TP + TN) / (TP + TN + FP + FN) — proporsi prediksi benar dari semua prediksi. Menyesatkan pada imbalanced dataset.\n\n• Precision = TP / (TP + FP) — dari semua yang diprediksi positif, berapa yang benar-benar positif? Penting saat FP mahal — misal deteksi spam (jangan salah tandai email penting sebagai spam).\n\n• Recall (Sensitivity) = TP / (TP + FN) — dari semua yang sebenarnya positif, berapa yang berhasil ditemukan model? Penting saat FN mahal — misal deteksi kanker (jangan lewatkan pasien yang sakit).\n\n• F1-Score = 2 × (Precision × Recall) / (Precision + Recall) — rata-rata harmonik Precision dan Recall. Berguna ketika keduanya sama pentingnya dan dataset tidak seimbang.\n\nPresisi vs Recall adalah tradeoff — meningkatkan satu biasanya menurunkan yang lain. Ambang batas (threshold) klasifikasi bisa diatur untuk menyeimbangkan keduanya sesuai kebutuhan bisnis."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Menghitung Metrik Evaluasi",
+          "bahasa": "python",
+          "kode": "from sklearn.metrics import (\n    accuracy_score, precision_score, recall_score,\n    f1_score, classification_report, confusion_matrix\n)\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Contoh prediksi model\ny_asli    = [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]\ny_prediksi = [1, 0, 1, 0, 0, 1, 1, 0, 1, 0]\n\n# Metrik individual\nprint(f'Accuracy:  {accuracy_score(y_asli, y_prediksi):.3f}')    # 0.800\nprint(f'Precision: {precision_score(y_asli, y_prediksi):.3f}')   # 0.800\nprint(f'Recall:    {recall_score(y_asli, y_prediksi):.3f}')      # 0.800\nprint(f'F1-Score:  {f1_score(y_asli, y_prediksi):.3f}')          # 0.800\n\n# Laporan lengkap\nprint(classification_report(y_asli, y_prediksi,\n      target_names=['Tidak Lulus', 'Lulus']))\n\n# Confusion Matrix\ncm = confusion_matrix(y_asli, y_prediksi)\nprint('Confusion Matrix:')\nprint(cm)\n# [[TN FP]\n#  [FN TP]]\n\n# Metrik untuk Regresi\nfrom sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score\ny_reg_asli    = [100, 200, 300, 400, 500]\ny_reg_prediksi = [110, 190, 310, 380, 520]\n\nprint(f'MAE:  {mean_absolute_error(y_reg_asli, y_reg_prediksi):.2f}')  # 16.0\nprint(f'RMSE: {mean_squared_error(y_reg_asli, y_reg_prediksi, squared=False):.2f}')  # 17.6\nprint(f'R²:   {r2_score(y_reg_asli, y_reg_prediksi):.3f}')             # 0.978",
+          "penjelasan": "R² (R-squared) berkisar dari -∞ sampai 1. Nilai 1 = model sempurna. Nilai 0 = model sama dengan selalu memprediksi mean. Nilai negatif = model lebih buruk dari prediksi mean — tanda serius bahwa ada yang salah."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Confusion Matrix dan Metrik yang Diturunkan",
+          "src": "/assets/ml/bab1/bab1_1.5.jpg",
+          "deskripsi_gambar": "Tabel confusion matrix dua kali dua yang menampilkan empat kemungkinan hasil prediksi: true positive, false positive, false negative, dan true negative. Formula untuk menghitung accuracy, precision, recall, dan F1-score ditampilkan berdasarkan nilai-nilai dalam matrix.",
+          "alt": "Confusion matrix dan formula metrik evaluasi klasifikasi: accuracy, precision, recall, F1"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Accuracy 99% Bisa Jadi Model yang Buruk",
+          "isi": "Bayangkan model deteksi penyakit langka yang hanya menyerang 1% populasi. Model yang selalu memprediksi 'tidak sakit' mencapai accuracy 99% — padahal model itu sama sekali tidak berguna! Ini disebut accuracy paradox pada imbalanced dataset. Untuk kasus seperti ini, Recall dan F1-Score jauh lebih informatif. Selalu tanyakan: apakah dataset saya seimbang? Jika tidak, jangan gunakan accuracy sebagai metrik utama."
+        }
+      ]
+    },
+    {
+      "id": "1.6",
+      "judul": "Overfitting vs Underfitting",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Dua Musuh Utama Machine Learning",
+          "isi": "Overfitting dan underfitting adalah dua masalah fundamental yang hampir pasti kamu hadapi saat melatih model ML. Memahami keduanya dan cara mengatasinya adalah keterampilan wajib.\n\nUnderfitting (Bias Tinggi):\nModel terlalu sederhana untuk menangkap pola dalam data. Performanya buruk di training set, dan juga buruk di test set.\n• Penyebab: model terlalu sederhana (kapasitas terlalu kecil), fitur yang tidak informatif, kurang lama dilatih\n• Tanda: training error tinggi, validation error tinggi, keduanya mirip\n• Solusi: gunakan model lebih kompleks, tambah fitur yang lebih baik, latih lebih lama\n\nOverfitting (Variance Tinggi):\nModel terlalu menghafal training data — termasuk noise dan anomali — sehingga tidak bisa generalisasi ke data baru.\n• Penyebab: model terlalu kompleks (terlalu banyak parameter), training data terlalu sedikit, dilatih terlalu lama\n• Tanda: training error sangat rendah, tapi validation/test error jauh lebih tinggi (gap besar)\n• Solusi: regularisasi (L1/L2), dropout, early stopping, augmentasi data, perbanyak data, model lebih sederhana\n\nGood Fit (Sweet Spot):\nModel dengan bias dan variance yang seimbang — training error dan validation error keduanya rendah dan berdekatan. Inilah yang kita kejar."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Underfitting vs Good Fit vs Overfitting",
+          "src": "/assets/ml/bab1/bab1_1.6.png",
+          "deskripsi_gambar": "Tiga grafik yang menampilkan data scatter dengan kurva model yang berbeda. Grafik kiri menunjukkan model terlalu sederhana yang tidak mengikuti pola data. Grafik tengah menunjukkan model yang seimbang mengikuti tren umum. Grafik kanan menunjukkan model terlalu kompleks yang melewati setiap titik data termasuk noise.",
+          "alt": "Perbandingan underfitting, good fit, dan overfitting pada scatter plot data"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Bias-Variance Tradeoff",
+          "isi": "Ada konsep matematika yang mendasari overfitting dan underfitting: Bias-Variance Tradeoff.\n\n• Bias — seberapa jauh rata-rata prediksi dari nilai asli. Model sederhana punya bias tinggi — selalu membuat asumsi yang tidak tepat tentang data.\n• Variance — seberapa besar variasi prediksi jika model dilatih ulang dengan data berbeda. Model kompleks punya variance tinggi — sangat sensitif terhadap fluktuasi data training.\n\nTotal error = Bias² + Variance + Irreducible Noise\n\nTidak ada cara untuk mengurangi bias DAN variance secara bersamaan — setiap peningkatan kapasitas model mengurangi bias tapi menaikkan variance, dan sebaliknya. Tujuannya adalah menemukan titik keseimbangan yang meminimalkan total error.\n\nTeknik mengatasi overfitting:\n• Regularisasi L1 (Lasso) — menambah penalti berdasarkan nilai absolut bobot, mendorong bobot menjadi nol (sparse model)\n• Regularisasi L2 (Ridge) — menambah penalti berdasarkan kuadrat bobot, mendorong bobot mendekati nol (tapi tidak nol)\n• Dropout — secara acak 'mematikan' sebagian neuron saat training (untuk neural network)\n• Early Stopping — hentikan training ketika validation error mulai naik\n• Data Augmentation — perbanyak data training secara artifisial"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Overfitting seperti Menghafal Soal Ujian",
+          "isi": "Underfitting seperti siswa yang tidak belajar sama sekali — tidak bisa mengerjakan soal latihan maupun ujian sungguhan. Overfitting seperti siswa yang menghafal semua soal latihan beserta jawabannya tanpa memahami konsepnya — nilai tryout sempurna, tapi saat ujian sungguhan soalnya sedikit berbeda, ia gagal total. Good fit seperti siswa yang benar-benar memahami konsepnya — bisa mengerjakan soal baru yang belum pernah dilihat sebelumnya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Double Descent: Overfitting Tidak Selalu Buruk?",
+          "isi": "Fenomena mengejutkan yang ditemukan di era deep learning: 'double descent'. Pada model yang sangat sangat besar (lebih banyak parameter dari jumlah data), performa justru bisa meningkat lagi setelah sempat overfit — berlawanan dengan teori bias-variance klasik. GPT-3 dengan 175 miliar parameter adalah contohnya. Ini masih menjadi topik penelitian aktif dan mempertanyakan beberapa asumsi fundamental tentang generalisasi dalam ML."
+        }
+      ]
+    },
+    {
+      "id": "1.7",
+      "judul": "Cross-Validation & Hyperparameter Tuning",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Cross-Validation: Evaluasi yang Lebih Reliable",
+          "isi": "Masalah dengan split train/test sederhana: hasil evaluasi sangat bergantung pada bagaimana data dibagi secara acak — split yang berbeda bisa menghasilkan metrik yang sangat berbeda. Untuk dataset kecil, ini sangat bermasalah.\n\nCross-Validation memecahkan ini dengan cara lebih cerdas — memanfaatkan semua data untuk evaluasi sekaligus tetap menjaga integritas evaluasi.\n\nK-Fold Cross-Validation (paling umum):\n1. Bagi data menjadi K bagian (fold) sama besar\n2. Ulangi K kali: gunakan satu fold sebagai validation, K-1 fold sisanya sebagai training\n3. Rata-rata K skor evaluasi untuk mendapatkan estimasi performa yang lebih stabil\n4. Nilai K yang umum: 5 atau 10\n\nStratified K-Fold:\nSeperti K-Fold tapi menjaga proporsi kelas di setiap fold. WAJIB digunakan untuk klasifikasi, terutama pada dataset imbalanced.\n\nLeave-One-Out CV (LOOCV):\nK = jumlah sampel — setiap sampel menjadi validation satu kali. Sangat komputasi mahal, berguna untuk dataset sangat kecil.\n\nTime Series Split:\nUntuk data time series — validation set SELALU di masa depan dari training set. Tidak boleh menggunakan K-Fold biasa karena akan bocor informasi masa depan."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Cross-Validation dan Hyperparameter Tuning",
+          "bahasa": "python",
+          "kode": "from sklearn.model_selection import cross_val_score, GridSearchCV, RandomizedSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.datasets import load_iris\nimport numpy as np\n\nX, y = load_iris(return_X_y=True)\n\n# ==========================================\n# CROSS-VALIDATION\n# ==========================================\nmodel = RandomForestClassifier(random_state=42)\n\n# 5-Fold CV\nscores = cross_val_score(model, X, y, cv=5, scoring='accuracy')\nprint(f'CV Scores:    {scores}')\nprint(f'Mean Accuracy: {scores.mean():.3f} ± {scores.std():.3f}')\n\n# ==========================================\n# HYPERPARAMETER TUNING: Grid Search\n# ==========================================\nparam_grid = {\n    'n_estimators':  [50, 100, 200],\n    'max_depth':     [None, 5, 10],\n    'min_samples_split': [2, 5, 10]\n}\n\ngrid_search = GridSearchCV(\n    RandomForestClassifier(random_state=42),\n    param_grid,\n    cv=5,\n    scoring='accuracy',\n    n_jobs=-1,   # pakai semua CPU core\n    verbose=1\n)\ngrid_search.fit(X, y)\n\nprint(f'\\nParameter terbaik: {grid_search.best_params_}')\nprint(f'Score terbaik:     {grid_search.best_score_:.3f}')\n\n# ==========================================\n# RANDOMIZED SEARCH: lebih cepat untuk ruang parameter besar\n# ==========================================\nfrom scipy.stats import randint\n\nparam_dist = {\n    'n_estimators':      randint(50, 500),\n    'max_depth':         [None, 5, 10, 20],\n    'min_samples_split': randint(2, 20)\n}\n\nrandom_search = RandomizedSearchCV(\n    RandomForestClassifier(random_state=42),\n    param_distributions=param_dist,\n    n_iter=50,         # coba 50 kombinasi acak (bukan semua)\n    cv=5,\n    scoring='accuracy',\n    random_state=42\n)\nrandom_search.fit(X, y)\nprint(f'\\nRandom Search terbaik: {random_search.best_params_}')",
+          "penjelasan": "GridSearchCV mencoba semua kombinasi parameter (lambat tapi exhaustive). RandomizedSearchCV mencoba subset acak (lebih cepat, biasanya cukup baik). Untuk ruang parameter yang besar (>1000 kombinasi), gunakan RandomizedSearchCV atau Optuna/Hyperopt yang lebih canggih."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "K-Fold Cross-Validation (K=5)",
+          "src": "/assets/ml/bab1/bab1_1.7.png",
+          "deskripsi_gambar": "Diagram lima baris yang menampilkan iterasi cross-validation. Setiap baris menunjukkan satu iterasi dengan satu bagian data sebagai validation dan sisanya sebagai training. Bagian validation bergeser dari kiri ke kanan di setiap iterasi. Skor dari setiap iterasi dirata-rata untuk estimasi performa yang lebih stabil.",
+          "alt": "Diagram K-Fold Cross Validation dengan 5 fold menunjukkan rotasi validation set"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Optuna: AutoML untuk Hyperparameter Tuning",
+          "isi": "Optuna adalah library open source untuk hyperparameter optimization yang menggunakan algoritma Bayesian optimization (Tree-structured Parzen Estimator). Berbeda dengan GridSearch yang mencoba semua kombinasi secara buta, Optuna 'belajar' dari percobaan sebelumnya untuk menentukan parameter mana yang paling menjanjikan untuk dicoba berikutnya. Hasilnya: menemukan konfigurasi optimal dengan jauh lebih sedikit percobaan. Digunakan secara luas di industri dan kompetisi Kaggle."
+        }
+      ]
+    },
+    {
+      "id": "1.8",
+      "judul": "Python untuk ML: NumPy, Pandas, Matplotlib",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Tiga Library Pondasi Data Science Python",
+          "isi": "Sebelum bisa membangun model ML, kamu perlu menguasai tiga library yang menjadi fondasi seluruh ekosistem data science Python. Tanpa ketiganya, praktis tidak ada pekerjaan ML yang bisa dilakukan.\n\nNumPy (Numerical Python):\nLibrary untuk komputasi numerik yang efisien. NumPy array (ndarray) adalah struktur data dasar untuk hampir semua operasi ML — jauh lebih cepat dari Python list biasa karena operasinya dilakukan di level C.\n• Array multi-dimensi dengan operasi vektor/matriks\n• Broadcasting — operasi matematis pada array dengan dimensi berbeda\n• Fungsi matematika: sin, cos, exp, log, sqrt, dll.\n• Linear algebra: perkalian matriks, invers, eigenvalue\n• Operasi random untuk sampling dan inisialisasi\n\nPandas:\nLibrary untuk manipulasi dan analisis data tabular. DataFrame Pandas adalah tabel data dengan baris dan kolom bernama — seperti spreadsheet Excel tapi jauh lebih powerful.\n• Load data dari berbagai format: CSV, Excel, JSON, SQL, Parquet\n• Filter, sort, group, merge, pivot data\n• Handle missing values, outlier, duplicate\n• Time series analysis\n• Integrasi langsung dengan scikit-learn dan Matplotlib\n\nMatplotlib & Seaborn:\nLibrary visualisasi data. Visualisasi adalah keterampilan esensial — memahami distribusi data, hubungan antar fitur, dan performa model semuanya dimulai dari visualisasi yang baik.\n• Matplotlib: library dasar, sangat fleksibel tapi verbose\n• Seaborn: dibangun di atas Matplotlib, menghasilkan grafik statistik yang indah dengan kode minimal"
+        },
+        {
+          "tipe": "kode",
+          "judul": "NumPy, Pandas, Matplotlib dalam Satu Workflow",
+          "bahasa": "python",
+          "kode": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# ==========================================\n# NUMPY: operasi array\n# ==========================================\na = np.array([1, 2, 3, 4, 5], dtype=np.float64)\nb = np.array([2, 3, 4, 5, 6])\n\nprint(a * 2)          # [2, 4, 6, 8, 10]\nprint(a + b)          # [3, 5, 7, 9, 11] — elemen per elemen\nprint(np.dot(a, b))   # dot product: 70\nprint(a.mean(), a.std())\n\n# Membuat array\nnp.zeros((3, 4))      # matriks 3x4 berisi 0\nnp.ones((2, 3))       # matriks 2x3 berisi 1\nnp.random.seed(42)\nnp.random.randn(100)  # 100 angka distribusi normal\nnp.linspace(0, 1, 50) # 50 angka dari 0 sampai 1\n\n# ==========================================\n# PANDAS: manipulasi data\n# ==========================================\ndf = pd.read_csv('data_mahasiswa.csv')\n\nprint(df.head())             # 5 baris pertama\nprint(df.info())             # tipe data dan missing values\nprint(df.describe())         # statistik deskriptif\n\n# Filter dan seleksi\ndf_aktif = df[df['status'] == 'aktif']\nipk_tinggi = df[df['ipk'] >= 3.5][['nim', 'nama', 'ipk']]\n\n# Agregasi\nrata_per_jurusan = df.groupby('jurusan')['ipk'].agg(['mean', 'std', 'count'])\n\n# Handle missing values\ndf['ipk'].fillna(df['ipk'].median(), inplace=True)\ndf.dropna(subset=['email'], inplace=True)\n\n# ==========================================\n# MATPLOTLIB & SEABORN: visualisasi\n# ==========================================\nfig, axes = plt.subplots(1, 3, figsize=(15, 4))\n\n# Histogram distribusi IPK\naxes[0].hist(df['ipk'], bins=20, color='steelblue', edgecolor='white')\naxes[0].set_title('Distribusi IPK')\naxes[0].set_xlabel('IPK')\n\n# Boxplot IPK per jurusan\ndf.boxplot(column='ipk', by='jurusan', ax=axes[1])\naxes[1].set_title('IPK per Jurusan')\n\n# Heatmap korelasi\nkol_num = df.select_dtypes(include=np.number)\nsns.heatmap(kol_num.corr(), annot=True, fmt='.2f', ax=axes[2], cmap='coolwarm')\naxes[2].set_title('Korelasi Antar Fitur')\n\nplt.tight_layout()\nplt.savefig('eksplorasi_data.png', dpi=150)\nplt.show()",
+          "penjelasan": "Eksplorasi data (EDA — Exploratory Data Analysis) adalah langkah wajib sebelum modeling. Visualisasi distribusi, korelasi, dan outlier sering mengungkap insight yang mengubah pendekatan modeling secara fundamental."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "NumPy Ditulis dalam C, Bukan Python",
+          "isi": "Paradoks menarik: NumPy adalah library Python tapi operasi intinya ditulis dalam C dan Fortran. Itulah mengapa operasi array NumPy bisa 100-1000x lebih cepat dari loop Python biasa. Operasi np.sum(array) ratusan kali lebih cepat dari sum(list). Ini juga mengapa deep learning framework seperti PyTorch dan TensorFlow bisa berjalan cepat di Python — di balik layar semuanya adalah operasi C/CUDA yang sangat dioptimasi."
+        }
+      ]
+    },
+    {
+      "id": "1.9",
+      "judul": "scikit-learn: API Dasar & Pipeline",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "scikit-learn: Library ML Terpopuler di Python",
+          "isi": "scikit-learn (sklearn) adalah library ML open source paling populer untuk Python. Ia menyediakan ratusan algoritma ML siap pakai dengan antarmuka yang sangat konsisten dan mudah digunakan. Didistribusikan di bawah BSD-3-Clause license — aman untuk semua keperluan termasuk komersial.\n\nFilosofi utama scikit-learn yang membuatnya sangat mudah dipelajari: SEMUA model mengikuti antarmuka yang sama:\n\n• fit(X_train, y_train) — latih model dengan data training\n• predict(X) — buat prediksi untuk data baru\n• predict_proba(X) — kembalikan probabilitas per kelas (untuk classifier)\n• score(X, y) — evaluasi model (accuracy untuk classifier, R² untuk regressor)\n• transform(X) — transformasi data (untuk preprocessing step)\n• fit_transform(X) — fit sekaligus transform\n\nKategori utama di scikit-learn:\n• Supervised: LinearRegression, LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, SVC, KNeighborsClassifier, GradientBoostingClassifier\n• Unsupervised: KMeans, DBSCAN, PCA, TSNE, IsolationForest\n• Preprocessing: StandardScaler, MinMaxScaler, OneHotEncoder, SimpleImputer, PolynomialFeatures\n• Model selection: train_test_split, cross_val_score, GridSearchCV\n• Metrics: accuracy_score, f1_score, roc_auc_score, mean_squared_error\n• Pipeline: Pipeline, ColumnTransformer"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Workflow ML Lengkap dengan scikit-learn",
+          "bahasa": "python",
+          "kode": "from sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split, cross_val_score\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.metrics import classification_report\nimport numpy as np\n\n# 1. Load data\nX, y = load_breast_cancer(return_X_y=True)\nprint(f'Dataset: {X.shape[0]} sampel, {X.shape[1]} fitur')\nprint(f'Distribusi kelas: {np.bincount(y)}')\n\n# 2. Split data\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\n# 3. Buat pipeline: preprocessing + model\npipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('model',  LogisticRegression(max_iter=1000, random_state=42))\n])\n\n# 4. Cross-validation untuk evaluasi yang andal\ncv_scores = cross_val_score(pipeline, X_train, y_train, cv=5, scoring='f1')\nprint(f'\\nCV F1-Score: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}')\n\n# 5. Latih model final\npipeline.fit(X_train, y_train)\n\n# 6. Evaluasi pada test set (HANYA SEKALI DI AKHIR)\ny_pred = pipeline.predict(X_test)\nprint('\\nHasil pada Test Set:')\nprint(classification_report(y_test, y_pred,\n      target_names=['Malignant', 'Benign']))\n\n# 7. Bandingkan dengan model lain\nmodels = {\n    'Logistic Regression': Pipeline([('sc', StandardScaler()), ('m', LogisticRegression(max_iter=1000))]),\n    'Random Forest':       RandomForestClassifier(n_estimators=100, random_state=42)\n}\n\nprint('\\nPerbandingan Model (CV F1-Score):')\nfor nama, mdl in models.items():\n    skor = cross_val_score(mdl, X_train, y_train, cv=5, scoring='f1')\n    print(f'  {nama:25s}: {skor.mean():.3f} ± {skor.std():.3f}')",
+          "penjelasan": "Selalu bungkus preprocessing dan model dalam Pipeline — ini mencegah data leakage karena scaler hanya fit pada training data. Jika scaler di-fit pada seluruh dataset sebelum split, informasi dari test set bocor ke training."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: scikit-learn seperti Kotak Peralatan Lengkap",
+          "isi": "scikit-learn seperti kotak peralatan tukang yang sangat lengkap dan terstandar. Setiap alat (algoritma) punya cara penggunaan yang sama: fit (pasang bit), predict (gunakan alat). Mau ganti obeng dengan bor? API-nya tetap sama — kamu tidak perlu belajar ulang dari awal. Ini yang membuat eksperimen dengan berbagai algoritma menjadi sangat cepat."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "scikit-learn Digunakan oleh Ribuan Perusahaan",
+          "isi": "scikit-learn dimulai sebagai project Google Summer of Code oleh David Cournapeau pada 2007 dan kini didownload lebih dari 30 juta kali per bulan. Penggunanya mencakup Spotify (rekomendasi musik), Booking.com (prediksi harga), J.P. Morgan (analisis risiko), dan NASA. Meski deep learning framework seperti PyTorch lebih 'glamor', scikit-learn masih menjadi pilihan utama untuk ML klasik di industri karena kestabilan, kemudahan, dan performa yang sudah terbukti."
+        }
+      ]
+    },
+    {
+      "id": "1.10",
+      "judul": "Jupyter Notebook & Google Colab",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Jupyter Notebook: Lingkungan Kerja Data Scientist",
+          "isi": "Jupyter Notebook adalah aplikasi web open source yang memungkinkan kamu membuat dan berbagi dokumen yang mengandung kode yang bisa dijalankan, visualisasi, teks narasi, persamaan matematika, dan media — semuanya dalam satu file .ipynb.\n\nMengapa Jupyter begitu populer di ML dan data science:\n• Eksekusi interaktif — jalankan kode sel per sel, lihat output langsung di bawahnya\n• Eksplorasi iteratif — ubah satu sel dan jalankan ulang tanpa mengulang semua kode\n• Reprodusibilitas — output tersimpan bersama kode, mudah dibagikan\n• Narative + Kode — ceritakan analisismu dengan teks Markdown di antara kode\n• Visualisasi inline — grafik Matplotlib/Seaborn tampil langsung di notebook\n\nKomponen utama Jupyter Notebook:\n• Cell — unit dasar notebook. Ada dua tipe: Code (kode Python yang bisa dijalankan) dan Markdown (teks berformat)\n• Kernel — proses Python yang berjalan di latar belakang, mengeksekusi kode\n• Output — hasil eksekusi (teks, angka, tabel, grafik) yang tersimpan di bawah cell\n\nGoogle Colab (Colaboratory) adalah Jupyter Notebook yang berjalan di cloud Google, gratis, tanpa instalasi apapun:\n• Akses GPU/TPU gratis (dengan batasan) — sangat berguna untuk deep learning\n• Google Drive integration — simpan notebook langsung ke Drive\n• Berbagi mudah seperti Google Docs — siapapun bisa membuka dan menjalankan\n• Pre-installed libraries — NumPy, Pandas, TensorFlow, PyTorch sudah tersedia\n• Buka notebook dari GitHub hanya dengan mengubah URL (github.com → colab.research.google.com/github)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Tips & Shortcut Jupyter yang Wajib Diketahui",
+          "bahasa": "python",
+          "kode": "# ==========================================\n# MAGIC COMMANDS di Jupyter\n# ==========================================\n\n# Ukur waktu eksekusi satu baris\n%timeit np.sqrt(np.arange(1000000))\n\n# Ukur waktu blok kode\n%%timeit\nresult = []\nfor i in range(1000):\n    result.append(i ** 2)\n\n# Tampilkan grafik inline\n%matplotlib inline\n\n# Reload modul yang diubah tanpa restart kernel\n%load_ext autoreload\n%autoreload 2\n\n# Lihat semua variabel di memory\n%who\n%whos\n\n# Jalankan script Python dari notebook\n%run script.py\n\n# Install package tanpa keluar notebook\n!pip install optuna\n!pip install xgboost lightgbm\n\n# ==========================================\n# BEST PRACTICES NOTEBOOK\n# ==========================================\n\n# 1. Tambahkan markdown untuk dokumentasi\n# ## Bagian 1: Eksplorasi Data\n# Pada bagian ini kita menganalisis distribusi...\n\n# 2. Set seed di awal untuk reproducibility\nimport numpy as np\nimport random\nnp.random.seed(42)\nrandom.seed(42)\n\n# 3. Tampilkan versi library\nimport sklearn, pandas, numpy\nprint(f'sklearn: {sklearn.__version__}')\nprint(f'pandas:  {pandas.__version__}')\nprint(f'numpy:   {numpy.__version__}')\n\n# 4. Restart kernel dan Run All sebelum submit\n# Memastikan notebook berjalan dari atas ke bawah tanpa error",
+          "penjelasan": "Notebook yang baik bisa dijalankan dari awal sampai akhir tanpa error dengan 'Restart & Run All'. Jika tidak bisa, ada dependency yang tersembunyi antar sel — masalah umum yang membuat notebook orang lain sulit direproduksi."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Antarmuka Jupyter Notebook",
+          "src": "/assets/ml/bab1/bab1_1.10.png",
+          "deskripsi_gambar": "Tampilan antarmuka Jupyter Notebook yang menunjukkan toolbar di bagian atas, sel kode dengan input Python, dan output yang dihasilkan. Sel markdown dengan teks berformat juga ditampilkan. Label In dan Out menunjukkan urutan eksekusi sel.",
+          "alt": "Screenshot antarmuka Jupyter Notebook menampilkan sel kode, markdown, dan output"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Jupyter seperti Buku Lab Ilmiah",
+          "isi": "Jupyter Notebook seperti buku lab seorang ilmuwan — di satu halaman ada hipotesis (teks Markdown), eksperimen (kode), dan hasil (output + grafik), semuanya berurutan dan terekam. Siapapun yang membaca buku lab tersebut bisa mereproduksi eksperimennya dari awal. Ini jauh lebih informatif dari sekadar file .py yang hanya berisi kode tanpa konteks dan penjelasan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Jupyter Berasal dari Nama Planet",
+          "isi": "Nama 'Jupyter' adalah kombinasi dari tiga bahasa pemrograman pertama yang didukung: Julia, Python, dan R — sekaligus merupakan homofon dari 'Jupiter' (nama planet dan dewa Romawi). Logo Jupyter adalah planet dengan tiga cincin, melambangkan ketiga bahasa tersebut. Meski kini mendukung lebih dari 100 bahasa (kernel), Python tetap menjadi yang paling dominan dengan sekitar 90% penggunaan."
+        }
+      ]
+    }
+  ]
+}

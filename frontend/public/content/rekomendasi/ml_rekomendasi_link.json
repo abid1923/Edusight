@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "path": "Machine Learning",
+    "deskripsi": "Rekomendasi link belajar tambahan untuk pengguna web belajar path Machine Learning. Dibagi menjadi tiga level: Beginner, Intermediate, dan Advanced. Setiap level berisi 5 link dari berbagai sumber (website, YouTube, GitHub, dll).",
+    "catatan": "Link ini ditampilkan sebagai rekomendasi lanjutan setelah user menyelesaikan materi di web belajar. Semua link telah diverifikasi aktif dan sesuai konten."
+  },
+  "rekomendasi": {
+    "beginner": {
+      "label": "Beginner",
+      "deskripsi": "Untuk kamu yang baru pertama kali mengenal Machine Learning. Fokus pada pemahaman konsep dasar, tools Python, dan algoritma pertama dengan cara yang menyenangkan.",
+      "link": [
+        {
+          "id": "b1",
+          "judul": "Google Machine Learning Crash Course",
+          "url": "https://developers.google.com/machine-learning/crash-course",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 1 – Dasar Machine Learning",
+            "Bab 2 – Supervised Learning"
+          ],
+          "deskripsi": "Kursus ML gratis dari Google yang sangat terstruktur. Mencakup konsep dasar ML, regresi, klasifikasi, neural network, dan cara kerja algoritma dengan visualisasi interaktif. Cocok sebagai titik awal belajar ML."
+        },
+        {
+          "id": "b2",
+          "judul": "Kaggle Learn – Intro to Machine Learning",
+          "url": "https://www.kaggle.com/learn/intro-to-machine-learning",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 1 – Dasar Machine Learning",
+            "Bab 2 – Supervised Learning"
+          ],
+          "deskripsi": "Kursus interaktif Kaggle yang mengajarkan ML langsung dengan kode Python di browser. Mencakup decision tree, validasi model, dan underfitting/overfitting. Gratis dan langsung praktek tanpa install apapun."
+        },
+        {
+          "id": "b3",
+          "judul": "YouTube – StatQuest: Machine Learning Playlist (Josh Starmer)",
+          "url": "https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 1 – Dasar Machine Learning",
+            "Bab 2 – Supervised Learning",
+            "Bab 3 – Unsupervised Learning"
+          ],
+          "deskripsi": "Playlist khusus Machine Learning dari StatQuest berisi 90+ video yang menjelaskan setiap algoritma ML dari nol — regresi, decision tree, random forest, SVM, PCA, K-Means, dan banyak lagi. Setiap video pendek, fokus, dan sangat mudah dipahami dengan animasi."
+        },
+        {
+          "id": "b4",
+          "judul": "YouTube – Machine Learning with Python Playlist (Sentdex)",
+          "url": "https://www.youtube.com/playlist?list=PLQVvvaa0QuDfKTOs3Keq_kaG2P55YRn5v",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 1 – Dasar Machine Learning",
+            "Bab 2 – Supervised Learning"
+          ],
+          "deskripsi": "Playlist Python ML dari Sentdex yang sangat praktis dan hands-on. Mencakup supervised, unsupervised, dan neural network dengan scikit-learn. Cocok bagi yang sudah tahu Python dasar dan ingin langsung coding ML."
+        },
+        {
+          "id": "b5",
+          "judul": "scikit-learn Official User Guide",
+          "url": "https://scikit-learn.org/stable/user_guide.html",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 1 – Dasar Machine Learning",
+            "Bab 2 – Supervised Learning",
+            "Bab 3 – Unsupervised Learning"
+          ],
+          "deskripsi": "Dokumentasi resmi scikit-learn yang sangat lengkap dengan penjelasan algoritma, contoh kode, dan visualisasi hasil. Jadikan ini referensi utama setiap kali menggunakan scikit-learn — setiap algoritma dijelaskan dengan contoh dan parameter lengkap."
+        }
+      ]
+    },
+    "intermediate": {
+      "label": "Intermediate",
+      "deskripsi": "Untuk kamu yang sudah menguasai dasar ML dan ingin memperdalam algoritma, unsupervised learning, dan mulai menyentuh deep learning.",
+      "link": [
+        {
+          "id": "i1",
+          "judul": "Kaggle Learn – Intermediate Machine Learning",
+          "url": "https://www.kaggle.com/learn/intermediate-machine-learning",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 2 – Supervised Learning",
+            "Bab 1 – Dasar Machine Learning"
+          ],
+          "deskripsi": "Lanjutan dari Intro to ML Kaggle. Membahas missing values, categorical encoding, pipeline, cross-validation, XGBoost, dan data leakage. Semua materi langsung praktek dengan notebook interaktif di browser."
+        },
+        {
+          "id": "i2",
+          "judul": "Kaggle Learn – Feature Engineering",
+          "url": "https://www.kaggle.com/learn/feature-engineering",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 1 – Dasar Machine Learning",
+            "Bab 2 – Supervised Learning"
+          ],
+          "deskripsi": "Kursus Kaggle khusus feature engineering: mutual information, clustering sebagai fitur, PCA, target encoding, dan teknik lanjutan lainnya. Sangat berguna untuk meningkatkan performa model secara signifikan."
+        },
+        {
+          "id": "i3",
+          "judul": "fast.ai – Practical Deep Learning for Coders",
+          "url": "https://course.fast.ai",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 2 – Supervised Learning",
+            "Bab 4 – Deep Learning"
+          ],
+          "deskripsi": "Kursus deep learning gratis dari fast.ai dengan pendekatan top-down: langsung praktek project nyata dulu, baru pelajari teorinya. Sangat efektif untuk belajar neural network, CNN, dan transfer learning dengan PyTorch."
+        },
+        {
+          "id": "i4",
+          "judul": "YouTube – Machine Learning Playlist (codebasics)",
+          "url": "https://www.youtube.com/playlist?list=PLeo1K3hjS3uvCeTYTeyfe0-rN5r8zn9rw",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 2 – Supervised Learning",
+            "Bab 3 – Unsupervised Learning"
+          ],
+          "deskripsi": "Playlist ML dari codebasics yang sangat populer di YouTube. Mencakup semua algoritma supervised dan unsupervised dengan penjelasan teori lalu langsung implementasi Python. Cocok untuk yang ingin belajar sambil melihat kode nyata berjalan."
+        },
+        {
+          "id": "i5",
+          "judul": "d2l.ai – Dive into Deep Learning (Online Textbook)",
+          "url": "https://d2l.ai",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 4 – Deep Learning",
+            "Bab 3 – Unsupervised Learning"
+          ],
+          "deskripsi": "Buku teks deep learning open source dari UC Berkeley, Amazon, dan komunitas global. Mencakup neural network, CNN, RNN, attention, dan modernnya deep learning dengan kode PyTorch dan TensorFlow. Gratis online sepenuhnya."
+        }
+      ]
+    },
+    "advanced": {
+      "label": "Advanced",
+      "deskripsi": "Untuk kamu yang sudah menguasai ML dan deep learning, dan ingin memperdalam model deployment, MLOps, serta riset terbaru.",
+      "link": [
+        {
+          "id": "a1",
+          "judul": "GitHub – MLOps Zoomcamp (DataTalksClub)",
+          "url": "https://github.com/DataTalksClub/mlops-zoomcamp",
+          "tipe": "github",
+          "ikon": "🐙",
+          "bab_relevan": [
+            "Bab 5 – Model Deployment & MLOps"
+          ],
+          "deskripsi": "Kursus MLOps gratis 9 minggu dari DataTalks.Club. Mencakup experiment tracking dengan MLflow, deployment dengan Flask, monitoring model, dan CI/CD pipeline. Semua materi open source di GitHub, video di YouTube."
+        },
+        {
+          "id": "a2",
+          "judul": "MLflow Official Documentation",
+          "url": "https://mlflow.org/docs/latest/index.html",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 5 – Model Deployment & MLOps"
+          ],
+          "deskripsi": "Dokumentasi resmi MLflow — platform open source untuk experiment tracking, model registry, dan deployment. Panduan lengkap dari setup hingga production deployment dengan berbagai framework ML."
+        },
+        {
+          "id": "a3",
+          "judul": "TensorFlow Official Tutorials",
+          "url": "https://www.tensorflow.org/tutorials",
+          "tipe": "website",
+          "ikon": "🌐",
+          "bab_relevan": [
+            "Bab 4 – Deep Learning",
+            "Bab 5 – Model Deployment & MLOps"
+          ],
+          "deskripsi": "Tutorial resmi TensorFlow/Keras dari Google. Mencakup semua topik dari neural network dasar, CNN, RNN, transfer learning, model deployment ke mobile (TFLite), hingga production serving. Setiap tutorial disertai Colab notebook."
+        },
+        {
+          "id": "a4",
+          "judul": "YouTube – Andrej Karpathy – Neural Networks: Zero to Hero",
+          "url": "https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ",
+          "tipe": "youtube",
+          "ikon": "▶️",
+          "bab_relevan": [
+            "Bab 4 – Deep Learning"
+          ],
+          "deskripsi": "Playlist dari Andrej Karpathy (mantan Director of AI Tesla, Co-founder OpenAI) yang membangun neural network dari nol menggunakan Python murni. Sangat mendalam secara konseptual — cocok untuk memahami cara kerja dalam dari backpropagation hingga transformer."
+        },
+        {
+          "id": "a5",
+          "judul": "GitHub – Awesome Machine Learning (josephmisiti)",
+          "url": "https://github.com/josephmisiti/awesome-machine-learning",
+          "tipe": "github",
+          "ikon": "🐙",
+          "bab_relevan": [
+            "Bab 2 – Supervised Learning",
+            "Bab 4 – Deep Learning",
+            "Bab 5 – Model Deployment & MLOps"
+          ],
+          "deskripsi": "Repository GitHub paling lengkap dan populer untuk ekosistem ML — berisi daftar kurasi framework, library, tools, dan dataset ML per bahasa pemrograman (Python, R, Julia, dll.). Sangat berguna sebagai referensi menemukan library yang tepat untuk setiap kebutuhan ML."
+        }
+      ]
+    }
+  }
+}

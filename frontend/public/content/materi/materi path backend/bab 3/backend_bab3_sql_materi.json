@@ -1,0 +1,359 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 3,
+    "judul_bab": "Database SQL",
+    "deskripsi": "Materi lengkap database relasional dan SQL — dari konsep dasar database, DDL, DML, filtering, JOIN, agregasi, relasi antar tabel, integrasi dengan Node.js, hingga ORM Sequelize.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "MDN Web Docs – Server-side Website Programming",
+        "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/First_steps/Website_security",
+        "lisensi": "CC-BY-SA 2.5"
+      },
+      {
+        "nama": "W3Schools – SQL Tutorial",
+        "url": "https://www.w3schools.com/sql/",
+        "lisensi": "Bebas edukasi"
+      },
+      {
+        "nama": "SQLZoo – Interactive SQL Tutorial",
+        "url": "https://sqlzoo.net/wiki/SQL_Tutorial",
+        "lisensi": "CC-BY-SA 4.0"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+
+  "sub_bab": [
+
+    {
+      "id": "3.1",
+      "judul": "Apa itu Database & Jenis-jenisnya",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Mengapa Database Diperlukan?",
+          "isi": "Bayangkan sebuah aplikasi web kampus yang menyimpan data ribuan mahasiswa, ratusan mata kuliah, dan jutaan catatan nilai dalam file JSON. Setiap kali ada query — 'tampilkan mahasiswa dengan IPK di atas 3.5 dari jurusan TI angkatan 2021' — aplikasi harus membaca seluruh file, memuat ke memori, lalu memfilter secara manual. Lambat, tidak efisien, dan sangat rentan error.\n\nDatabase hadir untuk memecahkan masalah ini. Database adalah sistem terorganisir untuk menyimpan, mengelola, dan mengambil data secara efisien. Database Management System (DBMS) adalah perangkat lunak yang mengelola database — menangani penyimpanan, pengambilan, keamanan, concurrent access, dan konsistensi data.\n\nMengapa database jauh lebih baik dari file JSON atau CSV untuk data produksi:\n• Performa — query yang dioptimasi dengan indeks jauh lebih cepat dari pencarian linear di file\n• Konsistensi — constraint (PRIMARY KEY, FOREIGN KEY, UNIQUE) mencegah data tidak valid masuk\n• Concurrent access — banyak pengguna bisa membaca/menulis secara bersamaan dengan aman\n• Transaksi — operasi multiple bisa dibuat atomic (semua berhasil atau semua gagal)\n• Backup dan recovery — mekanisme bawaan untuk pemulihan data\n• Skalabilitas — bisa menangani jutaan hingga miliaran record"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Dua Keluarga Besar Database",
+          "isi": "Dunia database terbagi menjadi dua keluarga besar yang punya filosofi berbeda:\n\nRelational Database (SQL):\n• Data disimpan dalam tabel dengan baris dan kolom, seperti spreadsheet\n• Hubungan antar tabel didefinisikan secara eksplisit via foreign key\n• Menggunakan SQL (Structured Query Language) untuk semua operasi\n• Schema ketat — struktur tabel harus didefinisikan sebelum data bisa dimasukkan\n• Cocok untuk: data terstruktur dengan relasi yang jelas, transaksi finansial, sistem akademik\n• Contoh: MySQL, PostgreSQL, SQLite, SQL Server, Oracle\n\nNon-Relational Database (NoSQL):\n• Beragam model: document (MongoDB), key-value (Redis), graph (Neo4j), column-family (Cassandra)\n• Schema fleksibel — dokumen dalam koleksi yang sama bisa punya struktur berbeda\n• Horizontal scaling yang lebih mudah\n• Cocok untuk: data tidak terstruktur, high-velocity data, konten yang berubah-ubah\n• Contoh: MongoDB, Redis, Cassandra, Elasticsearch\n\nUntuk bab ini, kita fokus ke Relational Database menggunakan SQL — fondasi yang wajib dikuasai setiap backend developer."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Perbandingan SQL vs NoSQL",
+          "src": "/assets/backend/bab3/bab3_3.1.png",
+          "deskripsi_gambar":  "Infografik perbandingan SQL dan NoSQL berdasarkan struktur data, scalability, consistency, querying, relationships, dan performa. SQL menggunakan schema tetap dan relasi kuat, sedangkan NoSQL menggunakan schema fleksibel dan skalabilitas horizontal.",
+          "alt": "Perbandingan database SQL relasional dan NoSQL dari segi struktur, schema, dan use case"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Database seperti Sistem Perpustakaan",
+          "isi": "Database seperti perpustakaan yang sangat terorganisir. File JSON seperti menumpuk semua buku di lantai — ada semua datanya tapi butuh waktu lama untuk menemukan yang dicari. Database seperti perpustakaan dengan sistem katalog Dewey, rak berlabel, dan kartu indeks — menemukan buku tertentu butuh detik, bukan jam."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "SQL Berusia Lebih dari 50 Tahun",
+          "isi": "SQL pertama kali dikembangkan oleh IBM pada awal 1970-an, terinspirasi dari paper Edgar F. Codd tentang relational model tahun 1970. Menjadi standar ANSI pada 1986 dan ISO pada 1987. Lebih dari 50 tahun kemudian, SQL masih menjadi bahasa database paling banyak digunakan di dunia — bukti luar biasa dari desain yang baik. Stack Overflow Developer Survey 2023 menempatkan SQL sebagai bahasa/teknologi keempat yang paling banyak digunakan, mengalahkan TypeScript dan Rust."
+        }
+      ]
+    },
+
+    {
+      "id": "3.2",
+      "judul": "Konsep Relational Database & Tabel",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Anatomi Database Relasional",
+          "isi": "Relational database mengorganisir data ke dalam struktur yang sangat intuitif dan matematis. Memahami konsep-konsep dasarnya adalah pondasi untuk menulis query SQL yang efektif.\n\nKonsep-konsep utama:\n\n• Tabel (Table / Relation) — unit penyimpanan utama. Terdiri dari baris dan kolom. Setiap tabel merepresentasikan satu entitas atau konsep (mahasiswa, mata_kuliah, nilai).\n\n• Baris (Row / Record / Tuple) — satu instance dari entitas. Baris mahasiswa berisi data satu mahasiswa spesifik.\n\n• Kolom (Column / Field / Attribute) — properti dari entitas. Kolom 'nama' menyimpan nama setiap mahasiswa.\n\n• Primary Key (PK) — satu kolom (atau kombinasi kolom) yang mengidentifikasi setiap baris secara unik. Tidak boleh NULL, tidak boleh duplikat. Biasanya kolom 'id' dengan auto increment.\n\n• Foreign Key (FK) — kolom yang mereferensi Primary Key dari tabel lain. Mendefinisikan relasi antar tabel dan memastikan referential integrity — kamu tidak bisa menambah nilai FK yang tidak ada di tabel yang direferensi.\n\n• Index — struktur data tambahan yang mempercepat pencarian pada kolom tertentu. Seperti indeks di belakang buku — tanpanya database harus membaca setiap baris (full table scan).\n\n• Constraint — aturan yang diterapkan pada data:\n  - NOT NULL: kolom wajib diisi\n  - UNIQUE: nilai tidak boleh duplikat\n  - PRIMARY KEY: unik + not null\n  - FOREIGN KEY: referential integrity\n  - CHECK: kondisi yang harus dipenuhi nilai\n  - DEFAULT: nilai default jika tidak diisi"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Konsep Tabel dan Relasi dalam SQL",
+          "bahasa": "sql",
+          "kode": "-- Contoh database sistem akademik sederhana\n\n-- Tabel mahasiswa\n-- id: Primary Key, auto increment\n-- nim: UNIQUE agar tidak ada NIM yang sama\n-- jurusan_id: Foreign Key ke tabel jurusan\nCREATE TABLE mahasiswa (\n  id         INT          PRIMARY KEY AUTO_INCREMENT,\n  nim        VARCHAR(10)  NOT NULL UNIQUE,\n  nama       VARCHAR(100) NOT NULL,\n  email      VARCHAR(150) NOT NULL UNIQUE,\n  tanggal_lahir DATE,\n  jurusan_id INT          NOT NULL,\n  ipk        DECIMAL(3,2) DEFAULT 0.00 CHECK (ipk >= 0 AND ipk <= 4.00),\n  created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,\n\n  FOREIGN KEY (jurusan_id) REFERENCES jurusan(id)\n    ON UPDATE CASCADE    -- jika id jurusan berubah, otomatis update di sini\n    ON DELETE RESTRICT   -- tidak bisa hapus jurusan jika masih ada mahasiswanya\n);\n\n-- Tabel jurusan\nCREATE TABLE jurusan (\n  id        INT         PRIMARY KEY AUTO_INCREMENT,\n  kode      VARCHAR(5)  NOT NULL UNIQUE,  -- 'TI', 'SI', 'RPL'\n  nama      VARCHAR(100) NOT NULL,\n  fakultas  VARCHAR(100) NOT NULL\n);\n\n-- Tabel mata_kuliah\nCREATE TABLE mata_kuliah (\n  id     INT         PRIMARY KEY AUTO_INCREMENT,\n  kode   VARCHAR(10) NOT NULL UNIQUE,\n  nama   VARCHAR(100) NOT NULL,\n  sks    TINYINT     NOT NULL CHECK (sks BETWEEN 1 AND 6),\n  semester TINYINT   NOT NULL\n);\n\n-- Tabel nilai (junction table - relasi many-to-many)\nCREATE TABLE nilai (\n  id            INT         PRIMARY KEY AUTO_INCREMENT,\n  mahasiswa_id  INT         NOT NULL,\n  matkul_id     INT         NOT NULL,\n  nilai_angka   DECIMAL(5,2) CHECK (nilai_angka BETWEEN 0 AND 100),\n  nilai_huruf   CHAR(2),\n  semester      VARCHAR(10) NOT NULL,  -- '2024/1'\n\n  FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa(id) ON DELETE CASCADE,\n  FOREIGN KEY (matkul_id)    REFERENCES mata_kuliah(id),\n  UNIQUE (mahasiswa_id, matkul_id, semester) -- satu mahasiswa tidak bisa ambil matkul yang sama di semester yang sama\n);",
+          "penjelasan": "ON DELETE CASCADE berarti jika mahasiswa dihapus, semua nilai mahasiswa tersebut otomatis terhapus. ON DELETE RESTRICT mencegah penghapusan data jika masih ada referensi dari tabel lain."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Primary Key seperti NIK, Foreign Key seperti Referensi",
+          "isi": "Primary Key seperti NIK — setiap warga negara punya NIK unik yang tidak berubah dan tidak bisa sama dengan orang lain. Foreign Key seperti kolom 'nomor_kk' di database kependudukan — nilainya harus merujuk ke nomor KK yang benar-benar ada. Jika kamu mencoba mengisi nomor KK yang tidak ada, sistem akan menolak — itulah referential integrity."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "NULL Bukan 0 dan Bukan String Kosong",
+          "isi": "NULL dalam database adalah konsep tersendiri yang berarti 'tidak diketahui' atau 'tidak ada nilai'. NULL ≠ 0 (angka nol), NULL ≠ '' (string kosong), dan yang paling mengejutkan: NULL ≠ NULL. Ekspresi apapun yang melibatkan NULL menghasilkan NULL, bukan true atau false. Untuk mengecek NULL harus menggunakan IS NULL atau IS NOT NULL, bukan = NULL. Ini sering menjadi sumber bug yang membingungkan bagi developer baru."
+        }
+      ]
+    },
+
+    {
+      "id": "3.3",
+      "judul": "DDL — CREATE, ALTER, DROP",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Data Definition Language (DDL)",
+          "isi": "DDL (Data Definition Language) adalah subset SQL yang digunakan untuk mendefinisikan dan memodifikasi struktur database — bukan datanya, tapi wadah tempat data disimpan. DDL mencakup perintah untuk membuat, mengubah, dan menghapus objek database.\n\nPerintah DDL utama:\n\n• CREATE — membuat objek baru: database, tabel, indeks, view\n• ALTER — mengubah struktur objek yang sudah ada: tambah kolom, ubah tipe data, tambah constraint\n• DROP — menghapus objek secara permanen beserta semua datanya\n• TRUNCATE — menghapus semua baris dari tabel tapi mempertahankan strukturnya (lebih cepat dari DELETE tanpa WHERE)\n• RENAME — mengganti nama objek\n\nSatu karakteristik penting DDL yang berbeda dari DML: perintah DDL bersifat auto-commit — perubahan langsung diterapkan ke database dan tidak bisa di-rollback. Inilah mengapa perintah DROP dan ALTER di database produksi harus dilakukan dengan sangat hati-hati dan selalu ada backup terlebih dahulu.\n\nTipe data kolom yang paling umum di MySQL/PostgreSQL:\n• Teks: CHAR(n), VARCHAR(n), TEXT, LONGTEXT\n• Angka bulat: TINYINT (1 byte), SMALLINT (2), INT (4), BIGINT (8)\n• Angka desimal: DECIMAL(p,s), FLOAT, DOUBLE\n• Tanggal & waktu: DATE, TIME, DATETIME, TIMESTAMP\n• Boolean: BOOLEAN (MySQL: TINYINT(1))\n• Binary: BLOB, LONGBLOB (untuk file/gambar — tapi simpan file di storage, bukan DB!)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "DDL: CREATE, ALTER, DROP, INDEX",
+          "bahasa": "sql",
+          "kode": "-- ==========================================\n-- CREATE DATABASE & TABLE\n-- ==========================================\nCREATE DATABASE IF NOT EXISTS web_belajar\n  CHARACTER SET utf8mb4\n  COLLATE utf8mb4_unicode_ci;  -- mendukung semua karakter termasuk emoji\n\nUSE web_belajar;\n\nCREATE TABLE IF NOT EXISTS mahasiswa (\n  id            INT          NOT NULL AUTO_INCREMENT,\n  nim           VARCHAR(10)  NOT NULL,\n  nama          VARCHAR(100) NOT NULL,\n  email         VARCHAR(150) NOT NULL,\n  tanggal_lahir DATE,\n  jenis_kelamin ENUM('L', 'P') NOT NULL,\n  ipk           DECIMAL(3,2) DEFAULT 0.00,\n  aktif         BOOLEAN      DEFAULT TRUE,\n  created_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,\n  updated_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n\n  PRIMARY KEY (id),\n  UNIQUE KEY uk_nim   (nim),\n  UNIQUE KEY uk_email (email),\n  INDEX idx_aktif (aktif)  -- index untuk query yang sering filter berdasarkan status aktif\n);\n\n-- ==========================================\n-- ALTER TABLE: modifikasi tabel yang sudah ada\n-- ==========================================\n\n-- Tambah kolom baru\nALTER TABLE mahasiswa\n  ADD COLUMN no_telepon VARCHAR(15) AFTER email,\n  ADD COLUMN foto_url   TEXT        DEFAULT NULL;\n\n-- Ubah tipe data kolom\nALTER TABLE mahasiswa\n  MODIFY COLUMN ipk DECIMAL(4,2) DEFAULT 0.00;  -- perluas dari 3,2 ke 4,2\n\n-- Ganti nama kolom\nALTER TABLE mahasiswa\n  RENAME COLUMN aktif TO is_aktif;\n\n-- Hapus kolom\nALTER TABLE mahasiswa\n  DROP COLUMN foto_url;\n\n-- Tambah constraint setelah tabel dibuat\nALTER TABLE mahasiswa\n  ADD CONSTRAINT chk_ipk CHECK (ipk >= 0.00 AND ipk <= 4.00),\n  ADD CONSTRAINT fk_jurusan FOREIGN KEY (jurusan_id) REFERENCES jurusan(id);\n\n-- ==========================================\n-- INDEX: mempercepat query\n-- ==========================================\nCREATE INDEX idx_nama ON mahasiswa(nama);           -- single index\nCREATE INDEX idx_nama_nim ON mahasiswa(nama, nim);  -- composite index\nCREATE UNIQUE INDEX idx_email ON mahasiswa(email);  -- unique index\n\nDROP INDEX idx_nama ON mahasiswa;  -- hapus index\n\n-- ==========================================\n-- DROP: hapus objek (HATI-HATI! Tidak bisa di-undo)\n-- ==========================================\nDROP TABLE IF EXISTS temp_data;      -- hapus tabel\nDROP DATABASE IF EXISTS database_lama; -- hapus seluruh database!\n\nTRUNCATE TABLE log_aktivitas;  -- hapus semua data, reset auto_increment\n-- Lebih cepat dari DELETE tanpa WHERE, tapi tidak bisa di-rollback",
+          "penjelasan": "Selalu gunakan IF NOT EXISTS di CREATE dan IF EXISTS di DROP untuk mencegah error jika objek sudah/belum ada. Di production, NEVER langsung DROP atau ALTER tanpa backup dan pengujian di staging environment terlebih dahulu."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: DDL seperti Arsitek Gedung",
+          "isi": "DDL adalah pekerjaan arsitek dan kontraktor — membuat blueprint (CREATE), merenovasi ruangan yang ada (ALTER), atau merobohkan gedung (DROP). Setelah gedung dibangun (tabel dibuat), barulah penghuni (data) bisa masuk. Merobohkan gedung (DROP) menghilangkan gedung beserta semua isinya — tidak seperti mengosongkan isinya saja (TRUNCATE/DELETE)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Migration: Cara Profesional Mengelola DDL",
+          "isi": "Di project nyata, developer tidak langsung mengetik ALTER TABLE di production. Mereka menggunakan sistem migrasi database — file yang mencatat setiap perubahan schema secara berurutan dan bisa dijalankan/di-rollback. Tools seperti Sequelize Migrations, Flyway, atau Liquibase memungkinkan tim mengubah schema database secara terstruktur, terlacak di Git, dan bisa direproduksi di environment manapun. Ini seperti version control tapi untuk schema database."
+        }
+      ]
+    },
+
+    {
+      "id": "3.4",
+      "judul": "DML — INSERT, SELECT, UPDATE, DELETE",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Data Manipulation Language (DML)",
+          "isi": "DML (Data Manipulation Language) adalah subset SQL yang digunakan untuk memanipulasi data di dalam tabel yang sudah ada — menambah, membaca, mengubah, dan menghapus record. Ini adalah yang paling sering digunakan dalam pengembangan aplikasi sehari-hari.\n\nEmpat perintah DML utama yang dikenal sebagai CRUD:\n\n• INSERT INTO — menambahkan baris baru ke tabel. Bisa satu baris atau banyak sekaligus.\n• SELECT — mengambil data dari satu atau lebih tabel. SELECT adalah perintah paling kompleks dan paling sering digunakan — bisa dikombinasikan dengan WHERE, ORDER BY, GROUP BY, JOIN, dan banyak lagi.\n• UPDATE — mengubah nilai kolom pada baris yang sudah ada. Selalu gunakan WHERE kecuali memang ingin mengubah semua baris!\n• DELETE FROM — menghapus baris dari tabel. Sama seperti UPDATE — selalu gunakan WHERE!\n\nPerbedaan penting DML vs DDL:\n• DML TIDAK auto-commit — perubahan bisa di-rollback sebelum COMMIT\n• Ini memungkinkan transaksi: sekelompok operasi DML yang harus semua berhasil atau semua gagal\n• Selalu tes query UPDATE dan DELETE dengan SELECT terlebih dahulu — gunakan WHERE yang sama tapi pakai SELECT dulu untuk melihat baris mana yang akan terpengaruh"
+        },
+        {
+          "tipe": "kode",
+          "judul": "INSERT, SELECT, UPDATE, DELETE Lengkap",
+          "bahasa": "sql",
+          "kode": "-- ==========================================\n-- INSERT: tambah data\n-- ==========================================\n\n-- Insert satu baris\nINSERT INTO jurusan (kode, nama, fakultas) VALUES\n  ('TI', 'Teknik Informatika', 'Fakultas Ilmu Komputer');\n\n-- Insert banyak baris sekaligus (lebih efisien)\nINSERT INTO mahasiswa (nim, nama, email, jenis_kelamin, jurusan_id) VALUES\n  ('2021001', 'Budi Santoso',  'budi@email.com',  'L', 1),\n  ('2021002', 'Siti Rahayu',   'siti@email.com',  'P', 1),\n  ('2021003', 'Ahmad Fauzi',   'ahmad@email.com', 'L', 2),\n  ('2021004', 'Dewi Lestari',  'dewi@email.com',  'P', 1),\n  ('2021005', 'Rizky Pratama', 'rizky@email.com', 'L', 3);\n\n-- INSERT ... ON DUPLICATE KEY UPDATE (upsert)\nINSERT INTO mahasiswa (nim, nama, email, jurusan_id)\n  VALUES ('2021001', 'Budi Santoso Updated', 'budi_baru@email.com', 1)\n  ON DUPLICATE KEY UPDATE\n    nama = VALUES(nama),\n    email = VALUES(email);\n\n-- ==========================================\n-- SELECT: baca data\n-- ==========================================\n\n-- Semua kolom\nSELECT * FROM mahasiswa;\n\n-- Kolom tertentu dengan alias\nSELECT\n  id,\n  nim,\n  nama           AS nama_lengkap,\n  email,\n  YEAR(CURDATE()) - YEAR(tanggal_lahir) AS umur,\n  UPPER(nama)    AS nama_kapital\nFROM mahasiswa;\n\n-- Menghindari duplikat\nSELECT DISTINCT jenis_kelamin FROM mahasiswa;\n\n-- Batasi jumlah hasil dan skip baris (pagination)\nSELECT * FROM mahasiswa\nORDER BY nama ASC\nLIMIT 10 OFFSET 20;  -- halaman 3 (skip 20 pertama, ambil 10)\n\n-- ==========================================\n-- UPDATE: ubah data — SELALU pakai WHERE!\n-- ==========================================\n\n-- Update satu baris\nUPDATE mahasiswa\nSET\n  ipk = 3.85,\n  updated_at = CURRENT_TIMESTAMP\nWHERE nim = '2021001';\n\n-- Update kondisional\nUPDATE mahasiswa\nSET is_aktif = FALSE\nWHERE YEAR(tanggal_lahir) < 1995  -- mahasiswa lahir sebelum 1995\n  AND ipk < 2.00;                  -- dan IPK di bawah 2\n\n-- ==========================================\n-- DELETE: hapus data — SELALU pakai WHERE!\n-- ==========================================\n\n-- AMAN: cek dulu dengan SELECT\nSELECT * FROM mahasiswa WHERE nim = '2021005';\n-- Jika hasilnya benar, baru jalankan DELETE\nDELETE FROM mahasiswa WHERE nim = '2021005';\n\n-- Delete dengan kondisi dari tabel lain (subquery)\nDELETE FROM mahasiswa\nWHERE jurusan_id NOT IN (\n  SELECT id FROM jurusan WHERE aktif = TRUE\n);",
+          "penjelasan": "Habit terbaik: SELALU tulis SELECT dengan WHERE yang sama sebelum menjalankan UPDATE atau DELETE. Ini mencegah kesalahan menghapus/mengubah semua data karena lupa WHERE. Satu UPDATE tanpa WHERE di tabel production bisa menjadi bencana."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "CRUD Operations: INSERT, SELECT, UPDATE, DELETE",
+          "src": "/assets/backend/bab3/bab3_3.4.png",
+          "deskripsi_gambar": "Infografik empat bagian yang menampilkan operasi CRUD pada SQL. Create (INSERT) dengan ikon database dan penambahan data, Read (SELECT) dengan ikon pencarian data, Update (UPDATE) dengan ikon edit data, dan Delete (DELETE) dengan ikon penghapusan data. Setiap bagian menampilkan contoh sintaks SQL sederhana yang sesuai dengan operasinya.",
+          "alt": "Diagram CRUD operations: Create/INSERT, Read/SELECT, Update/UPDATE, Delete/DELETE"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: DML seperti Operasi di Lembar Spreadsheet",
+          "isi": "INSERT seperti menambahkan baris baru di spreadsheet. SELECT seperti menyorot dan menyalin baris-baris tertentu ke clipboard. UPDATE seperti mengedit nilai di sel tertentu. DELETE seperti menghapus baris. Bedanya, database jauh lebih pintar: bisa memfilter jutaan baris dalam milliseconds, dan tidak bisa salah klik tombol 'undo' setelah COMMIT."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "The Most Expensive WHERE Clause Typo",
+          "isi": "Pada 2012, seorang developer di sebuah perusahaan hosting menjalankan UPDATE tanpa WHERE di tabel pelanggan produksi — semua 500.000 record pelanggan mendapat password yang sama. Kejadian serupa terjadi berkali-kali di berbagai perusahaan. Beberapa database modern seperti MySQL Workbench punya mode 'Safe Update' yang mencegah UPDATE/DELETE tanpa WHERE. Gunakan ini saat bekerja dengan database production."
+        }
+      ]
+    },
+
+    {
+      "id": "3.5",
+      "judul": "Filtering & Sorting — WHERE, ORDER BY",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Memfilter dan Mengurutkan Data",
+          "isi": "SELECT tanpa filtering akan mengembalikan semua baris — tidak berguna untuk tabel dengan jutaan record. WHERE clause adalah alat utama untuk memfilter baris yang ingin diambil.\n\nOperator yang bisa digunakan di WHERE:\n\nPerbandingan:\n• = sama dengan\n• != atau <> tidak sama\n• >, <, >=, <= lebih besar/kecil\n\nLogika:\n• AND — semua kondisi harus true\n• OR — minimal satu kondisi true\n• NOT — negasi kondisi\n\nRange & Set:\n• BETWEEN a AND b — nilai dalam rentang a sampai b (inklusif)\n• IN (val1, val2, ...) — nilai ada dalam daftar\n• NOT IN (...) — nilai tidak ada dalam daftar\n\nPattern Matching:\n• LIKE — pencarian pola dengan wildcard: % (nol atau lebih karakter), _ (tepat satu karakter)\n• NOT LIKE — kebalikan LIKE\n\nNULL Checking:\n• IS NULL — nilai adalah NULL\n• IS NOT NULL — nilai bukan NULL\n\nSubquery:\n• EXISTS — true jika subquery mengembalikan minimal satu baris\n• IN dengan subquery — nilai ada di hasil subquery\n\nORDER BY mengurutkan hasil query:\n• ASC (ascending/naik) — default jika tidak disebutkan\n• DESC (descending/turun)\n• Bisa kombinasi beberapa kolom: ORDER BY jurusan ASC, ipk DESC\n\nPenting: urutan klausa SQL harus benar: SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT"
+        },
+        {
+          "tipe": "kode",
+          "judul": "WHERE, LIKE, BETWEEN, IN, ORDER BY, LIMIT",
+          "bahasa": "sql",
+          "kode": "-- ==========================================\n-- WHERE dengan berbagai operator\n-- ==========================================\n\n-- Filter sederhana\nSELECT * FROM mahasiswa\nWHERE jenis_kelamin = 'P'\n  AND is_aktif = TRUE;\n\n-- BETWEEN: IPK antara 3.5 dan 4.0\nSELECT nim, nama, ipk\nFROM mahasiswa\nWHERE ipk BETWEEN 3.50 AND 4.00\nORDER BY ipk DESC;\n\n-- IN: mahasiswa dari jurusan tertentu\nSELECT nim, nama, jurusan_id\nFROM mahasiswa\nWHERE jurusan_id IN (1, 2, 5);\n\n-- NOT IN: semua kecuali jurusan tertentu\nSELECT * FROM mahasiswa\nWHERE jurusan_id NOT IN (SELECT id FROM jurusan WHERE aktif = FALSE);\n\n-- ==========================================\n-- LIKE: pencarian pola\n-- ==========================================\n\n-- Nama yang diawali 'Budi'\nSELECT * FROM mahasiswa WHERE nama LIKE 'Budi%';\n\n-- Nama yang mengandung 'Ahmad'\nSELECT * FROM mahasiswa WHERE nama LIKE '%Ahmad%';\n\n-- Email dari domain gmail saja\nSELECT * FROM mahasiswa WHERE email LIKE '%@gmail.com';\n\n-- NIM dengan 4 digit pertama '2021'\nSELECT * FROM mahasiswa WHERE nim LIKE '2021____'; -- 4 underscore = 4 karakter\n\n-- ==========================================\n-- NULL Checking\n-- ==========================================\n\n-- Mahasiswa yang belum mengisi nomor telepon\nSELECT nim, nama FROM mahasiswa\nWHERE no_telepon IS NULL;\n\n-- COALESCE: tampilkan nilai alternatif jika NULL\nSELECT\n  nama,\n  COALESCE(no_telepon, 'Belum diisi') AS telepon,\n  COALESCE(ipk, 0.00)                AS ipk\nFROM mahasiswa;\n\n-- ==========================================\n-- ORDER BY + LIMIT: Sorting dan Pagination\n-- ==========================================\n\n-- Top 10 mahasiswa dengan IPK tertinggi\nSELECT nim, nama, ipk\nFROM mahasiswa\nWHERE is_aktif = TRUE\nORDER BY ipk DESC, nama ASC  -- jika IPK sama, urutkan nama secara alfabetis\nLIMIT 10;\n\n-- Pagination: halaman 3, 10 item per halaman\nSELECT * FROM mahasiswa\nORDER BY created_at DESC\nLIMIT 10 OFFSET 20;  -- OFFSET = (halaman - 1) * limit\n\n-- Hitung total untuk pagination\nSELECT COUNT(*) AS total FROM mahasiswa WHERE is_aktif = TRUE;",
+          "penjelasan": "LIKE dengan % di awal ('%Ahmad') tidak bisa memanfaatkan index — selalu melakukan full table scan. Jika sering melakukan pencarian seperti ini, pertimbangkan Full-Text Search yang lebih efisien."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "SQL Injection — Bahaya di WHERE Clause",
+          "isi": "WHERE clause adalah salah satu target utama SQL Injection. Jika kamu membangun query dengan concatenation string: 'SELECT * FROM users WHERE email = \\'' + inputEmail + '\\'' — penyerang bisa memasukkan: '; DROP TABLE users; -- sebagai email, menghasilkan query: SELECT * FROM users WHERE email = ''; DROP TABLE users; --'. Solusi: SELALU gunakan parameterized query (prepared statement) — jangan pernah langsung memasukkan input pengguna ke dalam SQL string."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: WHERE + ORDER BY seperti Pencarian di Marketplace",
+          "isi": "Saat belanja online, kamu memfilter produk: kategori = 'laptop', harga BETWEEN 5jt AND 15jt, rating >= 4.0, stok IS NOT NULL. Itu adalah WHERE clause. Lalu kamu urutkan hasil: 'Harga terendah' atau 'Terlaris' — itu ORDER BY. Dan kamu melihat 20 produk per halaman — itu LIMIT + OFFSET."
+        }
+      ]
+    },
+
+    {
+      "id": "3.6",
+      "judul": "JOIN — INNER, LEFT, RIGHT",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Menggabungkan Data dari Beberapa Tabel",
+          "isi": "Database relasional menyimpan data di banyak tabel yang saling terhubung untuk menghindari redundansi. JOIN adalah operasi yang menggabungkan baris dari dua atau lebih tabel berdasarkan kolom yang berkaitan — biasanya Primary Key dan Foreign Key.\n\nIni adalah konsep yang paling sering membingungkan pemula SQL, tapi setelah dipahami, JOIN membuka kemampuan luar biasa untuk mengambil data dari banyak tabel sekaligus.\n\nJenis-jenis JOIN:\n\n• INNER JOIN (atau JOIN saja) — mengembalikan hanya baris yang ada di KEDUA tabel. Baris yang tidak punya pasangan di tabel lain tidak muncul. Paling sering digunakan.\n\n• LEFT JOIN (atau LEFT OUTER JOIN) — mengembalikan SEMUA baris dari tabel kiri, dan baris yang cocok dari tabel kanan. Jika tidak ada pasangan di tabel kanan, kolom tabel kanan bernilai NULL. Berguna untuk 'tampilkan semua X beserta Y-nya jika ada'.\n\n• RIGHT JOIN (atau RIGHT OUTER JOIN) — kebalikan LEFT JOIN. Semua baris dari tabel kanan, yang cocok dari kiri. Jarang digunakan — biasanya bisa diubah menjadi LEFT JOIN dengan membalik urutan tabel.\n\n• FULL OUTER JOIN — semua baris dari kedua tabel, NULL di sisi yang tidak punya pasangan. MySQL tidak support ini secara native — bisa disimulasikan dengan UNION dari LEFT dan RIGHT JOIN.\n\n• SELF JOIN — tabel di-JOIN dengan dirinya sendiri. Berguna untuk tabel hierarkis (karyawan-atasan, kategori-subkategori).\n\n• CROSS JOIN — setiap baris tabel kiri dikombinasikan dengan setiap baris tabel kanan (Cartesian product). Jarang digunakan, bisa menghasilkan dataset sangat besar."
+        },
+        {
+          "tipe": "kode",
+          "judul": "INNER JOIN, LEFT JOIN, dan JOIN Kompleks",
+          "bahasa": "sql",
+          "kode": "-- ==========================================\n-- INNER JOIN: hanya yang ada di kedua tabel\n-- ==========================================\n\n-- Mahasiswa beserta nama jurusannya\nSELECT\n  m.nim,\n  m.nama           AS nama_mahasiswa,\n  m.ipk,\n  j.nama           AS nama_jurusan,\n  j.kode           AS kode_jurusan\nFROM mahasiswa m\nINNER JOIN jurusan j ON m.jurusan_id = j.id\nORDER BY m.ipk DESC;\n-- Mahasiswa yang belum punya jurusan (jurusan_id NULL) TIDAK muncul\n\n-- ==========================================\n-- LEFT JOIN: semua mahasiswa, jurusan jika ada\n-- ==========================================\n\nSELECT\n  m.nim,\n  m.nama,\n  COALESCE(j.nama, 'Belum Ditentukan') AS jurusan\nFROM mahasiswa m\nLEFT JOIN jurusan j ON m.jurusan_id = j.id;\n-- Mahasiswa tanpa jurusan tetap muncul, kolom jurusan = NULL\n\n-- Temukan mahasiswa yang BELUM punya jurusan\nSELECT m.nim, m.nama\nFROM mahasiswa m\nLEFT JOIN jurusan j ON m.jurusan_id = j.id\nWHERE j.id IS NULL;  -- filter hanya yang tidak punya pasangan\n\n-- ==========================================\n-- JOIN TIGA TABEL: mahasiswa + nilai + mata kuliah\n-- ==========================================\n\nSELECT\n  m.nim,\n  m.nama                  AS nama_mahasiswa,\n  mk.kode                 AS kode_matkul,\n  mk.nama                 AS nama_matkul,\n  mk.sks,\n  n.nilai_angka,\n  n.nilai_huruf,\n  n.semester\nFROM mahasiswa m\nINNER JOIN nilai n      ON m.id = n.mahasiswa_id\nINNER JOIN mata_kuliah mk ON n.matkul_id = mk.id\nWHERE m.nim = '2021001'\nORDER BY n.semester, mk.nama;\n\n-- ==========================================\n-- SELF JOIN: hierarki (dosen pembimbing)\n-- ==========================================\n\n-- Tabel karyawan dengan kolom manager_id (FK ke id karyawan lain)\nSELECT\n  k.nama       AS nama_karyawan,\n  m.nama       AS nama_manager\nFROM karyawan k\nLEFT JOIN karyawan m ON k.manager_id = m.id;  -- karyawan JOIN karyawan\n\n-- ==========================================\n-- Ringkasan nilai mahasiswa menggunakan JOIN\n-- ==========================================\n\nSELECT\n  m.nim,\n  m.nama,\n  j.nama                                AS jurusan,\n  COUNT(n.id)                           AS total_matkul,\n  SUM(mk.sks)                           AS total_sks,\n  ROUND(AVG(n.nilai_angka), 2)          AS rata_rata_nilai\nFROM mahasiswa m\nINNER JOIN jurusan j     ON m.jurusan_id = j.id\nLEFT JOIN nilai n        ON m.id = n.mahasiswa_id\nLEFT JOIN mata_kuliah mk ON n.matkul_id = mk.id\nGROUP BY m.id, m.nim, m.nama, j.nama\nHAVING total_matkul > 0\nORDER BY rata_rata_nilai DESC;",
+          "penjelasan": "Alias tabel (m, j, n, mk) sangat membantu ketika JOIN melibatkan banyak tabel — kamu tidak perlu mengetik nama tabel penuh setiap kali. Gunakan alias yang bermakna agar mudah dibaca."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Diagram Visual JOIN: INNER, LEFT, RIGHT, FULL",
+          "src": "/assets/backend/bab3/bab3_3.6.png",
+          "deskripsi_gambar": "Empat diagram Venn berdampingan menggunakan Table A dan Table B. INNER JOIN menyorot irisan kedua tabel. LEFT JOIN menyorot seluruh Table A dan irisan. RIGHT JOIN menyorot seluruh Table B dan irisan. FULL JOIN menyorot seluruh area kedua tabel.",
+          "alt": "Diagram Venn empat jenis SQL JOIN: INNER, LEFT, RIGHT, dan FULL OUTER JOIN"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: JOIN seperti Mencocokkan Dua Daftar",
+          "isi": "INNER JOIN seperti mencari nama yang ada di KEDUA daftar absensi — hanya yang hadir di kelas DAN sudah bayar SPP. LEFT JOIN seperti mengambil semua nama dari daftar absensi kelas, lalu mencocokkan dengan daftar SPP — yang belum bayar tetap muncul dengan kolom SPP kosong. RIGHT JOIN adalah kebalikannya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "JOIN Bisa Sangat Lambat Tanpa Index",
+          "isi": "JOIN pada kolom yang tidak memiliki index bisa menjadi operasi yang sangat mahal. Database harus membandingkan setiap baris di tabel kiri dengan setiap baris di tabel kanan — O(n×m) operasi. Untuk dua tabel masing-masing 1 juta baris, itu 1 triliun perbandingan! Selalu pastikan kolom yang digunakan sebagai kondisi JOIN (biasanya FK) sudah punya index. MySQL otomatis membuat index untuk Primary Key tapi tidak untuk Foreign Key — kamu harus membuatnya secara eksplisit."
+        }
+      ]
+    },
+
+    {
+      "id": "3.7",
+      "judul": "Agregasi — COUNT, SUM, AVG, GROUP BY",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Fungsi Agregasi dan Pengelompokan",
+          "isi": "Fungsi agregasi melakukan kalkulasi pada sekumpulan baris dan mengembalikan satu nilai. Ini adalah fondasi dari semua laporan dan statistik dalam database — berapa total penjualan, berapa rata-rata IPK, siapa yang paling banyak membeli, dll.\n\nFungsi agregasi utama:\n• COUNT(*) — hitung jumlah baris (termasuk NULL)\n• COUNT(kolom) — hitung baris di mana kolom TIDAK NULL\n• COUNT(DISTINCT kolom) — hitung nilai unik di kolom\n• SUM(kolom) — jumlahkan semua nilai (mengabaikan NULL)\n• AVG(kolom) — rata-rata nilai (mengabaikan NULL)\n• MIN(kolom) — nilai terkecil\n• MAX(kolom) — nilai terbesar\n• GROUP_CONCAT(kolom) — gabungkan nilai jadi satu string (MySQL)\n\nGROUP BY mengelompokkan baris yang memiliki nilai yang sama di kolom tertentu, sehingga fungsi agregasi bisa diterapkan ke setiap kelompok secara terpisah.\n\nAturan penting GROUP BY:\n• Kolom yang ada di SELECT (bukan fungsi agregasi) HARUS ada di GROUP BY\n• Urutan klausa: SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT\n\nHAVING vs WHERE:\n• WHERE memfilter baris SEBELUM pengelompokan — tidak bisa menggunakan fungsi agregasi\n• HAVING memfilter SETELAH pengelompokan — bisa menggunakan fungsi agregasi\n• Gunakan WHERE untuk filter baris individual, HAVING untuk filter hasil agregasi"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Fungsi Agregasi dan GROUP BY",
+          "bahasa": "sql",
+          "kode": "-- ==========================================\n-- FUNGSI AGREGASI DASAR\n-- ==========================================\n\n-- Statistik dasar mahasiswa\nSELECT\n  COUNT(*)                    AS total_mahasiswa,\n  COUNT(no_telepon)           AS yang_punya_telepon,  -- hanya non-NULL\n  COUNT(DISTINCT jurusan_id)  AS total_jurusan,\n  ROUND(AVG(ipk), 2)          AS rata_ipk,\n  MAX(ipk)                    AS ipk_tertinggi,\n  MIN(ipk)                    AS ipk_terendah\nFROM mahasiswa\nWHERE is_aktif = TRUE;\n\n-- ==========================================\n-- GROUP BY: statistik per kelompok\n-- ==========================================\n\n-- Jumlah mahasiswa per jurusan\nSELECT\n  j.nama       AS jurusan,\n  COUNT(m.id)  AS total_mahasiswa,\n  ROUND(AVG(m.ipk), 2) AS rata_ipk\nFROM mahasiswa m\nINNER JOIN jurusan j ON m.jurusan_id = j.id\nGROUP BY j.id, j.nama\nORDER BY total_mahasiswa DESC;\n\n-- Distribusi nilai per mata kuliah\nSELECT\n  mk.nama              AS mata_kuliah,\n  COUNT(n.id)          AS total_peserta,\n  ROUND(AVG(n.nilai_angka), 2) AS rata_nilai,\n  MAX(n.nilai_angka)   AS nilai_max,\n  MIN(n.nilai_angka)   AS nilai_min,\n  SUM(CASE WHEN n.nilai_huruf = 'A' THEN 1 ELSE 0 END) AS jumlah_A,\n  SUM(CASE WHEN n.nilai_huruf = 'B' THEN 1 ELSE 0 END) AS jumlah_B\nFROM nilai n\nINNER JOIN mata_kuliah mk ON n.matkul_id = mk.id\nGROUP BY n.matkul_id, mk.nama\nORDER BY rata_nilai DESC;\n\n-- ==========================================\n-- HAVING: filter setelah GROUP BY\n-- ==========================================\n\n-- Jurusan dengan rata-rata IPK di atas 3.5\nSELECT\n  j.nama              AS jurusan,\n  ROUND(AVG(m.ipk), 2) AS rata_ipk\nFROM mahasiswa m\nINNER JOIN jurusan j ON m.jurusan_id = j.id\nGROUP BY j.id, j.nama\nHAVING AVG(m.ipk) > 3.50   -- HAVING pakai fungsi agregasi\nORDER BY rata_ipk DESC;\n\n-- WHERE vs HAVING — perbedaan yang penting:\nSELECT jurusan_id, COUNT(*) AS total\nFROM mahasiswa\nWHERE is_aktif = TRUE     -- WHERE filter SEBELUM group: hanya hitung yang aktif\nGROUP BY jurusan_id\nHAVING COUNT(*) >= 5;     -- HAVING filter SETELAH group: hanya jurusan dengan >= 5 mahasiswa aktif\n\n-- ==========================================\n-- ROLLUP: subtotal per kelompok\n-- ==========================================\nSELECT\n  j.nama       AS jurusan,\n  jk.label     AS jenis_kelamin,\n  COUNT(*)     AS total\nFROM mahasiswa m\nJOIN jurusan j ON m.jurusan_id = j.id\nCROSS JOIN (SELECT 'L' AS label UNION SELECT 'P') jk\nWHERE m.jenis_kelamin = jk.label\nGROUP BY j.nama, jk.label WITH ROLLUP;  -- tambahkan baris subtotal",
+          "penjelasan": "CASE WHEN di dalam SUM adalah teknik 'conditional aggregation' yang sangat berguna — menghitung berapa baris yang memenuhi kondisi tertentu tanpa perlu GROUP BY tambahan."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: GROUP BY seperti Pivot Table di Excel",
+          "isi": "GROUP BY bekerja persis seperti Pivot Table di Excel. Kamu ambil data mentah ribuan baris, lalu 'drag' satu kolom ke Row Labels (GROUP BY), dan 'drag' kolom lain ke Values (fungsi agregasi). Excel — atau database — otomatis mengelompokkan dan menghitung. Bedanya, SQL jauh lebih cepat dan bisa menangani miliaran baris yang Excel tidak sanggup."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Window Functions: Agregasi yang Lebih Powerful",
+          "isi": "SQL modern memiliki Window Functions — fungsi agregasi yang bekerja 'di atas jendela' baris tanpa menggulung (collapse) semua baris menjadi satu seperti GROUP BY. Contoh: RANK() OVER (PARTITION BY jurusan_id ORDER BY ipk DESC) memberikan peringkat IPK per jurusan untuk setiap baris mahasiswa. Ini jauh lebih powerful dari GROUP BY untuk analitik kompleks. Didukung oleh MySQL 8+, PostgreSQL, SQL Server, dan SQLite."
+        }
+      ]
+    },
+
+    {
+      "id": "3.8",
+      "judul": "Relasi Antar Tabel & Foreign Key",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Tiga Jenis Relasi Database",
+          "isi": "Relasi antar tabel adalah inti dari database relasional. Ada tiga jenis relasi yang perlu dipahami — masing-masing diimplementasikan dengan cara yang berbeda:\n\n1. One-to-One (1:1) — satu baris di tabel A berhubungan dengan tepat satu baris di tabel B. Contoh: satu mahasiswa punya satu kartu mahasiswa, satu user punya satu profil detail. Implementasi: tambahkan UNIQUE FOREIGN KEY di salah satu tabel.\n\n2. One-to-Many (1:N) — satu baris di tabel A berhubungan dengan banyak baris di tabel B, tapi satu baris di B hanya terhubung ke satu baris di A. Ini adalah relasi paling umum. Contoh: satu jurusan punya banyak mahasiswa, satu mahasiswa hanya di satu jurusan. Implementasi: FOREIGN KEY di tabel 'banyak' (mahasiswa.jurusan_id → jurusan.id).\n\n3. Many-to-Many (M:N) — banyak baris di A berhubungan dengan banyak baris di B. Contoh: satu mahasiswa bisa mengambil banyak mata kuliah, satu mata kuliah bisa diambil banyak mahasiswa. Implementasi: butuh tabel penghubung (junction table / pivot table) yang memiliki FK ke kedua tabel.\n\nNormalisasi adalah proses mengorganisir database untuk mengurangi redundansi dan meningkatkan konsistensi. Ada beberapa normal form (NF) tapi yang paling penting adalah:\n• 1NF: setiap kolom mengandung nilai atomic (tidak ada list dalam satu sel)\n• 2NF: tidak ada partial dependency pada composite PK\n• 3NF: tidak ada transitive dependency (kolom non-key bergantung pada kolom non-key lain)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Implementasi Relasi dan Junction Table",
+          "bahasa": "sql",
+          "kode": "-- ==========================================\n-- ONE-TO-MANY: jurusan ke mahasiswa\n-- ==========================================\nCREATE TABLE jurusan (\n  id   INT PRIMARY KEY AUTO_INCREMENT,\n  nama VARCHAR(100) NOT NULL\n);\n\nCREATE TABLE mahasiswa (\n  id         INT PRIMARY KEY AUTO_INCREMENT,\n  nama       VARCHAR(100) NOT NULL,\n  jurusan_id INT NOT NULL,\n  FOREIGN KEY (jurusan_id) REFERENCES jurusan(id)\n    ON DELETE RESTRICT  -- tidak bisa hapus jurusan jika masih ada mahasiswanya\n    ON UPDATE CASCADE   -- jika id jurusan berubah, update otomatis\n);\n\n-- ==========================================\n-- ONE-TO-ONE: mahasiswa ke detail_mahasiswa\n-- ==========================================\nCREATE TABLE detail_mahasiswa (\n  mahasiswa_id  INT PRIMARY KEY,  -- PK sekaligus FK = One-to-One\n  alamat        TEXT,\n  nama_orang_tua VARCHAR(100),\n  no_darurat    VARCHAR(15),\n\n  FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa(id)\n    ON DELETE CASCADE  -- hapus mahasiswa → hapus detail-nya juga\n);\n\n-- ==========================================\n-- MANY-TO-MANY: mahasiswa dan mata_kuliah\n-- via junction table 'nilai'\n-- ==========================================\nCREATE TABLE mata_kuliah (\n  id   INT PRIMARY KEY AUTO_INCREMENT,\n  kode VARCHAR(10) NOT NULL UNIQUE,\n  nama VARCHAR(100) NOT NULL,\n  sks  TINYINT NOT NULL\n);\n\n-- Junction table: satu baris = satu mahasiswa mengambil satu matkul\nCREATE TABLE krs ( -- Kartu Rencana Studi\n  id            INT  PRIMARY KEY AUTO_INCREMENT,\n  mahasiswa_id  INT  NOT NULL,\n  matkul_id     INT  NOT NULL,\n  semester      VARCHAR(7) NOT NULL,  -- '2024/1'\n  nilai_angka   DECIMAL(5,2),\n  nilai_huruf   CHAR(2),\n  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n\n  FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa(id) ON DELETE CASCADE,\n  FOREIGN KEY (matkul_id)    REFERENCES mata_kuliah(id),\n  UNIQUE KEY uk_krs (mahasiswa_id, matkul_id, semester)  -- satu matkul sekali per semester\n);\n\n-- Query: ambil semua matkul yang diambil mahasiswa tertentu di semester ini\nSELECT\n  mk.kode,\n  mk.nama AS mata_kuliah,\n  mk.sks,\n  krs.nilai_huruf\nFROM krs\nINNER JOIN mata_kuliah mk ON krs.matkul_id = mk.id\nWHERE krs.mahasiswa_id = 5\n  AND krs.semester = '2024/1';\n\n-- Hitung total SKS per mahasiswa di semester ini\nSELECT\n  m.nim,\n  m.nama,\n  COUNT(krs.id)   AS total_matkul,\n  SUM(mk.sks)     AS total_sks\nFROM mahasiswa m\nINNER JOIN krs          ON m.id = krs.mahasiswa_id\nINNER JOIN mata_kuliah mk ON krs.matkul_id = mk.id\nWHERE krs.semester = '2024/1'\nGROUP BY m.id, m.nim, m.nama;",
+          "penjelasan": "ON DELETE CASCADE adalah pilihan yang nyaman tapi harus digunakan hati-hati. Hapus satu mahasiswa → otomatis hapus semua data KRS-nya. Kadang lebih aman menggunakan soft delete (kolom deleted_at) daripada hard delete dengan CASCADE."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Tiga Jenis Relasi: 1:1, 1:N, M:N",
+          "src": "/assets/backend/bab3/bab3_3.8.png",
+          "deskripsi_gambar": "Diagram tiga jenis relasi database. Bagian atas menunjukkan One-to-One Relationship, bagian tengah One-to-Many Relationship, dan bagian bawah Many-to-Many Relationship. Setiap relasi divisualisasikan menggunakan dua tabel dengan simbol kardinalitas pada garis penghubung.",
+          "alt": "Diagram tiga jenis relasi database: one-to-one, one-to-many, dan many-to-many"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Denormalization: Kadang Redundansi Itu Baik",
+          "isi": "Normalisasi mengurangi redundansi tapi meningkatkan kompleksitas query (banyak JOIN). Denormalization adalah kebalikannya — sengaja menyimpan data redundan untuk mempercepat baca data. Contoh: menyimpan nama jurusan langsung di tabel mahasiswa meski sudah ada tabel jurusan — query mahasiswa tidak perlu JOIN lagi. Tradeoff: data bisa tidak konsisten jika nama jurusan berubah. Di sistem OLAP (analitik) dan data warehouse, denormalization umum digunakan untuk performa query yang sangat cepat."
+        }
+      ]
+    },
+
+    {
+      "id": "3.9",
+      "judul": "Menggunakan MySQL/PostgreSQL dengan Node.js",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Menghubungkan Node.js ke Database",
+          "isi": "Setelah menguasai SQL secara teoritis, saatnya menghubungkan Node.js ke database nyata. Ada dua pendekatan:\n\nPendekatan 1 — Database Driver langsung (low-level):\nMenggunakan library driver seperti mysql2 (untuk MySQL) atau pg (untuk PostgreSQL). Kamu menulis SQL secara manual dan driver mengirimkannya ke database. Memberikan kontrol penuh tapi lebih verbose.\n\nPendekatan 2 — Query Builder atau ORM (high-level):\nQuery Builder seperti Knex.js memungkinkan menulis query dengan JavaScript method yang diubah menjadi SQL. ORM (Object-Relational Mapper) seperti Sequelize memetakan tabel ke class/model JavaScript dan menyembunyikan SQL sepenuhnya.\n\nKapan pilih masing-masing:\n• Driver langsung: query kompleks, performa kritis, developer sudah mahir SQL\n• Query builder: lebih fleksibel dari ORM, tetap bisa kontrol SQL yang dihasilkan\n• ORM: development cepat, tim yang lebih nyaman dengan JavaScript daripada SQL\n\nKonsep penting dalam koneksi database:\n• Connection Pool — kumpulan koneksi database yang sudah terbuka dan siap digunakan. Membuka koneksi baru untuk setiap query sangat mahal (100-300ms). Pool menyimpan beberapa koneksi aktif yang bisa digunakan bergantian.\n• Prepared Statement — query dengan placeholder (?  atau $1) yang dicompile sekali dan bisa dieksekusi berkali-kali dengan nilai berbeda. Lebih cepat dan AMAN dari SQL Injection.\n• Transaction — sekelompok query yang harus semua berhasil atau semua di-rollback jika salah satu gagal."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Koneksi MySQL dengan mysql2 dan Connection Pool",
+          "bahasa": "javascript",
+          "kode": "// npm install mysql2 dotenv\nconst mysql = require('mysql2/promise'); // versi Promise\nrequire('dotenv').config();\n\n// ==========================================\n// SETUP CONNECTION POOL\n// ==========================================\nconst pool = mysql.createPool({\n  host:               process.env.DB_HOST     || 'localhost',\n  port:               process.env.DB_PORT     || 3306,\n  user:               process.env.DB_USER     || 'root',\n  password:           process.env.DB_PASSWORD,\n  database:           process.env.DB_NAME     || 'web_belajar',\n  waitForConnections: true,\n  connectionLimit:    10,   // maksimal 10 koneksi bersamaan\n  queueLimit:         0,    // antrian tidak terbatas\n  charset:            'utf8mb4'\n});\n\n// Test koneksi saat startup\nasync function testKoneksi() {\n  try {\n    const conn = await pool.getConnection();\n    console.log('✅ Database terhubung!');\n    conn.release(); // kembalikan koneksi ke pool\n  } catch (err) {\n    console.error('❌ Gagal terhubung ke database:', err.message);\n    process.exit(1);\n  }\n}\ntestKoneksi();\n\n// ==========================================\n// QUERY DASAR — Selalu gunakan ? untuk nilai!\n// ==========================================\n\n// SELECT dengan prepared statement\nasync function getMahasiswaById(id) {\n  const [rows] = await pool.execute(\n    'SELECT m.*, j.nama AS jurusan FROM mahasiswa m JOIN jurusan j ON m.jurusan_id = j.id WHERE m.id = ?',\n    [id]  // nilai dikirim terpisah, AMAN dari SQL Injection\n  );\n  return rows[0] || null; // kembalikan satu object atau null\n}\n\n// SELECT dengan filter dinamis\nasync function getMahasiswaByFilter({ jurusan_id, is_aktif, search, limit = 10, offset = 0 }) {\n  let sql = 'SELECT m.nim, m.nama, m.ipk, j.nama AS jurusan FROM mahasiswa m JOIN jurusan j ON m.jurusan_id = j.id WHERE 1=1';\n  const params = [];\n\n  if (jurusan_id) { sql += ' AND m.jurusan_id = ?'; params.push(jurusan_id); }\n  if (is_aktif !== undefined) { sql += ' AND m.is_aktif = ?'; params.push(is_aktif); }\n  if (search) { sql += ' AND m.nama LIKE ?'; params.push(`%${search}%`); }\n\n  sql += ' ORDER BY m.nama LIMIT ? OFFSET ?';\n  params.push(limit, offset);\n\n  const [rows] = await pool.execute(sql, params);\n  return rows;\n}\n\n// INSERT\nasync function createMahasiswa({ nim, nama, email, jurusan_id }) {\n  const [result] = await pool.execute(\n    'INSERT INTO mahasiswa (nim, nama, email, jurusan_id) VALUES (?, ?, ?, ?)',\n    [nim, nama, email, jurusan_id]\n  );\n  return result.insertId; // ID dari baris yang baru dibuat\n}\n\n// ==========================================\n// TRANSAKSI — semua atau tidak sama sekali\n// ==========================================\nasync function daftarMahasiswaDanKRS(dataMahasiswa, dataKRS) {\n  const conn = await pool.getConnection();\n  try {\n    await conn.beginTransaction();\n\n    // Operasi 1: buat mahasiswa baru\n    const [result] = await conn.execute(\n      'INSERT INTO mahasiswa (nim, nama, email, jurusan_id) VALUES (?, ?, ?, ?)',\n      [dataMahasiswa.nim, dataMahasiswa.nama, dataMahasiswa.email, dataMahasiswa.jurusan_id]\n    );\n    const mahasiswaId = result.insertId;\n\n    // Operasi 2: daftarkan ke KRS\n    for (const matkul of dataKRS) {\n      await conn.execute(\n        'INSERT INTO krs (mahasiswa_id, matkul_id, semester) VALUES (?, ?, ?)',\n        [mahasiswaId, matkul.id, matkul.semester]\n      );\n    }\n\n    await conn.commit(); // semua berhasil — simpan permanen\n    return mahasiswaId;\n\n  } catch (err) {\n    await conn.rollback(); // ada yang gagal — batalkan semua\n    throw err;\n  } finally {\n    conn.release(); // kembalikan koneksi ke pool\n  }\n}",
+          "penjelasan": "SELALU gunakan ? sebagai placeholder (prepared statement), jangan pernah string concatenation seperti 'WHERE id = ' + id. Pool connection harus selalu di-release() setelah selesai — terutama dalam blok try/catch/finally agar koneksi tidak bocor."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "N+1 Query Problem",
+          "isi": "Salah satu masalah performa paling umum dengan database: N+1 Query. Contoh: untuk menampilkan 50 mahasiswa beserta jurusannya, developer melakukan 1 query untuk ambil semua mahasiswa, lalu 50 query terpisah untuk ambil jurusan setiap mahasiswa = 51 query total. Solusi: gunakan JOIN dalam satu query atau eager loading di ORM. Tanpa disadari, N+1 bisa membuat halaman yang tampil normal di dev (10 data) menjadi sangat lambat di production (ribuan data)."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Connection Pool seperti Armada Taksi",
+          "isi": "Membuka koneksi database baru setiap query seperti memanggil taksi baru dari garasi setiap ada penumpang — sangat lambat. Connection pool seperti armada taksi yang selalu standby di terminal — ada 10 taksi siap. Penumpang (query) langsung dapat taksi (koneksi). Setelah pengantar, taksi kembali ke terminal (conn.release()) untuk siap mengangkut penumpang berikutnya."
+        }
+      ]
+    },
+
+    {
+      "id": "3.10",
+      "judul": "ORM Dasar dengan Sequelize",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "ORM: Bicara dengan Database dalam Bahasa JavaScript",
+          "isi": "ORM (Object-Relational Mapper) adalah lapisan abstraksi yang memetakan tabel database ke class/model JavaScript dan baris tabel ke object JavaScript. Dengan ORM, kamu bisa berinteraksi dengan database menggunakan JavaScript murni tanpa harus menulis SQL secara manual untuk operasi-operasi umum.\n\nSequelize adalah ORM Node.js paling populer yang mendukung MySQL, PostgreSQL, SQLite, dan Microsoft SQL Server sekaligus.\n\nKeuntungan ORM:\n• Produktivitas — tidak perlu menulis SQL berulang untuk operasi CRUD standar\n• Portabilitas — ganti database hanya dengan ubah konfigurasi (secara teori)\n• Migration system — pengelolaan perubahan schema yang terstruktur\n• Model validation — validasi data sebelum menyentuh database\n• Type safety — lebih aman dengan TypeScript\n\nKekurangan ORM:\n• Performance overhead — query yang dihasilkan ORM tidak selalu optimal\n• Learning curve — harus mempelajari API ORM di atas SQL\n• Black box — query yang dihasilkan kadang tidak terduga\n• Kompleks query sulit — JOIN dan agregasi kompleks lebih mudah di SQL raw\n\nFitur utama Sequelize:\n• Model Definition — mendefinisikan tabel sebagai class\n• CRUD Operasi — findAll, findOne, create, update, destroy\n• Associations — hasOne, hasMany, belongsTo, belongsToMany\n• Query dengan where, order, limit, offset\n• Transactions\n• Migrations dan Seeders"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Sequelize: Model, Asosiasi, dan Query",
+          "bahasa": "javascript",
+          "kode": "// npm install sequelize mysql2\nconst { Sequelize, DataTypes, Op } = require('sequelize');\n\n// ==========================================\n// SETUP KONEKSI\n// ==========================================\nconst sequelize = new Sequelize(\n  process.env.DB_NAME,\n  process.env.DB_USER,\n  process.env.DB_PASSWORD,\n  {\n    host:    process.env.DB_HOST || 'localhost',\n    dialect: 'mysql',\n    logging: process.env.NODE_ENV === 'development' ? console.log : false,\n    pool: { max: 10, min: 0, acquire: 30000, idle: 10000 }\n  }\n);\n\n// ==========================================\n// DEFINISI MODEL\n// ==========================================\nconst Jurusan = sequelize.define('Jurusan', {\n  id:   { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },\n  kode: { type: DataTypes.STRING(5), allowNull: false, unique: true },\n  nama: { type: DataTypes.STRING(100), allowNull: false }\n}, { tableName: 'jurusan', timestamps: false });\n\nconst Mahasiswa = sequelize.define('Mahasiswa', {\n  id:    { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },\n  nim:   { type: DataTypes.STRING(10), allowNull: false, unique: true },\n  nama:  { type: DataTypes.STRING(100), allowNull: false },\n  email: { type: DataTypes.STRING(150), allowNull: false, unique: true,\n           validate: { isEmail: true } },  // validasi bawaan Sequelize\n  ipk:   { type: DataTypes.DECIMAL(3, 2), defaultValue: 0.00,\n           validate: { min: 0, max: 4 } },\n  isAktif: { type: DataTypes.BOOLEAN, defaultValue: true, field: 'is_aktif' }\n}, { tableName: 'mahasiswa', underscored: true });\n\n// ==========================================\n// ASOSIASI\n// ==========================================\nJurusan.hasMany(Mahasiswa, { foreignKey: 'jurusan_id', as: 'mahasiswa' });\nMahasiswa.belongsTo(Jurusan, { foreignKey: 'jurusan_id', as: 'jurusan' });\n\n// ==========================================\n// CRUD DENGAN SEQUELIZE\n// ==========================================\n\n// findAll: ambil semua dengan filter\nasync function getDaftarMahasiswa({ jurusan_id, search, halaman = 1, limit = 10 }) {\n  const offset = (halaman - 1) * limit;\n\n  const { count, rows } = await Mahasiswa.findAndCountAll({\n    where: {\n      isAktif: true,\n      ...(jurusan_id && { jurusan_id }),\n      ...(search && { nama: { [Op.like]: `%${search}%` } })\n    },\n    include: [{ model: Jurusan, as: 'jurusan', attributes: ['kode', 'nama'] }],\n    order: [['nama', 'ASC']],\n    limit,\n    offset\n  });\n\n  return {\n    data: rows,\n    pagination: { total: count, halaman, limit, totalHalaman: Math.ceil(count / limit) }\n  };\n}\n\n// findOne: cari satu\nasync function getMahasiswaByNim(nim) {\n  return await Mahasiswa.findOne({\n    where: { nim },\n    include: [{ model: Jurusan, as: 'jurusan' }]\n  });\n}\n\n// create: buat baru\nasync function buatMahasiswa(data) {\n  return await Mahasiswa.create(data);\n  // Sequelize otomatis validasi berdasarkan schema model\n}\n\n// update: ubah\nasync function updateIPK(nim, ipkBaru) {\n  const [jumlahTerpengaruh] = await Mahasiswa.update(\n    { ipk: ipkBaru },\n    { where: { nim } }\n  );\n  return jumlahTerpengaruh > 0;\n}\n\n// destroy: hapus\nasync function hapusMahasiswa(id) {\n  const jumlah = await Mahasiswa.destroy({ where: { id } });\n  return jumlah > 0;\n}",
+          "penjelasan": "Op (Operator) dari Sequelize digunakan untuk kondisi kompleks: Op.like, Op.gt (greater than), Op.between, Op.in, Op.or, dll. Ini adalah cara Sequelize yang type-safe untuk WHERE clause yang tidak bisa ditulis dengan object biasa."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Arsitektur ORM: Object ↔ Database",
+          "src": "/assets/backend/bab3/bab3_3.10.png",
+          "deskripsi_gambar": "Diagram Object Relational Mapping (ORM). Berbagai object dari bahasa pemrograman berada di sisi kiri, database relasional di sisi kanan, dan ORM abstraction layer di tengah sebagai penerjemah. Panah dua arah menunjukkan proses object mapping dan konversi SQL statement antara aplikasi dan database.",
+          "alt": "Diagram ORM sebagai lapisan abstraksi antara object aplikasi dan database relasional"
+        },  
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: ORM seperti Penerjemah",
+          "isi": "ORM seperti penerjemah profesional di konferensi internasional. Kamu berbicara dalam bahasa yang kamu kuasai (JavaScript), penerjemah (ORM/Sequelize) mengubahnya menjadi bahasa yang dimengerti database (SQL), lalu mengubah jawaban database kembali ke bahasa kamu (JavaScript object). Nyaman tapi ada biaya: penerjemahan tidak selalu sempurna dan butuh waktu tambahan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Prisma: ORM Generasi Baru",
+          "isi": "Prisma adalah ORM Node.js modern yang semakin populer sebagai alternatif Sequelize. Prisma menggunakan file schema .prisma tersendiri (bukan JavaScript) untuk mendefinisikan model, otomatis generate TypeScript types, dan memiliki Prisma Studio — GUI database browser bawaan. Di Stack Overflow Developer Survey 2023, Prisma sudah masuk daftar ORM paling banyak dicintai developer Node.js, menyaingi Sequelize yang sudah lebih lama."
+        }
+      ]
+    }
+
+  ]
+}

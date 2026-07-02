@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 2,
+    "judul_bab": "Styling dengan CSS",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "2.1",
+      "pertanyaan": "Dari tiga cara menulis CSS (inline, internal, eksternal), manakah yang paling direkomendasikan untuk proyek nyata dan mengapa?",
+      "opsi": {
+        "A": "Inline CSS, karena paling cepat ditulis langsung di elemen",
+        "B": "Internal CSS, karena semua kode ada di satu file HTML",
+        "C": "Eksternal CSS, karena satu file .css bisa digunakan oleh banyak halaman sekaligus",
+        "D": "Ketiganya setara, tidak ada yang lebih direkomendasikan"
+      },
+      "jawaban": "C",
+      "penjelasan": "Eksternal CSS adalah cara terbaik karena satu file style.css bisa mengatur tampilan banyak halaman sekaligus. Jika perlu mengubah warna brand misalnya, cukup ubah di satu file dan seluruh website ikut berubah. Inline CSS menyulitkan pemeliharaan dan tidak bisa di-reuse."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "2.1",
+      "pertanyaan": "Perhatikan aturan CSS berikut:\n\nh2 {\n  color: navy;\n  font-size: 24px;\n  margin-bottom: 16px;\n}\n\nDalam terminologi CSS, bagian 'color: navy;' disebut...",
+      "opsi": {
+        "A": "Selector",
+        "B": "Declaration",
+        "C": "Rule",
+        "D": "Combinator"
+      },
+      "jawaban": "B",
+      "penjelasan": "Satu pasangan property: value yang diakhiri titik koma disebut declaration. Keseluruhan blok (h2 { ... }) disebut rule atau ruleset. h2 adalah selector, dan { color: navy; font-size: 24px; margin-bottom: 16px; } adalah declaration block."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "2.2",
+      "pertanyaan": "Terdapat konflik CSS pada sebuah elemen <p>:\n\np { color: red; }\n.intro { color: blue; }\n#hero p { color: green; }\n\nJika elemen tersebut adalah <p class='intro'> di dalam <div id='hero'>, warna apa yang akan tampil?",
+      "opsi": {
+        "A": "Merah, karena ditulis pertama",
+        "B": "Biru, karena class selector lebih spesifik dari element selector",
+        "C": "Hijau, karena selector ID + element (#hero p) memiliki spesifisitas tertinggi",
+        "D": "Warna default browser, karena ada konflik"
+      },
+      "jawaban": "C",
+      "penjelasan": "Spesifisitas '#hero p' adalah 1 ID + 1 element = (1,0,1). Spesifisitas '.intro' adalah 1 class = (0,1,0). Spesifisitas 'p' adalah 1 element = (0,0,1). Selector dengan ID selalu mengalahkan class, dan class selalu mengalahkan element selector."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "2.3",
+      "pertanyaan": "Sebuah elemen memiliki CSS: width: 200px; padding: 20px; border: 5px solid black;. Berapa total lebar elemen jika menggunakan box-sizing default (content-box)?",
+      "opsi": {
+        "A": "200px",
+        "B": "220px",
+        "C": "245px",
+        "D": "250px"
+      },
+      "jawaban": "D",
+      "penjelasan": "Dengan box-sizing: content-box (default), total lebar = width + padding kiri + padding kanan + border kiri + border kanan = 200 + 20 + 20 + 5 + 5 = 250px. Inilah mengapa sebagian besar developer menggunakan box-sizing: border-box secara global agar width yang ditulis adalah total lebar sesungguhnya."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "2.4",
+      "pertanyaan": "Mengapa penggunaan unit 'rem' lebih disarankan daripada 'px' untuk ukuran font?",
+      "opsi": {
+        "A": "Karena rem menghasilkan file CSS yang lebih kecil",
+        "B": "Karena rem menghormati preferensi ukuran teks yang diatur pengguna di browser mereka, sehingga lebih aksesibel",
+        "C": "Karena rem lebih cepat diproses oleh browser",
+        "D": "Karena rem adalah satu-satunya unit yang didukung semua browser modern"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pengguna, terutama yang memiliki gangguan penglihatan, sering mengatur ukuran teks default browser mereka menjadi lebih besar. Dengan rem, ukuran font website ikut menyesuaikan secara proporsional. Dengan px, pengaturan pengguna tersebut diabaikan sepenuhnya."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "2.5",
+      "pertanyaan": "Pada sebuah flex container dengan flex-direction: row, properti manakah yang mengatur perataan item secara VERTIKAL?",
+      "opsi": {
+        "A": "justify-content",
+        "B": "align-content",
+        "C": "align-items",
+        "D": "flex-wrap"
+      },
+      "jawaban": "C",
+      "penjelasan": "Ketika flex-direction: row, main axis adalah horizontal dan cross axis adalah vertikal. justify-content mengatur perataan di main axis (horizontal), sedangkan align-items mengatur perataan di cross axis (vertikal). Ingat: justify = main axis, align = cross axis."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "2.6",
+      "pertanyaan": "Manakah baris CSS Grid yang membuat kolom responsif secara otomatis — sebanyak mungkin kolom dengan lebar minimal 250px — tanpa perlu media query?",
+      "opsi": {
+        "A": "grid-template-columns: repeat(3, 1fr);",
+        "B": "grid-template-columns: auto auto auto;",
+        "C": "grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));",
+        "D": "grid-template-columns: 250px 250px 250px;"
+      },
+      "jawaban": "C",
+      "penjelasan": "repeat(auto-fit, minmax(250px, 1fr)) adalah kombinasi yang powerful: auto-fit membuat browser menentukan sendiri jumlah kolom, minmax(250px, 1fr) memastikan tiap kolom minimal 250px dan bisa tumbuh mengisi ruang tersisa. Hasilnya: di layar lebar ada banyak kolom, di layar sempit kolom menyusut menjadi satu — tanpa satu pun media query."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "2.7",
+      "pertanyaan": "Seorang developer ingin membuat badge notifikasi merah di pojok kanan atas sebuah kartu. Kombinasi position mana yang paling tepat?",
+      "opsi": {
+        "A": "Badge: position: fixed; kartu tidak perlu position khusus",
+        "B": "Badge: position: absolute; kartu: position: relative",
+        "C": "Badge: position: sticky; kartu: position: relative",
+        "D": "Badge: position: relative; kartu: position: absolute"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pola klasik: beri position: relative pada parent (kartu) agar menjadi anchor. Lalu beri position: absolute pada child (badge) agar diposisikan relatif terhadap kartu, bukan halaman. Tanpa position: relative pada kartu, badge akan diposisikan relatif terhadap ancestor yang punya position, yang bisa saja adalah seluruh halaman."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "2.8",
+      "pertanyaan": "Apa perbedaan pendekatan 'mobile-first' dan 'desktop-first' dalam menulis media query CSS?",
+      "opsi": {
+        "A": "Mobile-first menggunakan max-width di media query, desktop-first menggunakan min-width",
+        "B": "Mobile-first menulis CSS default untuk mobile lalu menambah aturan dengan min-width; desktop-first sebaliknya dengan max-width",
+        "C": "Keduanya sama saja, hanya perbedaan preferensi pribadi developer",
+        "D": "Mobile-first hanya untuk aplikasi mobile, desktop-first untuk website biasa"
+      },
+      "jawaban": "B",
+      "penjelasan": "Mobile-first: tulis CSS default untuk layar terkecil dulu, lalu tambahkan @media (min-width: ...) untuk layar lebih besar. Desktop-first: tulis untuk desktop dulu, lalu override dengan @media (max-width: ...) untuk layar lebih kecil. Mobile-first lebih direkomendasikan karena sejalan dengan Google mobile-first indexing dan menghasilkan CSS yang lebih efisien."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "2.9",
+      "pertanyaan": "Perhatikan kode CSS berikut:\n\n:root {\n  --warna-brand: #3498db;\n}\n.tombol {\n  background: var(--warna-brand);\n}\n\nApa keuntungan utama dari pendekatan CSS Custom Properties (variabel) ini dibandingkan langsung menulis #3498db di setiap elemen?",
+      "opsi": {
+        "A": "Variabel CSS membuat halaman web menjadi lebih cepat loadingnya",
+        "B": "Jika warna brand perlu diubah, cukup ubah satu baris di :root dan semua elemen yang menggunakannya ikut berubah otomatis",
+        "C": "Variabel CSS hanya bisa digunakan untuk warna saja",
+        "D": "Variabel CSS berfungsi sama seperti class CSS, hanya sintaksnya berbeda"
+      },
+      "jawaban": "B",
+      "penjelasan": "Keuntungan utama variabel CSS adalah kemudahan pemeliharaan dan konsistensi. Definisikan sekali di :root, pakai di mana-mana dengan var(). Saat perlu mengubah nilai (misal rebranding warna), cukup ubah satu baris saja. Variabel CSS juga sangat berguna untuk implementasi fitur dark/light mode."
+    }
+  ]
+}

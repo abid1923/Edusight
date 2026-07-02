@@ -1,0 +1,409 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 5,
+    "judul_bab": "Framework Modern (React)",
+    "deskripsi": "Materi lengkap React dari nol — mulai dari konsep Virtual DOM, JSX, Component, Props, State, hooks useEffect, form handling, routing dengan React Router, hingga manajemen state global dengan Context API.",
+    "total_sub_bab": 10,
+    "sumber": [
+      {
+        "nama": "React Docs Resmi – react.dev",
+        "url": "https://react.dev/learn",
+        "lisensi": "CC-BY-4.0"
+      },
+      {
+        "nama": "freeCodeCamp – The React Roadmap",
+        "url": "https://www.freecodecamp.org/news/the-react-roadmap-learn-react",
+        "lisensi": "BSD-3-Clause"
+      },
+      {
+        "nama": "Learning React – Open Source Textbook",
+        "url": "https://github.com/videlais/learning-react",
+        "lisensi": "CC-BY-SA 4.0 (teks), CC0 (kode)"
+      }
+    ],
+    "catatan_lisensi": "Materi ini merupakan adaptasi dan terjemahan bebas dari sumber-sumber open source di atas. Telah dimodifikasi, diterjemahkan ke Bahasa Indonesia, dan diperkaya dengan analogi serta penjelasan tambahan."
+  },
+
+  "sub_bab": [
+
+    {
+      "id": "5.1",
+      "judul": "Apa itu React & Cara Kerjanya",
+      "nomor": 1,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Pengertian React",
+          "isi": "React adalah library JavaScript untuk membangun antarmuka pengguna (UI) yang dibuat oleh Facebook (sekarang Meta) dan dirilis ke publik pada tahun 2013. Kata kunci di sini adalah 'library' — bukan framework penuh seperti Angular. React hanya mengurus lapisan tampilan (view), bukan routing, state management, atau fetching data secara bawaan. Tapi ekosistemnya yang luar biasa kaya membuat React terasa seperti framework lengkap.\n\nMengapa React begitu populer? Beberapa alasan utama:\n\n• Component-based — UI dipecah menjadi potongan-potongan kecil yang mandiri dan bisa digunakan ulang\n• Declarative — kamu mendeskripsikan tampilan yang diinginkan, React yang mengurus caranya\n• Virtual DOM — membuat update UI sangat efisien\n• Ekosistem besar — ribuan library pendukung, komunitas aktif, banyak lowongan kerja\n• React Native — kode React bisa digunakan untuk membuat aplikasi mobile iOS dan Android"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Virtual DOM: Rahasia Kecepatan React",
+          "isi": "DOM manipulation adalah operasi yang mahal secara performa. Setiap kali DOM diubah, browser harus menghitung ulang layout dan menggambar ulang halaman. Pada aplikasi kompleks dengan banyak perubahan, ini bisa sangat lambat.\n\nReact memecahkan ini dengan Virtual DOM — representasi ringan dari DOM nyata yang disimpan di memori JavaScript. Ketika state berubah:\n\n1. React membangun Virtual DOM baru yang merepresentasikan UI setelah perubahan\n2. React membandingkan Virtual DOM baru dengan yang lama (proses ini disebut 'diffing')\n3. React menghitung perubahan minimal yang diperlukan (disebut 'reconciliation')\n4. Hanya perubahan yang benar-benar diperlukan yang diterapkan ke DOM nyata\n\nHasilnya: DOM hanya disentuh seminimal mungkin — jauh lebih cepat dari manipulasi DOM manual yang menimpa seluruh konten."
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Setup Project React dengan Vite",
+          "isi": "Cara modern membuat project React adalah menggunakan Vite — build tool yang sangat cepat sebagai pengganti Create React App (CRA) yang sudah deprecated.\n\nLangkah setup:\n1. Pastikan Node.js sudah terinstall\n2. Jalankan perintah di terminal\n3. Pilih framework React dan variant JavaScript\n4. Install dependencies dan jalankan dev server\n\nStruktur folder project React hasil Vite:\n• src/ — semua kode sumber aplikasi\n• src/main.jsx — entry point, merender App ke DOM\n• src/App.jsx — component utama\n• public/ — aset statis (favicon, gambar)\n• index.html — file HTML tunggal (Single Page Application)\n• vite.config.js — konfigurasi Vite"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Setup React dengan Vite",
+          "bahasa": "bash",
+          "kode": "# Buat project React baru dengan Vite\nnpm create vite@latest nama-project -- --template react\n\n# Masuk ke folder project\ncd nama-project\n\n# Install semua dependencies\nnpm install\n\n# Jalankan development server\nnpm run dev\n# → Server berjalan di http://localhost:5173",
+          "penjelasan": "Vite jauh lebih cepat dari Create React App karena menggunakan native ES modules di browser saat development — tidak perlu bundling dulu. Hot Module Replacement (HMR)-nya hampir instan."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Cara Kerja Virtual DOM React",
+          "src": "/assets/frontend/bab5/bab5_5.1.png",
+          "deskripsi_gambar": "Diagram tiga kolom. Kiri: 'State Berubah' dengan ikon trigger. Tengah: dua Virtual DOM berdampingan (lama vs baru) dengan proses 'Diffing' — perbedaan disorot merah. Kanan: 'Real DOM' dengan hanya node yang berubah diperbarui (disorot hijau). Panah mengalir dari kiri ke kanan menunjukkan alur. Label 'Reconciliation' di bawah proses diffing.",
+          "alt": "Diagram cara kerja Virtual DOM React: state berubah, diffing, dan update minimal ke real DOM"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Virtual DOM seperti Arsitek dengan Denah",
+          "isi": "Bayangkan renovasi rumah tanpa arsitek — tukang langsung menghancurkan dan membangun ulang setiap kali ada perubahan kecil. Sangat tidak efisien. Arsitek (React) membuat denah dulu (Virtual DOM), membandingkan denah lama dengan baru, lalu hanya memberi instruksi renovasi pada bagian yang benar-benar berubah. Lebih cepat, lebih hemat."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "React Bukan Satu-satunya yang Pakai Virtual DOM",
+          "isi": "Vue.js juga menggunakan konsep Virtual DOM yang mirip dengan React. Namun Svelte, framework JavaScript modern lainnya, mengambil pendekatan berbeda total: tidak ada Virtual DOM sama sekali. Svelte mengompilasi kode menjadi JavaScript vanilla yang langsung memanipulasi DOM secara minimal saat build time, bukan runtime. Hasilnya bahkan lebih cepat dari Virtual DOM untuk banyak kasus."
+        }
+      ]
+    },
+
+    {
+      "id": "5.2",
+      "judul": "JSX",
+      "nomor": 2,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu JSX?",
+          "isi": "JSX (JavaScript XML) adalah ekstensi sintaks JavaScript yang memungkinkan kamu menulis markup yang terlihat seperti HTML di dalam kode JavaScript. JSX adalah salah satu hal pertama yang membuat orang terkejut saat belajar React — 'HTML di dalam JavaScript?'\n\nPenting dipahami: JSX bukan HTML, dan JSX bukan bagian dari JavaScript standar. JSX adalah sintaks khusus yang dikompilasi oleh Babel (atau Vite) menjadi pemanggilan fungsi React.createElement() biasa. Jadi saat kamu menulis JSX, kamu sebenarnya menulis JavaScript yang menyerupai HTML.\n\nPerbedaan JSX dengan HTML yang sering membingungkan pemula:\n\n• class → className (karena class adalah reserved word di JavaScript)\n• for → htmlFor (pada label)\n• style menerima object, bukan string: style={{ color: 'red' }}\n• Semua tag wajib ditutup: <img />, <br />, <input />\n• Event handler pakai camelCase: onClick, onChange, onSubmit\n• Komentar ditulis di dalam kurung kurawal: {/* komentar */}\n• Harus return satu root element (atau gunakan Fragment)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "JSX: Sintaks dan Ekspresi",
+          "bahasa": "jsx",
+          "kode": "// JSX dikompilasi menjadi React.createElement() di balik layar\n// Yang kamu tulis:\nconst elemen = <h1 className=\"judul\">Halo Dunia</h1>;\n\n// Yang sebenarnya dijalankan:\nconst elemen = React.createElement('h1', { className: 'judul' }, 'Halo Dunia');\n\n// ===========================================\n// Ekspresi JavaScript di JSX: gunakan { }\n// ===========================================\nconst nama = 'Budi';\nconst umur = 21;\nconst isLogin = true;\n\nconst profil = (\n  <div className=\"profil\">\n    {/* Variabel */}\n    <h2>Halo, {nama}!</h2>\n\n    {/* Ekspresi */}\n    <p>Tahun lahir: {2024 - umur}</p>\n\n    {/* Ternary untuk conditional */}\n    <span className={isLogin ? 'badge-aktif' : 'badge-nonaktif'}>\n      {isLogin ? '🟢 Online' : '🔴 Offline'}\n    </span>\n\n    {/* Pemanggilan fungsi */}\n    <p>Nama besar: {nama.toUpperCase()}</p>\n\n    {/* Array langsung dirender */}\n    <ul>\n      {['HTML', 'CSS', 'JavaScript'].map(skill => (\n        <li key={skill}>{skill}</li>\n      ))}\n    </ul>\n\n    {/* Style sebagai object */}\n    <p style={{ color: '#3498db', fontWeight: 'bold', fontSize: '18px' }}>\n      Teks berwarna\n    </p>\n  </div>\n);\n\n// Fragment: return banyak elemen tanpa wrapper div\nimport { Fragment } from 'react';\nreturn (\n  <Fragment>\n    <h1>Judul</h1>\n    <p>Paragraf</p>\n  </Fragment>\n);\n// Atau shorthand:\nreturn (\n  <>\n    <h1>Judul</h1>\n    <p>Paragraf</p>\n  </>\n);",
+          "penjelasan": "Fragment (<> </>) adalah solusi elegan ketika kamu ingin return beberapa elemen sejajar tanpa menambahkan div ekstra ke DOM. Ini penting untuk menjaga struktur HTML tetap bersih dan semantik."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "JSX dan React.createElement",
+          "src": "/assets/frontend/bab5/bab5_5.2.png",
+          "deskripsi_gambar": "Diagram atau ilustrasi yang menunjukkan bahwa JSX merupakan sintaks yang lebih mudah dibaca untuk React.createElement(). Diagram menampilkan kode JSX di satu sisi dan hasil transformasinya menjadi React.createElement() di sisi lain.",
+          "alt": "Perbandingan JSX dan React.createElement pada React"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: JSX seperti Shorthand Penulisan",
+          "isi": "JSX seperti shorthand matematika. Daripada menulis 'tambahkan dua ditambah tiga lalu kalikan empat', kamu tulis (2+3)*4. Lebih ringkas, lebih mudah dibaca. JSX adalah shorthand untuk React.createElement() yang panjang dan verbose — kompiler mengubahnya kembali ke bentuk aslinya saat build."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "JSX Tidak Wajib di React",
+          "isi": "Secara teknis kamu bisa membuat aplikasi React tanpa JSX sama sekali — cukup panggil React.createElement() langsung. Tapi hampir tidak ada yang melakukan ini karena JSX jauh lebih mudah dibaca, terutama untuk struktur UI yang kompleks dan bersarang. Tim React sendiri sangat merekomendasikan JSX untuk semua project React."
+        }
+      ]
+    },
+
+    {
+      "id": "5.3",
+      "judul": "Component",
+      "nomor": 3,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Component: Atom dari UI React",
+          "isi": "Component adalah blok bangunan fundamental React. Setiap bagian dari UI — tombol, kartu, form, navbar, bahkan seluruh halaman — adalah sebuah component. Component memungkinkan kamu memecah UI yang kompleks menjadi potongan-potongan kecil yang mandiri, dapat digunakan ulang, dan mudah dipelihara.\n\nDi React modern (sejak hooks hadir di 2018), semua component ditulis sebagai function component — fungsi JavaScript biasa yang menerima props dan mengembalikan JSX. Class component masih valid tapi sudah tidak direkomendasikan.\n\nAturan penting component React:\n• Nama component WAJIB diawali huruf kapital (PascalCase): Button, UserCard, NavBar\n• Harus mengembalikan JSX (atau null jika tidak ingin merender apapun)\n• Satu file biasanya berisi satu component utama\n• Nama file sebaiknya sama dengan nama component: Button.jsx, UserCard.jsx\n\nKomposisi component adalah salah satu prinsip terpenting React — gabungkan component-component kecil menjadi component yang lebih besar, seperti menyusun LEGO."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Membuat dan Menggunakan Component",
+          "bahasa": "jsx",
+          "kode": "// Button.jsx — component sederhana\nfunction Button({ label, onClick, variant = 'primary' }) {\n  return (\n    <button\n      className={`btn btn-${variant}`}\n      onClick={onClick}\n    >\n      {label}\n    </button>\n  );\n}\nexport default Button;\n\n// KartuMahasiswa.jsx — component yang lebih kompleks\nfunction KartuMahasiswa({ nama, nim, ipk, foto }) {\n  const getBadgeWarna = (ipk) => {\n    if (ipk >= 3.5) return 'hijau';\n    if (ipk >= 3.0) return 'kuning';\n    return 'merah';\n  };\n\n  return (\n    <article className=\"kartu-mahasiswa\">\n      <img src={foto} alt={`Foto ${nama}`} />\n      <div className=\"kartu-body\">\n        <h3>{nama}</h3>\n        <p className=\"nim\">{nim}</p>\n        <span className={`badge badge-${getBadgeWarna(ipk)}`}>\n          IPK: {ipk}\n        </span>\n      </div>\n    </article>\n  );\n}\nexport default KartuMahasiswa;\n\n// App.jsx — komposisi component\nimport Button from './Button';\nimport KartuMahasiswa from './KartuMahasiswa';\n\nfunction App() {\n  return (\n    <main>\n      <h1>Daftar Mahasiswa</h1>\n\n      {/* Gunakan component seperti HTML tag */}\n      <KartuMahasiswa\n        nama=\"Siti Rahayu\"\n        nim=\"2021002\"\n        ipk={3.85}\n        foto=\"/foto/siti.jpg\"\n      />\n      <KartuMahasiswa\n        nama=\"Budi Santoso\"\n        nim=\"2021001\"\n        ipk={3.50}\n        foto=\"/foto/budi.jpg\"\n      />\n\n      <Button label=\"Tambah Mahasiswa\" onClick={() => console.log('klik!')} />\n      <Button label=\"Export Data\" variant=\"secondary\" onClick={() => {}} />\n    </main>\n  );\n}\nexport default App;",
+          "penjelasan": "Perhatikan bahwa Button digunakan dua kali dengan props berbeda — inilah reusability component. Satu component, banyak tampilan berbeda tergantung props yang dikirim."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Contoh Component Tree React",
+          "src": "/assets/frontend/bab5/bab5_5.3.png",
+          "deskripsi_gambar": "Diagram pohon component React. Component App berada di puncak dan bercabang menjadi Header, Body, Sidebar, dan Footer. Beberapa component memiliki child component lain seperti Logo, Top Navbar, dan User Info untuk menunjukkan hubungan parent-child antar component.",
+          "alt": "Diagram struktur component tree React dengan hubungan parent dan child component"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Component seperti Lego",
+          "isi": "Component React seperti kepingan Lego. Setiap kepingan kecil punya bentuk dan fungsi sendiri (Button, Input, Card). Kepingan bisa digabung menjadi struktur lebih besar (Form, Modal, Navbar). Dan struktur besar itu bisa digabung lagi menjadi halaman penuh. Setiap kepingan bisa digunakan ulang di mana saja — persis seperti kepingan Lego yang sama bisa dipakai di banyak bangunan berbeda."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Berapa Jumlah Component yang Ideal?",
+          "isi": "Tidak ada aturan baku, tapi prinsip 'Single Responsibility Principle' berlaku: setiap component idealnya hanya punya satu alasan untuk berubah. Jika sebuah component melakukan terlalu banyak hal, pecah menjadi component-component lebih kecil. Di aplikasi React besar seperti Facebook, ada ribuan component yang saling menyusun diri menjadi UI yang kompleks."
+        }
+      ]
+    },
+
+    {
+      "id": "5.4",
+      "judul": "Props",
+      "nomor": 4,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Props: Cara Component Berkomunikasi",
+          "isi": "Props (properties) adalah cara mengirimkan data dari component induk (parent) ke component anak (child). Props adalah satu-satunya cara data mengalir secara langsung antar component di React — dan alirannya selalu satu arah: dari parent ke child (one-way data flow).\n\nBeberapa aturan penting props:\n• Props bersifat read-only — component anak TIDAK BOLEH mengubah props yang diterimanya\n• Props bisa berupa tipe data apapun: string, number, boolean, array, object, bahkan fungsi\n• Jika value adalah string, cukup pakai tanda kutip: nama=\"Budi\"\n• Jika value bukan string, gunakan kurung kurawal: umur={21}, aktif={true}, data={arrayData}\n• Boolean true bisa ditulis singkat: <Button disabled /> sama dengan <Button disabled={true} />\n\nChildren props adalah props spesial yang berisi apapun yang ditulis di antara tag pembuka dan penutup component — bisa teks, elemen JSX, atau component lain."
+        },
+        {
+          "tipe": "kode",
+          "judul": "Menggunakan Props",
+          "bahasa": "jsx",
+          "kode": "// Component Alert yang fleksibel dengan props\nfunction Alert({ tipe = 'info', judul, pesan, bisa_ditutup = false, onTutup }) {\n  const warna = {\n    info: '#3498db',\n    sukses: '#2ecc71',\n    peringatan: '#f39c12',\n    error: '#e74c3c'\n  };\n\n  return (\n    <div\n      className={`alert alert-${tipe}`}\n      style={{ borderLeft: `4px solid ${warna[tipe]}` }}\n    >\n      {judul && <h4 className=\"alert-judul\">{judul}</h4>}\n      <p>{pesan}</p>\n      {bisa_ditutup && (\n        <button onClick={onTutup} className=\"btn-tutup\">✕</button>\n      )}\n    </div>\n  );\n}\n\n// Children props: konten fleksibel di dalam component\nfunction Card({ judul, children, footer }) {\n  return (\n    <div className=\"card\">\n      <div className=\"card-header\">\n        <h3>{judul}</h3>\n      </div>\n      <div className=\"card-body\">\n        {children} {/* Apapun yang ada di antara <Card>...</Card> */}\n      </div>\n      {footer && <div className=\"card-footer\">{footer}</div>}\n    </div>\n  );\n}\n\n// Menggunakan component di atas\nfunction App() {\n  return (\n    <div>\n      {/* Props berbeda, tampilan berbeda */}\n      <Alert\n        tipe=\"sukses\"\n        judul=\"Pendaftaran Berhasil!\"\n        pesan=\"Akun kamu telah dibuat. Silakan cek email untuk verifikasi.\"\n        bisa_ditutup\n        onTutup={() => console.log('alert ditutup')}\n      />\n      <Alert\n        tipe=\"error\"\n        pesan=\"Email atau password salah. Silakan coba lagi.\"\n      />\n\n      {/* Children props */}\n      <Card\n        judul=\"Profil Mahasiswa\"\n        footer={<button>Edit Profil</button>}\n      >\n        <p>Nama: Budi Santoso</p>\n        <p>NIM: 2021001</p>\n        <p>IPK: 3.85</p>\n      </Card>\n    </div>\n  );\n}",
+          "penjelasan": "Perhatikan pola {judul && <h4>{judul}</h4>} — ini menampilkan elemen hanya jika judul ada (truthy). Sangat berguna untuk membuat component yang fleksibel dengan bagian opsional."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Alur Data One-Way di React",
+          "src": "/assets/frontend/bab5/bab5_5.4.png",
+          "deskripsi_gambar": "Diagram pohon component dengan panah satu arah ke bawah. App (atas) mengirim props ke Header dan Main. Main mengirim props ke ProductCard dan Sidebar. ProductCard mengirim props ke Button. Semua panah mengarah ke bawah, tidak ada yang ke atas. Label 'Props mengalir ke bawah' di sisi kanan. Warna hijau untuk alur data.",
+          "alt": "Diagram alur data satu arah React dari parent ke child melalui props"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Props seperti Parameter Fungsi",
+          "isi": "Props adalah parameter dari component. Seperti fungsi hitungLuas(panjang, lebar) yang menerima input dan menghasilkan output berbeda tergantung nilainya, component menerima props dan menghasilkan tampilan berbeda. Dan seperti fungsi yang tidak boleh mengubah nilai parameter aslinya, component tidak boleh mengubah props yang diterimanya."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Props Drilling: Tantangan Nyata",
+          "isi": "Ketika data perlu dilewatkan dari component A ke component F yang ada 5 level di bawahnya, kamu harus melewatkan props satu demi satu melalui B, C, D, E meski mereka tidak membutuhkan data itu — hanya sebagai 'perantara'. Ini disebut props drilling dan menjadi masalah di aplikasi besar. Solusinya adalah Context API atau state management library seperti Zustand atau Redux — yang akan dibahas di sub-bab 5.10."
+        }
+      ]
+    },
+
+    {
+      "id": "5.5",
+      "judul": "State dengan useState",
+      "nomor": 5,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "State: Data yang Membuat UI Berubah",
+          "isi": "State adalah data yang dimiliki sebuah component dan ketika berubah, menyebabkan component tersebut di-render ulang dengan tampilan yang diperbarui. Jika props adalah data yang diterima dari luar, state adalah data internal yang dikelola component itu sendiri.\n\nPerbedaan props vs state:\n• Props — diterima dari parent, read-only, tidak bisa diubah oleh component penerima\n• State — dikelola sendiri, bisa diubah, perubahan memicu re-render\n\nuseState adalah hook bawaan React untuk menambahkan state ke function component. Ia mengembalikan array dengan dua elemen:\n1. Nilai state saat ini\n2. Fungsi untuk memperbarui state\n\nAturan penting state:\n• JANGAN mengubah state langsung (mutation) — selalu gunakan fungsi setter\n• State update bersifat asinkron — React mungkin menggabungkan beberapa update\n• Untuk state berbasis nilai sebelumnya, gunakan functional update form\n• State yang berupa object atau array harus diganti dengan nilai baru, bukan dimutasi"
+        },
+        {
+          "tipe": "kode",
+          "judul": "useState: Counter, Form, dan Toggle",
+          "bahasa": "jsx",
+          "kode": "import { useState } from 'react';\n\n// Counter sederhana\nfunction Counter() {\n  const [hitung, setHitung] = useState(0); // nilai awal = 0\n\n  return (\n    <div className=\"counter\">\n      <button onClick={() => setHitung(h => h - 1)}>−</button>\n      <span className=\"nilai\">{hitung}</span>\n      <button onClick={() => setHitung(h => h + 1)}>+</button>\n      <button onClick={() => setHitung(0)}>Reset</button>\n    </div>\n  );\n}\n\n// Toggle dark mode\nfunction TombolTema() {\n  const [isDark, setIsDark] = useState(false);\n\n  return (\n    <button\n      onClick={() => setIsDark(prev => !prev)}\n      className={`btn-tema ${isDark ? 'dark' : 'light'}`}\n    >\n      {isDark ? '☀️ Mode Terang' : '🌙 Mode Gelap'}\n    </button>\n  );\n}\n\n// Multiple state\nfunction FormLogin() {\n  const [email, setEmail] = useState('');\n  const [password, setPassword] = useState('');\n  const [isLoading, setIsLoading] = useState(false);\n  const [error, setError] = useState(null);\n\n  const handleSubmit = async (e) => {\n    e.preventDefault();\n    setIsLoading(true);\n    setError(null);\n    try {\n      await proseLogin(email, password);\n    } catch (err) {\n      setError(err.message);\n    } finally {\n      setIsLoading(false);\n    }\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      {error && <div className=\"alert error\">{error}</div>}\n      <input\n        type=\"email\"\n        value={email}\n        onChange={e => setEmail(e.target.value)}\n        placeholder=\"Email\"\n      />\n      <input\n        type=\"password\"\n        value={password}\n        onChange={e => setPassword(e.target.value)}\n        placeholder=\"Password\"\n      />\n      <button type=\"submit\" disabled={isLoading}>\n        {isLoading ? 'Memproses...' : 'Login'}\n      </button>\n    </form>\n  );\n}\n\n// State dengan Object — WAJIB buat object baru!\nfunction FormProfil() {\n  const [profil, setProfil] = useState({ nama: '', email: '', kota: '' });\n\n  const handleChange = (e) => {\n    setProfil(prev => ({\n      ...prev,                        // salin semua property lama\n      [e.target.name]: e.target.value // timpa yang berubah\n    }));\n  };\n\n  return (\n    <form>\n      <input name=\"nama\" value={profil.nama} onChange={handleChange} />\n      <input name=\"email\" value={profil.email} onChange={handleChange} />\n      <input name=\"kota\" value={profil.kota} onChange={handleChange} />\n    </form>\n  );\n}",
+          "penjelasan": "Perhatikan functional update form: setHitung(h => h - 1) bukan setHitung(hitung - 1). Saat update bergantung pada nilai state sebelumnya, selalu gunakan callback function agar mendapat nilai terbaru meski beberapa update digabung React."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Siklus State React: Update dan Re-render",
+          "src": "/assets/frontend/bab5/bab5_5.5.png",
+          "deskripsi_gambar": "Diagram lingkaran siklus: kotak 'State Awal' → panah 'Render pertama' → kotak 'Component ditampilkan di UI' → panah 'User interaksi / event' → kotak 'setState() dipanggil' → panah 'React jadwalkan re-render' → kotak 'Component render ulang dengan state baru' → kembali ke 'Component ditampilkan di UI'. Lingkaran tak berakhir dengan panah searah jarum jam.",
+          "alt": "Diagram siklus state React dari inisialisasi, render, interaksi, setState, hingga re-render"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: State seperti Papan Skor",
+          "isi": "State seperti papan skor di pertandingan basket. Papan menampilkan nilai saat ini (nilai state). Ketika tim mencetak poin, operator menekan tombol (setState dipanggil), papan diperbarui (re-render), dan penonton melihat nilai terbaru. Penonton tidak langsung mengubah angka di papan — mereka hanya meminta operator untuk memperbarui (tidak boleh mutasi state langsung)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "React Batching Update State",
+          "isi": "Sejak React 18, React secara otomatis menggabungkan (batch) semua update state yang terjadi dalam satu event handler menjadi satu re-render. Artinya jika kamu memanggil setNama(), setUmur(), dan setKota() berurutan, React hanya melakukan satu re-render di akhir, bukan tiga kali. Ini meningkatkan performa secara signifikan, terutama pada form kompleks dengan banyak field."
+        }
+      ]
+    },
+
+    {
+      "id": "5.6",
+      "judul": "Rendering List & Conditional",
+      "nomor": 6,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Render List dengan map()",
+          "isi": "Menampilkan daftar data adalah salah satu operasi paling umum dalam aplikasi React — daftar produk, daftar mahasiswa, daftar notifikasi, dan lain-lain. Di React, cara standar merender list adalah menggunakan method .map() pada array untuk mengubah setiap item data menjadi elemen JSX.\n\nSatu hal yang wajib dipahami: setiap elemen dalam list HARUS memiliki prop key yang unik. React menggunakan key untuk:\n• Mengidentifikasi elemen mana yang berubah, ditambah, atau dihapus\n• Mengoptimalkan proses reconciliation agar hanya merender ulang yang berubah\n• Mencegah bug state yang aneh pada elemen list yang bisa diubah urutan atau dihapus\n\nAturan key:\n• Harus unik di antara saudara (sibling) dalam list yang sama\n• Sebaiknya menggunakan ID dari data, bukan indeks array\n• Jangan gunakan Math.random() sebagai key — berubah setiap render!\n• Indeks array (i) boleh dipakai HANYA jika list tidak bisa diurutkan ulang dan tidak ada item yang dihapus"
+        },
+        {
+          "tipe": "paragraf",
+          "judul": "Conditional Rendering",
+          "isi": "React tidak punya direktif khusus seperti v-if di Vue atau *ngIf di Angular — kondisi ditangani dengan JavaScript murni di dalam JSX. Ada empat cara umum conditional rendering:\n\n• if/else di luar return — cocok untuk logika kompleks\n• Ternary operator (? :) — untuk pilihan antara dua tampilan\n• Logical && operator — untuk menampilkan sesuatu atau tidak sama sekali\n• Nullish coalescing ?? — untuk memberikan fallback jika nilai null/undefined\n\nCatatan penting untuk &&: jangan gunakan angka sebagai kondisi kiri! {count && <p>Ada {count} item</p>} akan merender angka 0 jika count adalah 0, bukan tidak merender apapun. Gunakan {count > 0 && <p>...</p>} sebagai gantinya."
+        },
+        {
+          "tipe": "kode",
+          "judul": "List Rendering dan Conditional Rendering",
+          "bahasa": "jsx",
+          "kode": "import { useState } from 'react';\n\n// Data mahasiswa\nconst dataMahasiswa = [\n  { id: 1, nama: 'Budi', ipk: 3.85, aktif: true },\n  { id: 2, nama: 'Siti', ipk: 3.50, aktif: true },\n  { id: 3, nama: 'Ahmad', ipk: 2.90, aktif: false },\n  { id: 4, nama: 'Dewi', ipk: 3.70, aktif: true },\n];\n\n// Render list dengan map() + conditional\nfunction DaftarMahasiswa() {\n  const [filter, setFilter] = useState('semua');\n  const [isLoading, setIsLoading] = useState(false);\n\n  // Filter data berdasarkan state\n  const dataFiltered = dataMahasiswa.filter(mhs => {\n    if (filter === 'aktif') return mhs.aktif;\n    if (filter === 'nonaktif') return !mhs.aktif;\n    return true;\n  });\n\n  // Conditional rendering: loading state\n  if (isLoading) {\n    return <div className=\"loading-spinner\">Memuat data...</div>;\n  }\n\n  return (\n    <div>\n      {/* Filter buttons */}\n      <div className=\"filter-group\">\n        {['semua', 'aktif', 'nonaktif'].map(f => (\n          <button\n            key={f}\n            onClick={() => setFilter(f)}\n            className={filter === f ? 'aktif' : ''}\n          >\n            {f.charAt(0).toUpperCase() + f.slice(1)}\n          </button>\n        ))}\n      </div>\n\n      {/* Conditional: data kosong */}\n      {dataFiltered.length === 0 ? (\n        <p className=\"empty-state\">Tidak ada mahasiswa dengan filter ini.</p>\n      ) : (\n        <ul className=\"daftar-mahasiswa\">\n          {dataFiltered.map(mhs => (\n            <li key={mhs.id} className=\"item-mahasiswa\">  {/* key WAJIB! */}\n              <strong>{mhs.nama}</strong>\n              <span>IPK: {mhs.ipk}</span>\n\n              {/* Logical && untuk badge opsional */}\n              {mhs.ipk >= 3.5 && (\n                <span className=\"badge-cumlaude\">🏆 Cumlaude</span>\n              )}\n\n              {/* Ternary untuk status */}\n              <span className={`status ${mhs.aktif ? 'aktif' : 'nonaktif'}`}>\n                {mhs.aktif ? '✅ Aktif' : '❌ Nonaktif'}\n              </span>\n            </li>\n          ))}\n        </ul>\n      )}\n\n      <p>Menampilkan {dataFiltered.length} dari {dataMahasiswa.length} mahasiswa</p>\n    </div>\n  );\n}",
+          "penjelasan": "Perhatikan pola filter dulu baru map — ini lebih efisien dari map dulu lalu filter. Gunakan metode chaining: dataMahasiswa.filter(...).map(...) untuk kode yang lebih ringkas."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Cara Kerja Key pada List React",
+          "src": "/assets/frontend/bab5/bab5_5.6.png",
+          "deskripsi_gambar": "Diagram sebelum dan sesudah update list. Sebelum: list tiga item [A(key=1), B(key=2), C(key=3)]. Setelah item B dihapus: list dua item [A(key=1), C(key=3)]. React mengidentifikasi key=2 hilang dan hanya menghapus B, bukan merender ulang A dan C. Kontras dengan tanpa key: React merender ulang semua item. Label merah untuk perubahan, hijau untuk yang tetap.",
+          "alt": "Diagram cara React menggunakan key untuk mengidentifikasi perubahan dalam list"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: key seperti NIK di Daftar Hadir",
+          "isi": "Bayangkan daftar hadir mahasiswa tanpa nomor urut, hanya nama. Jika satu mahasiswa tidak hadir dan nama dicoret, guru harus membaca ulang semua nama untuk menemukan yang berubah. Dengan NIK, guru langsung tahu NIK 2021005 tidak hadir tanpa harus re-cek semua. key di React bekerja persis seperti NIK — identifikasi unik yang membuat React tidak perlu 'membaca ulang semua item' setiap ada perubahan."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Kenapa Indeks Array Buruk sebagai Key?",
+          "isi": "Jika kamu menggunakan indeks array sebagai key dan kemudian menghapus item di tengah list, semua item setelahnya bergeser indeks. React melihat key yang 'sama' di posisi berbeda dan mengira tidak ada yang berubah — lalu salah menampilkan state component yang terkait. Ini menyebabkan bug yang sangat membingungkan, seperti nilai input yang 'melompat' ke item yang salah setelah hapus."
+        }
+      ]
+    },
+
+    {
+      "id": "5.7",
+      "judul": "useEffect & Side Effects",
+      "nomor": 7,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Apa itu Side Effect?",
+          "isi": "Side effect adalah operasi yang berinteraksi dengan dunia di luar React — hal-hal yang tidak bisa dilakukan langsung saat render karena bisa menyebabkan efek samping yang tidak terprediksi.\n\nContoh side effect yang umum:\n• Fetch data dari API\n• Manipulasi DOM langsung (jarang, tapi kadang perlu)\n• Subscribe/unsubscribe event listener global\n• Set atau clear timer (setTimeout, setInterval)\n• Menyimpan data ke localStorage\n• Mengubah judul halaman (document.title)\n• Koneksi ke WebSocket atau layanan eksternal\n\nuseEffect adalah hook untuk menjalankan side effect setelah React selesai merender component. Ia menerima dua argumen:\n1. Fungsi effect — kode side effect yang dijalankan\n2. Dependency array — kapan effect harus dijalankan ulang\n\nPerilaku dependency array:\n• Tidak ada (tanpa argumen kedua) → jalankan setiap render\n• [] (array kosong) → jalankan hanya sekali setelah render pertama\n• [a, b] → jalankan ulang setiap kali a atau b berubah"
+        },
+        {
+          "tipe": "kode",
+          "judul": "useEffect: Fetch Data, Timer, dan Cleanup",
+          "bahasa": "jsx",
+          "kode": "import { useState, useEffect } from 'react';\n\n// Fetch data saat component pertama kali dimuat\nfunction DaftarPost() {\n  const [posts, setPosts] = useState([]);\n  const [isLoading, setIsLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    // Effect: jalankan fetch saat pertama kali mount\n    async function ambilPosts() {\n      try {\n        const res = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');\n        if (!res.ok) throw new Error('Gagal mengambil data');\n        const data = await res.json();\n        setPosts(data);\n      } catch (err) {\n        setError(err.message);\n      } finally {\n        setIsLoading(false);\n      }\n    }\n    ambilPosts();\n  }, []); // [] = jalankan sekali saat mount\n\n  if (isLoading) return <p>Memuat...</p>;\n  if (error) return <p>Error: {error}</p>;\n  return <ul>{posts.map(p => <li key={p.id}>{p.title}</li>)}</ul>;\n}\n\n// Fetch ulang saat dependency berubah\nfunction DetailMahasiswa({ mahasiswaId }) {\n  const [mahasiswa, setMahasiswa] = useState(null);\n\n  useEffect(() => {\n    fetch(`/api/mahasiswa/${mahasiswaId}`)\n      .then(r => r.json())\n      .then(setMahasiswa);\n  }, [mahasiswaId]); // re-fetch setiap mahasiswaId berubah\n\n  return mahasiswa ? <div>{mahasiswa.nama}</div> : <p>Memuat...</p>;\n}\n\n// Cleanup: sangat penting untuk mencegah memory leak\nfunction Jam() {\n  const [waktu, setWaktu] = useState(new Date());\n\n  useEffect(() => {\n    // Setup: mulai interval\n    const interval = setInterval(() => {\n      setWaktu(new Date());\n    }, 1000);\n\n    // Cleanup function: dijalankan sebelum effect berikutnya atau saat unmount\n    return () => {\n      clearInterval(interval); // WAJIB! Tanpa ini, interval terus jalan meski component hilang\n    };\n  }, []); // Hanya sekali\n\n  return <p>Waktu: {waktu.toLocaleTimeString('id-ID')}</p>;\n}\n\n// Ubah judul halaman\nfunction HalamanProfil({ nama }) {\n  useEffect(() => {\n    document.title = `Profil ${nama} | Web Belajar`;\n    return () => {\n      document.title = 'Web Belajar'; // reset saat meninggalkan halaman\n    };\n  }, [nama]);\n\n  return <div>Halaman profil {nama}</div>;\n}",
+          "penjelasan": "Cleanup function (return di dalam useEffect) adalah kunci mencegah memory leak. Selalu kembalikan fungsi cleanup jika effect melakukan subscribe, menambah event listener, atau membuat timer."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Siklus Hidup useEffect",
+          "src": "/assets/frontend/bab5/bab5_5.7.png",
+          "deskripsi_gambar": "Diagram timeline component React. Garis horizontal 'Waktu'. Titik-titik: 'Mount (pertama render)' → 'Effect pertama jalan' → 'Re-render (dependency berubah)' → 'Cleanup effect lama' → 'Effect baru jalan' → 'Unmount (component dihapus)' → 'Cleanup terakhir jalan'. Panah ke atas untuk effect, panah ke bawah untuk cleanup. Warna hijau effect, merah cleanup.",
+          "alt": "Diagram siklus hidup useEffect: kapan effect dan cleanup dijalankan"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: useEffect seperti Alarm dan Snooze",
+          "isi": "useEffect seperti mengatur alarm. Dependency array adalah kondisi kapan alarm berbunyi: [] berarti alarm berbunyi sekali saat bangun, [mahasiswaId] berarti alarm berbunyi setiap kali ID berubah. Cleanup function adalah tombol snooze sebelum alarm berikutnya — matikan yang lama sebelum mulai yang baru. Tanpa snooze (cleanup), semua alarm berbunyi bersamaan — chaos!"
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "useEffect Akan Berubah di React 19",
+          "isi": "Di React 19, tim React memperkenalkan server components dan actions yang mengubah cara side effect ditangani. Untuk fetching data khususnya, React sekarang merekomendasikan menggunakan framework seperti Next.js atau library seperti TanStack Query daripada useEffect langsung — karena useEffect untuk fetching memiliki beberapa masalah seperti race condition dan waterfall requests yang sulit dihindari."
+        }
+      ]
+    },
+
+    {
+      "id": "5.8",
+      "judul": "Handling Form & Events",
+      "nomor": 8,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Controlled vs Uncontrolled Component",
+          "isi": "Ada dua pendekatan menangani form di React:\n\nControlled Component — React mengontrol nilai input melalui state. Setiap perubahan input memperbarui state (via onChange), dan nilai input selalu berasal dari state. Ini adalah pendekatan yang direkomendasikan karena:\n• Nilai form selalu tersinkron dengan state React\n• Mudah melakukan validasi real-time\n• Mudah memanipulasi nilai (format, trim, dll.) sebelum disimpan\n• Mudah mengatur nilai dari luar (reset form, set nilai default dari API)\n\nUncontrolled Component — nilai input dikelola oleh DOM itu sendiri, dan JavaScript hanya membaca nilainya saat dibutuhkan (via ref). Lebih sederhana untuk form kecil, tapi sulit divalidasi secara real-time.\n\nEvent yang paling penting dalam form:\n• onChange — dipanggil setiap kali nilai input berubah (gunakan untuk controlled component)\n• onSubmit — dipanggil ketika form disubmit (selalu preventDefault!)\n• onFocus / onBlur — saat input mendapat atau kehilangan fokus (untuk validasi on-blur)\n• onKeyDown — untuk mendeteksi penekanan tombol tertentu (Enter untuk submit, Escape untuk batal)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Form Lengkap dengan Validasi",
+          "bahasa": "jsx",
+          "kode": "import { useState } from 'react';\n\nfunction FormDaftar() {\n  // State untuk nilai form\n  const [form, setForm] = useState({\n    nama: '', email: '', password: '', jurusan: '', setuju: false\n  });\n\n  // State untuk error validasi per field\n  const [errors, setErrors] = useState({});\n  const [isSubmitting, setIsSubmitting] = useState(false);\n  const [sukses, setSukses] = useState(false);\n\n  // Handler perubahan field\n  const handleChange = (e) => {\n    const { name, value, type, checked } = e.target;\n    setForm(prev => ({\n      ...prev,\n      [name]: type === 'checkbox' ? checked : value\n    }));\n    // Hapus error field ini saat user mulai mengetik\n    if (errors[name]) {\n      setErrors(prev => ({ ...prev, [name]: '' }));\n    }\n  };\n\n  // Fungsi validasi\n  const validasi = () => {\n    const err = {};\n    if (!form.nama.trim()) err.nama = 'Nama wajib diisi';\n    else if (form.nama.trim().length < 3) err.nama = 'Nama minimal 3 karakter';\n\n    if (!form.email) err.email = 'Email wajib diisi';\n    else if (!/\\S+@\\S+\\.\\S+/.test(form.email)) err.email = 'Format email tidak valid';\n\n    if (!form.password) err.password = 'Password wajib diisi';\n    else if (form.password.length < 8) err.password = 'Password minimal 8 karakter';\n\n    if (!form.jurusan) err.jurusan = 'Pilih jurusan terlebih dahulu';\n\n    if (!form.setuju) err.setuju = 'Anda harus menyetujui syarat dan ketentuan';\n\n    return err;\n  };\n\n  // Handler submit\n  const handleSubmit = async (e) => {\n    e.preventDefault(); // WAJIB!\n    const err = validasi();\n    if (Object.keys(err).length > 0) {\n      setErrors(err);\n      return;\n    }\n    setIsSubmitting(true);\n    try {\n      await daftarkan(form); // API call\n      setSukses(true);\n      setForm({ nama: '', email: '', password: '', jurusan: '', setuju: false });\n    } catch (err) {\n      setErrors({ submit: err.message });\n    } finally {\n      setIsSubmitting(false);\n    }\n  };\n\n  if (sukses) return <div className=\"sukses\">✅ Pendaftaran berhasil!</div>;\n\n  return (\n    <form onSubmit={handleSubmit} className=\"form-daftar\" noValidate>\n      <h2>Formulir Pendaftaran</h2>\n      {errors.submit && <div className=\"alert error\">{errors.submit}</div>}\n\n      <div className=\"field\">\n        <label htmlFor=\"nama\">Nama Lengkap</label>\n        <input id=\"nama\" name=\"nama\" type=\"text\"\n          value={form.nama} onChange={handleChange}\n          className={errors.nama ? 'input-error' : ''}\n        />\n        {errors.nama && <span className=\"pesan-error\">{errors.nama}</span>}\n      </div>\n\n      <div className=\"field\">\n        <label htmlFor=\"jurusan\">Jurusan</label>\n        <select id=\"jurusan\" name=\"jurusan\"\n          value={form.jurusan} onChange={handleChange}\n        >\n          <option value=\"\">-- Pilih Jurusan --</option>\n          <option value=\"ti\">Teknik Informatika</option>\n          <option value=\"si\">Sistem Informasi</option>\n        </select>\n        {errors.jurusan && <span className=\"pesan-error\">{errors.jurusan}</span>}\n      </div>\n\n      <button type=\"submit\" disabled={isSubmitting}>\n        {isSubmitting ? 'Mendaftar...' : 'Daftar Sekarang'}\n      </button>\n    </form>\n  );\n}",
+          "penjelasan": "Pola satu handleChange untuk semua field (menggunakan e.target.name) jauh lebih scalable daripada membuat handler terpisah per field. Tambah field baru? Cukup tambahkan ke state object — handler tidak perlu diubah."
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Controlled Component seperti Boneka Wayang",
+          "isi": "Controlled component seperti wayang yang dikendalikan dalang (React state). Setiap gerakan wayang (perubahan nilai input) harus seijin dalang (setState). Dalang selalu tahu posisi wayang saat ini (nilai state = nilai input). Uncontrolled component seperti wayang yang bergerak sendiri — dalang hanya bisa lihat posisinya sesekali saat dibutuhkan (via ref)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "React Hook Form: Solusi Form yang Lebih Efisien",
+          "isi": "Library React Hook Form (react-hook-form) adalah solusi form yang sangat populer dan efisien. Ia menggunakan uncontrolled component di balik layar tapi memberikan API yang mudah digunakan, validasi bawaan, dan performa jauh lebih baik dari controlled component — karena tidak ada setState setiap penekanan tombol. Untuk form yang sangat besar atau kompleks, React Hook Form adalah pilihan yang sangat direkomendasikan."
+        }
+      ]
+    },
+
+    {
+      "id": "5.9",
+      "judul": "React Router",
+      "nomor": 9,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Routing di Single Page Application",
+          "isi": "React membuat Single Page Application (SPA) — hanya ada satu file HTML, dan React merender konten berbeda tergantung URL tanpa reload halaman. Tapi React sendiri tidak punya sistem routing bawaan. Di sinilah React Router hadir — library routing paling populer untuk React.\n\nKonsep utama React Router v6 (versi modern):\n\n• BrowserRouter — wrapper utama yang menggunakan HTML5 History API untuk routing bersih (tanpa #)\n• Routes — container untuk semua definisi route\n• Route — mendefinisikan mapping antara path URL dan component yang dirender\n• Link — pengganti tag <a> untuk navigasi tanpa reload\n• NavLink — seperti Link tapi otomatis menambah class 'active' saat URL cocok\n• useParams — hook untuk mengakses parameter URL dinamis (:id)\n• useNavigate — hook untuk navigasi programatik dari dalam kode JavaScript\n• useLocation — hook untuk mengakses objek location saat ini (pathname, search, state)\n• Outlet — placeholder di mana child route dirender (untuk nested routing)"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Setup React Router dan Navigasi",
+          "bahasa": "jsx",
+          "kode": "// Instalasi\n// npm install react-router-dom\n\n// main.jsx — wrap App dengan BrowserRouter\nimport { BrowserRouter } from 'react-router-dom';\nReactDOM.createRoot(document.getElementById('root')).render(\n  <BrowserRouter>\n    <App />\n  </BrowserRouter>\n);\n\n// App.jsx — definisi semua route\nimport { Routes, Route, Navigate } from 'react-router-dom';\nimport Navbar from './components/Navbar';\nimport Beranda from './pages/Beranda';\nimport DaftarMahasiswa from './pages/DaftarMahasiswa';\nimport DetailMahasiswa from './pages/DetailMahasiswa';\nimport TambahMahasiswa from './pages/TambahMahasiswa';\nimport Login from './pages/Login';\nimport NotFound from './pages/NotFound';\n\nfunction App() {\n  const isLogin = !!localStorage.getItem('token');\n\n  return (\n    <div className=\"app\">\n      <Navbar />\n      <main>\n        <Routes>\n          <Route path=\"/\" element={<Beranda />} />\n          <Route path=\"/mahasiswa\" element={<DaftarMahasiswa />} />\n          <Route path=\"/mahasiswa/:id\" element={<DetailMahasiswa />} />\n          <Route path=\"/mahasiswa/tambah\" element={<TambahMahasiswa />} />\n          <Route path=\"/login\" element={<Login />} />\n\n          {/* Redirect: / ke /beranda */}\n          <Route path=\"/home\" element={<Navigate to=\"/\" replace />} />\n\n          {/* 404: tangkap semua path yang tidak cocok */}\n          <Route path=\"*\" element={<NotFound />} />\n        </Routes>\n      </main>\n    </div>\n  );\n}\n\n// Navbar.jsx — Link dan NavLink\nimport { Link, NavLink } from 'react-router-dom';\nfunction Navbar() {\n  return (\n    <nav className=\"navbar\">\n      <Link to=\"/\" className=\"logo\">🎓 Web Belajar</Link>\n      <div className=\"nav-links\">\n        {/* NavLink otomatis dapat class 'active' saat URL cocok */}\n        <NavLink to=\"/\" end>Beranda</NavLink>\n        <NavLink to=\"/mahasiswa\">Mahasiswa</NavLink>\n      </div>\n    </nav>\n  );\n}\n\n// DetailMahasiswa.jsx — useParams dan useNavigate\nimport { useParams, useNavigate } from 'react-router-dom';\nfunction DetailMahasiswa() {\n  const { id } = useParams();          // ambil :id dari URL\n  const navigate = useNavigate();      // untuk navigasi programatik\n  const [mhs, setMhs] = useState(null);\n\n  useEffect(() => {\n    fetch(`/api/mahasiswa/${id}`)\n      .then(r => r.json())\n      .then(setMhs);\n  }, [id]);\n\n  const handleHapus = async () => {\n    await hapusMahasiswa(id);\n    navigate('/mahasiswa');             // kembali ke daftar setelah hapus\n  };\n\n  return mhs ? (\n    <div>\n      <h2>{mhs.nama}</h2>\n      <button onClick={() => navigate(-1)}>← Kembali</button>\n      <button onClick={handleHapus}>Hapus</button>\n    </div>\n  ) : <p>Memuat...</p>;\n}",
+          "penjelasan": "Gunakan NavLink dengan prop end untuk route root '/' — tanpa end, NavLink root akan selalu aktif karena semua URL dimulai dengan '/'. Prop end membuat NavLink hanya aktif jika URL persis cocok."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Arsitektur Routing React Router",
+          "src": "/assets/frontend/bab5/bab5_5.9.png",
+          "deskripsi_gambar": "Diagram dua kolom. Kiri: URL berbeda (/, /mahasiswa, /mahasiswa/42, /login). Kanan: Component yang dirender untuk setiap URL (Beranda, DaftarMahasiswa, DetailMahasiswa, Login). Panah menghubungkan URL ke component. Di atas: label 'React Router' sebagai penghubung. Di bawah: gambar browser dengan URL bar berubah tapi halaman tidak reload (label 'No page reload').",
+          "alt": "Diagram React Router yang memetakan URL ke component yang sesuai dalam SPA"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: React Router seperti Resepsionis Hotel",
+          "isi": "React Router seperti resepsionis hotel yang melihat nomor kamar di kartu kunci (URL) dan mengantar tamu ke kamar yang tepat (component). Tamu berpindah kamar (navigasi antar halaman) tanpa harus keluar dari gedung dan masuk lagi (tanpa reload). Resepsionis juga mencatat riwayat perjalanan tamu (history API) sehingga tombol 'kembali' bekerja dengan benar."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "React Router v7 Adalah Next.js Versi Ringan",
+          "isi": "React Router v7 (dirilis akhir 2024) membawa perubahan besar — ia kini bisa berjalan sebagai framework penuh dengan server-side rendering, data loading, dan actions, tidak hanya routing client-side. Banyak yang menyebutnya sebagai 'Next.js versi ringan'. Tim React Router bahkan merger dengan Remix framework, menggabungkan kemampuan keduanya."
+        }
+      ]
+    },
+
+    {
+      "id": "5.10",
+      "judul": "Global State dengan Context API",
+      "nomor": 10,
+      "konten": [
+        {
+          "tipe": "paragraf",
+          "judul": "Masalah Props Drilling dan Solusinya",
+          "isi": "Bayangkan data user yang sedang login perlu diakses oleh Navbar, Sidebar, ProfileCard, dan SettingsPage — component-component yang tersebar di berbagai level pohon component. Tanpa Context, kamu harus melewatkan props user dari App → setiap level → ke setiap component yang membutuhkan. Inilah props drilling — melelahkan, sulit dimaintain, dan mengotori component perantara.\n\nContext API adalah solusi bawaan React untuk berbagi data ke banyak component di berbagai level tanpa props drilling. Data disimpan di 'context' dan component manapun bisa mengaksesnya langsung.\n\nKapan pakai Context vs props biasa?\n• Props biasa — untuk data yang hanya butuh berpindah 1-2 level, atau data yang memang spesifik untuk component tertentu\n• Context — untuk data yang benar-benar global: user yang login, tema (dark/light), bahasa aplikasi, notifikasi\n\nAlur kerja Context API:\n1. Buat context dengan createContext()\n2. Bungkus component yang butuh akses dengan Provider dan berikan value\n3. Akses context dari component manapun dengan useContext()"
+        },
+        {
+          "tipe": "kode",
+          "judul": "Context API: Auth dan Tema",
+          "bahasa": "jsx",
+          "kode": "import { createContext, useContext, useState, useEffect } from 'react';\n\n// =============================================\n// 1. Buat Context\n// =============================================\nconst AuthContext = createContext(null);\nconst TemaContext = createContext(null);\n\n// =============================================\n// 2. Buat Provider Component\n// =============================================\nfunction AuthProvider({ children }) {\n  const [user, setUser] = useState(null);\n  const [isLoading, setIsLoading] = useState(true);\n\n  // Cek session saat pertama load\n  useEffect(() => {\n    const userData = localStorage.getItem('user');\n    if (userData) setUser(JSON.parse(userData));\n    setIsLoading(false);\n  }, []);\n\n  const login = async (email, password) => {\n    const userData = await apiLogin(email, password);\n    setUser(userData);\n    localStorage.setItem('user', JSON.stringify(userData));\n  };\n\n  const logout = () => {\n    setUser(null);\n    localStorage.removeItem('user');\n  };\n\n  // Value yang dibagikan ke semua consumer\n  const value = { user, isLoading, login, logout };\n\n  return (\n    <AuthContext.Provider value={value}>\n      {children}\n    </AuthContext.Provider>\n  );\n}\n\nfunction TemaProvider({ children }) {\n  const [tema, setTema] = useState(() => {\n    return localStorage.getItem('tema') ?? 'terang';\n  });\n\n  const toggleTema = () => {\n    setTema(prev => {\n      const baru = prev === 'terang' ? 'gelap' : 'terang';\n      localStorage.setItem('tema', baru);\n      return baru;\n    });\n  };\n\n  return (\n    <TemaContext.Provider value={{ tema, toggleTema }}>\n      <div data-tema={tema}>{children}</div>\n    </TemaContext.Provider>\n  );\n}\n\n// Custom hook untuk akses yang lebih bersih\nfunction useAuth() {\n  const context = useContext(AuthContext);\n  if (!context) throw new Error('useAuth harus digunakan di dalam AuthProvider');\n  return context;\n}\n\nfunction useTema() {\n  return useContext(TemaContext);\n}\n\n// =============================================\n// 3. Wrap App dengan Provider\n// =============================================\nfunction main() {\n  return (\n    <TemaProvider>\n      <AuthProvider>\n        <App />\n      </AuthProvider>\n    </TemaProvider>\n  );\n}\n\n// =============================================\n// 4. Gunakan context di component manapun\n// =============================================\nfunction Navbar() {\n  const { user, logout } = useAuth();   // akses context langsung!\n  const { tema, toggleTema } = useTema();\n\n  return (\n    <nav>\n      <span>Halo, {user?.nama ?? 'Tamu'}!</span>\n      <button onClick={toggleTema}>\n        {tema === 'terang' ? '🌙' : '☀️'}\n      </button>\n      {user && <button onClick={logout}>Logout</button>}\n    </nav>\n  );\n}\n\nfunction HalamanProfil() {\n  const { user, isLoading } = useAuth();\n  if (isLoading) return <p>Memuat...</p>;\n  if (!user) return <p>Silakan login</p>;\n  return <div><h2>Profil: {user.nama}</h2></div>;\n}",
+          "penjelasan": "Pola custom hook (useAuth, useTema) membuat penggunaan context jauh lebih bersih dan menambah error handling otomatis jika context digunakan di luar Provider-nya. Ini adalah pola yang sangat direkomendasikan di komunitas React."
+        },
+        {
+          "tipe": "gambar",
+          "judul": "Context API: Data Tanpa Props Drilling",
+          "src": "/assets/frontend/bab5/bab5_5.10.png",
+          "deskripsi_gambar": "Diagram dua pohon component berdampingan. Kiri (Props Drilling): App mengirim user ke Layout → Sidebar → NavItem → UserAvatar melalui panah merah berturut-turut yang panjang. Label 'Banyak props yang tidak diperlukan'. Kanan (Context): AuthContext.Provider membungkus App. Panah hijau langsung dari Provider ke UserAvatar melewati semua level. Label 'Akses langsung tanpa perantara'.",
+          "alt": "Perbandingan props drilling vs Context API dalam pohon component React"
+        },
+        {
+          "tipe": "analogi",
+          "judul": "Analogi: Context seperti WiFi",
+          "isi": "Props drilling seperti kabel LAN yang harus disambungkan dari router ke setiap perangkat satu per satu — melalui setiap ruangan. Context seperti WiFi — router memancarkan sinyal (Provider memancarkan value), dan perangkat manapun di jangkauan bisa langsung terhubung tanpa kabel perantara (useContext() langsung mengakses data)."
+        },
+        {
+          "tipe": "fun_fact",
+          "judul": "Context Bukan Pengganti Redux",
+          "isi": "Context API sering dianggap sebagai pengganti Redux, padahal tidak tepat. Context cocok untuk data yang jarang berubah (user login, tema, bahasa). Untuk state yang sering berubah dan kompleks, Context bisa menyebabkan re-render berlebihan karena semua consumer re-render setiap value berubah. Untuk state management yang lebih canggih, library seperti Zustand (ringan dan modern) atau Redux Toolkit (untuk aplikasi enterprise besar) masih sangat relevan."
+        }
+      ]
+    }
+
+  ]
+}

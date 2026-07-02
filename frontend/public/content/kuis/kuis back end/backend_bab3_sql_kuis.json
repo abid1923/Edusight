@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "path": "Back End",
+    "bab": 3,
+    "judul_bab": "Database SQL",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "3.1",
+      "pertanyaan": "Dari perbandingan berikut, manakah karakteristik yang paling menggambarkan keunggulan Relational Database (SQL) dibandingkan Non-Relational Database (NoSQL)?",
+      "opsi": {
+        "A": "Schema fleksibel yang memungkinkan dokumen dalam koleksi yang sama memiliki struktur berbeda",
+        "B": "Mendukung transaksi ACID dan memiliki schema ketat yang mencegah data tidak valid masuk",
+        "C": "Lebih mudah melakukan horizontal scaling untuk menangani data tidak terstruktur",
+        "D": "Cocok untuk data high-velocity seperti log streaming dan konten yang berubah-ubah"
+      },
+      "jawaban": "B",
+      "penjelasan": "Relational Database (SQL) memiliki schema ketat dan mendukung transaksi ACID (Atomicity, Consistency, Isolation, Durability) yang memastikan konsistensi data. Pilihan A, C, dan D adalah karakteristik NoSQL, bukan SQL. SQL cocok untuk data terstruktur dengan relasi jelas seperti sistem akademik dan transaksi finansial."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "3.2",
+      "pertanyaan": "Perhatikan pernyataan berikut tentang konsep database relasional:\n\n1. Primary Key adalah kolom yang mereferensi tabel lain\n2. Foreign Key memastikan referential integrity antar tabel\n3. Index mempercepat pencarian pada kolom tertentu\n4. Constraint CHECK memungkinkan nilai NULL pada kolom\n\nPernyataan mana yang BENAR?",
+      "opsi": {
+        "A": "Hanya 1 dan 2",
+        "B": "Hanya 2 dan 3",
+        "C": "Hanya 3 dan 4",
+        "D": "Semua pernyataan benar"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pernyataan 1 salah: Primary Key mengidentifikasi setiap baris secara unik, bukan mereferensi tabel lain (itu Foreign Key). Pernyataan 4 salah: Constraint CHECK menentukan kondisi yang harus dipenuhi nilai, bukan tentang NULL — NOT NULL yang mencegah NULL. Pernyataan 2 benar (FK memastikan referential integrity) dan 3 benar (index mempercepat pencarian seperti indeks di belakang buku)."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "3.3",
+      "pertanyaan": "Perhatikan perintah DDL berikut:\n\nALTER TABLE mahasiswa\n  ADD COLUMN no_telepon VARCHAR(15) AFTER email,\n  MODIFY COLUMN ipk DECIMAL(4,2) DEFAULT 0.00;\n\nApa yang dilakukan perintah di atas?",
+      "opsi": {
+        "A": "Membuat tabel baru bernama mahasiswa dengan kolom no_telepon dan ipk",
+        "B": "Menghapus kolom email dan menambahkan kolom no_telepon serta ipk",
+        "C": "Menambahkan kolom no_telepon setelah kolom email dan mengubah tipe data kolom ipk",
+        "D": "Menambahkan constraint CHECK pada kolom no_telepon dan ipk"
+      },
+      "jawaban": "C",
+      "penjelasan": "ALTER TABLE digunakan untuk mengubah struktur tabel yang sudah ada. ADD COLUMN menambahkan kolom baru (no_telepon setelah email), dan MODIFY COLUMN mengubah tipe data kolom yang sudah ada (ipk dari DECIMAL(3,2) menjadi DECIMAL(4,2)). CREATE TABLE membuat tabel baru, DROP COLUMN menghapus kolom, dan ADD CONSTRAINT menambahkan constraint — bukan yang dilakukan di sini."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "3.4",
+      "pertanyaan": "Seorang developer ingin mengubah IPK mahasiswa dengan NIM '2021001' menjadi 3.85. Manakah perintah DML yang paling tepat dan AMAN?",
+      "opsi": {
+        "A": "UPDATE mahasiswa SET ipk = 3.85;",
+        "B": "UPDATE mahasiswa SET ipk = 3.85 WHERE nim = '2021001';",
+        "C": "SELECT * FROM mahasiswa WHERE nim = '2021001'; UPDATE mahasiswa SET ipk = 3.85;",
+        "D": "ALTER TABLE mahasiswa MODIFY ipk = 3.85 WHERE nim = '2021001';"
+      },
+      "jawaban": "B",
+      "penjelasan": "UPDATE SELALU harus menggunakan WHERE untuk menentukan baris mana yang akan diubah. Tanpa WHERE (pilihan A), SEMUA baris di tabel akan diubah — bencana di production! Pilihan C salah karena SELECT dan UPDATE adalah dua perintah terpisah, SELECT tidak melindungi UPDATE. Pilihan D salah karena ALTER TABLE adalah DDL, bukan DML, dan tidak bisa digunakan untuk mengubah nilai data."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "3.5",
+      "pertanyaan": "Perhatikan query berikut:\n\nSELECT * FROM mahasiswa\nWHERE jurusan_id IN (1, 2, 5)\n  AND email LIKE '%@gmail.com'\n  AND no_telepon IS NOT NULL\nORDER BY nama ASC\nLIMIT 10 OFFSET 20;\n\nApa fungsi dari LIMIT 10 OFFSET 20 dalam query tersebut?",
+      "opsi": {
+        "A": "Menampilkan 20 baris pertama dan menghapus 10 baris terakhir",
+        "B": "Menampilkan 10 baris, melewati 20 baris pertama (halaman 3)",
+        "C": "Menampilkan 20 baris, dimulai dari baris ke-10",
+        "D": "Membatasi total hasil query menjadi maksimal 20 baris"
+      },
+      "jawaban": "B",
+      "penjelasan": "LIMIT 10 OFFSET 20 artinya: lewati (skip) 20 baris pertama, lalu ambil 10 baris berikutnya. Ini adalah teknik pagination — jika setiap halaman menampilkan 10 item, maka ini menampilkan halaman ke-3. OFFSET = (halaman - 1) × limit = (3 - 1) × 10 = 20. ORDER BY nama ASC harus ada sebelum LIMIT untuk memastikan urutan data konsisten."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "3.6",
+      "pertanyaan": "Perhatikan query JOIN berikut:\n\nSELECT m.nim, m.nama, j.nama AS jurusan\nFROM mahasiswa m\nLEFT JOIN jurusan j ON m.jurusan_id = j.id;\n\nBagaimana hasil query ini untuk mahasiswa yang belum memiliki jurusan (jurusan_id = NULL)?",
+      "opsi": {
+        "A": "Baris mahasiswa tersebut tidak akan muncul dalam hasil",
+        "B": "Baris mahasiswa tetap muncul, kolom jurusan bernilai NULL",
+        "C": "Query akan menghasilkan error karena tidak ada pasangan di tabel jurusan",
+        "D": "Baris mahasiswa tetap muncul, kolom jurusan bernilai 'Belum Ditentukan'"
+      },
+      "jawaban": "B",
+      "penjelasan": "LEFT JOIN mengembalikan SEMUA baris dari tabel kiri (mahasiswa) dan baris yang cocok dari tabel kanan (jurusan). Jika tidak ada pasangan (jurusan_id NULL atau tidak ada di tabel jurusan), kolom dari tabel kanan akan bernilai NULL. Untuk menampilkan 'Belum Ditentukan' perlu menggunakan COALESCE(j.nama, 'Belum Ditentukan'). INNER JOIN akan membuat baris tersebut tidak muncul (pilihan A)."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "3.7",
+      "pertanyaan": "Perhatikan query agregasi berikut:\n\nSELECT jurusan_id, COUNT(*) AS total, AVG(ipk) AS rata_ipk\nFROM mahasiswa\nWHERE is_aktif = TRUE\nGROUP BY jurusan_id\nHAVING COUNT(*) >= 5;\n\nMengapa kondisi COUNT(*) >= 5 diletakkan di HAVING bukan di WHERE?",
+      "opsi": {
+        "A": "Karena WHERE tidak bisa menggunakan operator perbandingan >=",
+        "B": "Karena WHERE memfilter baris SEBELUM pengelompokan, sedangkan HAVING memfilter SETELAH pengelompokan",
+        "C": "Karena HAVING lebih cepat dieksekusi daripada WHERE untuk kondisi agregasi",
+        "D": "Karena WHERE hanya bisa digunakan untuk kolom dengan tipe data numerik"
+      },
+      "jawaban": "B",
+      "penjelasan": "WHERE memfilter baris individual SEBELUM proses GROUP BY — tidak bisa menggunakan fungsi agregasi seperti COUNT(), AVG(), SUM(). HAVING memfilter hasil SETELAH pengelompokan, sehingga bisa menggunakan fungsi agregasi. WHERE is_aktif = TRUE memfilter hanya mahasiswa aktif sebelum dihitung per jurusan. HAVING COUNT(*) >= 5 memfilter jurusan yang memiliki minimal 5 mahasiswa aktif setelah pengelompokan."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "3.8",
+      "pertanyaan": "Dalam sistem akademik, satu mahasiswa bisa mengambil banyak mata kuliah, dan satu mata kuliah bisa diambil banyak mahasiswa. Relasi seperti ini disebut...",
+      "opsi": {
+        "A": "One-to-One (1:1)",
+        "B": "One-to-Many (1:N)",
+        "C": "Many-to-Many (M:N)",
+        "D": "Self-Referencing"
+      },
+      "jawaban": "C",
+      "penjelasan": "Many-to-Many (M:N) adalah relasi di mana banyak baris di tabel A berhubungan dengan banyak baris di tabel B. Implementasinya membutuhkan tabel penghubung (junction table / pivot table) seperti tabel 'nilai' atau 'krs' yang memiliki Foreign Key ke kedua tabel. One-to-One (1:1) seperti mahasiswa ke detail_mahasiswa, One-to-Many (1:N) seperti jurusan ke mahasiswa, dan Self-Referencing adalah tabel yang mereferensi dirinya sendiri."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "3.9",
+      "pertanyaan": "Perhatikan kode Node.js berikut:\n\nconst [rows] = await pool.execute(\n  'SELECT * FROM mahasiswa WHERE id = ?',\n  [id]\n);\n\nApa keuntungan utama menggunakan '?' sebagai placeholder dalam query tersebut?",
+      "opsi": {
+        "A": "Membuat query lebih pendek dan mudah dibaca",
+        "B": "Mencegah SQL Injection karena nilai dikirim terpisah dari query string",
+        "C": "Memungkinkan query dieksekusi lebih cepat karena sudah dicompile sekali",
+        "D": "Otomatis mengkonversi tipe data JavaScript ke tipe data SQL yang sesuai"
+      },
+      "jawaban": "B",
+      "penjelasan": "Penggunaan '?' sebagai placeholder (prepared statement) adalah pertahanan utama terhadap SQL Injection. Nilai [id] dikirim terpisah dari query string, sehingga database memperlakukannya sebagai data murni bukan bagian dari SQL command. Jika menggunakan string concatenation seperti 'WHERE id = ' + id, penyerang bisa memasukkan '; DROP TABLE users; --' sebagai id. Prepared statement juga memungkinkan query dicompile sekali dan dieksekusi berkali-kali (pilihan C), tapi keuntungan UTAMANYA adalah keamanan dari SQL Injection."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "3.10",
+      "pertanyaan": "Dalam Sequelize, perhatikan definisi asosiasi berikut:\n\nJurusan.hasMany(Mahasiswa, { foreignKey: 'jurusan_id', as: 'mahasiswa' });\nMahasiswa.belongsTo(Jurusan, { foreignKey: 'jurusan_id', as: 'jurusan' });\n\nApa perbedaan antara hasMany dan belongsTo dalam konteks ini?",
+      "opsi": {
+        "A": "hasMany digunakan untuk relasi One-to-One, belongsTo untuk Many-to-Many",
+        "B": "hasMany menunjukkan satu jurusan punya banyak mahasiswa; belongsTo menunjukkan satu mahasiswa hanya di satu jurusan",
+        "C": "hasMany dan belongsTo adalah sinonim yang bisa digunakan secara bergantian",
+        "D": "hasMany hanya bisa digunakan dengan tabel yang memiliki Primary Key auto-increment"
+      },
+      "jawaban": "B",
+      "penjelasan": "Dalam ORM Sequelize, hasMany dan belongsTo mendefinisikan dua sisi dari relasi One-to-Many. Jurusan.hasMany(Mahasiswa) berarti satu jurusan memiliki banyak mahasiswa (sisi 'one'). Mahasiswa.belongsTo(Jurusan) berarti satu mahasiswa 'milik' satu jurusan (sisi 'many'). Kombinasi ini memungkinkan eager loading dengan include. Untuk Many-to-Many digunakan belongsToMany di kedua model dengan through (junction table)."
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 1,
+    "judul_bab": "Dasar HTML",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "1.1",
+      "pertanyaan": "HTML adalah singkatan dari...",
+      "opsi": {
+        "A": "HyperText Markup Language",
+        "B": "HyperText Making Language",
+        "C": "HighText Markup Language",
+        "D": "HyperTransfer Markup Language"
+      },
+      "jawaban": "A",
+      "penjelasan": "HTML adalah singkatan dari HyperText Markup Language — bahasa markah standar untuk membangun struktur halaman web."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "1.1",
+      "pertanyaan": "Manakah pernyataan yang BENAR tentang HTML?",
+      "opsi": {
+        "A": "HTML adalah bahasa pemrograman karena bisa membuat halaman web",
+        "B": "HTML adalah bahasa markah yang memberikan label pada konten agar browser tahu cara menampilkannya",
+        "C": "HTML bisa menjalankan logika kondisi if-else dan perulangan",
+        "D": "HTML mengurus tampilan visual seperti warna dan ukuran font"
+      },
+      "jawaban": "B",
+      "penjelasan": "HTML adalah bahasa markah (markup language), bukan bahasa pemrograman. Tidak ada logika seperti if-else atau perulangan. HTML hanya memberi label pada konten. Tampilan visual adalah tugas CSS."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "1.2",
+      "pertanyaan": "Apa fungsi dari baris <!DOCTYPE html> di bagian paling atas dokumen HTML?",
+      "opsi": {
+        "A": "Membuat judul halaman yang tampil di tab browser",
+        "B": "Mendefinisikan bahasa yang digunakan di halaman",
+        "C": "Memberitahu browser bahwa dokumen ini menggunakan HTML5 agar tidak masuk quirks mode",
+        "D": "Menghubungkan file HTML dengan file CSS eksternal"
+      },
+      "jawaban": "C",
+      "penjelasan": "<!DOCTYPE html> adalah deklarasi tipe dokumen yang memberitahu browser untuk menggunakan mode HTML5 modern. Tanpanya, browser masuk ke 'quirks mode' yang menyebabkan tampilan tidak konsisten antar browser."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "1.2",
+      "pertanyaan": "Mengapa meta tag viewport penting dalam dokumen HTML?",
+      "opsi": {
+        "A": "Agar halaman web bisa dibuka di semua browser desktop",
+        "B": "Agar halaman web tampil dengan benar di perangkat mobile dan tidak terlihat sangat kecil",
+        "C": "Untuk meningkatkan kecepatan loading halaman",
+        "D": "Untuk mendefinisikan encoding karakter seperti huruf Arab dan emoji"
+      },
+      "jawaban": "B",
+      "penjelasan": "Meta viewport dengan nilai width=device-width, initial-scale=1.0 memastikan halaman tampil sesuai lebar layar perangkat mobile. Tanpanya, browser mobile akan menampilkan versi desktop yang diperkecil sehingga teks menjadi sangat kecil."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "1.3",
+      "pertanyaan": "Perhatikan kode berikut: <img src=\"foto.jpg\" alt=\"Foto gunung\" />. Elemen img disebut void element karena...",
+      "opsi": {
+        "A": "Nilainya kosong dan tidak menampilkan apapun",
+        "B": "Tidak memiliki tag penutup dan tidak bisa memiliki konten di dalamnya",
+        "C": "Atribut alt-nya boleh dikosongkan",
+        "D": "Hanya bisa digunakan satu kali per halaman"
+      },
+      "jawaban": "B",
+      "penjelasan": "Void elements adalah elemen yang tidak memiliki tag penutup dan tidak bisa memiliki konten di dalamnya. Contoh lain: <br>, <hr>, <input>, <meta>."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "1.4",
+      "pertanyaan": "Seorang developer menulis kode: <h1>Judul Utama</h1> lalu langsung <h4>Sub Judul</h4> tanpa h2 dan h3. Apa masalah dari pendekatan ini?",
+      "opsi": {
+        "A": "Tidak ada masalah, heading boleh dipakai dalam urutan apapun",
+        "B": "Halaman akan error dan tidak bisa dibuka browser",
+        "C": "Melanggar struktur logis dokumen yang merusak aksesibilitas dan SEO",
+        "D": "Teks h4 tidak akan tampil karena melewati h2 dan h3"
+      },
+      "jawaban": "C",
+      "penjelasan": "Heading harus digunakan secara berurutan. Melompat dari h1 ke h4 merusak struktur dokumen — screen reader tidak bisa membantu pengguna navigasi dengan benar, dan mesin pencari kesulitan memahami hierarki konten."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "1.5",
+      "pertanyaan": "Manakah penulisan hyperlink yang PALING BENAR untuk membuka halaman eksternal di tab baru dengan aman?",
+      "opsi": {
+        "A": "<a href=\"https://example.com\" target=\"_blank\">Kunjungi</a>",
+        "B": "<a href=\"https://example.com\" target=\"_blank\" rel=\"noopener noreferrer\">Kunjungi</a>",
+        "C": "<a href=\"https://example.com\" open=\"new\">Kunjungi</a>",
+        "D": "<a href=\"https://example.com\" target=\"new_tab\">Kunjungi</a>"
+      },
+      "jawaban": "B",
+      "penjelasan": "target='_blank' membuka di tab baru, tapi wajib disertai rel='noopener noreferrer' sebagai langkah keamanan. Tanpanya, halaman yang dibuka di tab baru bisa mengakses dan memanipulasi tab asal melalui JavaScript."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "1.6",
+      "pertanyaan": "Jenis list HTML mana yang paling tepat digunakan untuk menampilkan langkah-langkah instalasi sebuah aplikasi?",
+      "opsi": {
+        "A": "<ul> karena lebih sederhana dan mudah dibuat",
+        "B": "<dl> karena setiap langkah punya istilah dan penjelasan",
+        "C": "<ol> karena urutan langkah-langkah tersebut sangat penting",
+        "D": "<ul> atau <ol> tidak ada bedanya untuk instruksi"
+      },
+      "jawaban": "C",
+      "penjelasan": "Ordered List (<ol>) tepat untuk langkah-langkah yang harus diikuti secara berurutan. Unordered List (<ul>) untuk daftar yang urutannya tidak penting. Description List (<dl>) untuk pasangan istilah dan definisi."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "1.8",
+      "pertanyaan": "Perhatikan kode ini: <input type=\"text\" id=\"nama\" name=\"nama\" />. Apa yang HARUS ditambahkan agar form ini aksesibel?",
+      "opsi": {
+        "A": "Atribut placeholder agar ada teks petunjuk di dalam input",
+        "B": "Atribut required agar input wajib diisi",
+        "C": "Elemen <label> yang dikaitkan dengan input ini",
+        "D": "Atribut class untuk styling dengan CSS"
+      },
+      "jawaban": "C",
+      "penjelasan": "Setiap input harus punya label yang terkait — baik dengan membungkus input di dalam <label>, atau mencocokkan atribut for pada label dengan id input. Placeholder tidak bisa menggantikan label karena menghilang saat user mulai mengetik dan tidak dibaca dengan baik oleh screen reader."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "1.10",
+      "pertanyaan": "Mana penggunaan elemen semantik HTML5 yang PALING TEPAT?",
+      "opsi": {
+        "A": "Menggunakan <section> untuk semua pembagian layout karena lebih semantik dari <div>",
+        "B": "Menggunakan <article> untuk konten posting blog yang bisa berdiri sendiri, <aside> untuk sidebar, dan <nav> untuk menu navigasi utama",
+        "C": "Menggunakan <header> hanya boleh satu kali di bagian paling atas halaman saja",
+        "D": "Mengganti semua <div> dengan <main> agar lebih semantik"
+      },
+      "jawaban": "B",
+      "penjelasan": "Pilihan B menggambarkan penggunaan semantik yang benar: article untuk konten mandiri, aside untuk konten sampingan, nav untuk navigasi. Header bisa muncul lebih dari sekali (untuk situs dan untuk artikel). Section dipakai untuk bagian tematik yang punya heading, bukan semua pembagian layout. Main hanya boleh satu per halaman."
+    }
+  ]
+}

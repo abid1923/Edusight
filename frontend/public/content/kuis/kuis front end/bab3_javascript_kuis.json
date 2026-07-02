@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "path": "Front End",
+    "bab": 3,
+    "judul_bab": "JavaScript Dasar",
+    "total_soal": 10,
+    "tipe_soal": "pilihan_ganda",
+    "jumlah_opsi": 4
+  },
+
+  "soal": [
+    {
+      "id": 1,
+      "sub_bab_referensi": "3.2",
+      "pertanyaan": "Perhatikan kode berikut:\n\nconst skor = 100;\nskor = 200;\n\nApa yang terjadi ketika kode ini dijalankan?",
+      "opsi": {
+        "A": "Nilai skor berhasil diubah menjadi 200",
+        "B": "Kode berjalan normal, skor tetap 100 karena const diabaikan",
+        "C": "TypeError: Assignment to constant variable — karena const tidak bisa di-reassign",
+        "D": "SyntaxError: const hanya bisa digunakan untuk string dan number"
+      },
+      "jawaban": "C",
+      "penjelasan": "Variabel yang dideklarasikan dengan const tidak bisa di-reassign setelah diberi nilai pertama kali. JavaScript akan melempar TypeError jika kamu mencoba mengubah nilainya. Gunakan let jika variabel perlu diubah."
+    },
+    {
+      "id": 2,
+      "sub_bab_referensi": "3.2",
+      "pertanyaan": "Apa hasil dari kode berikut?\n\nconsole.log(typeof null);",
+      "opsi": {
+        "A": "'null'",
+        "B": "'undefined'",
+        "C": "'object'",
+        "D": "'boolean'"
+      },
+      "jawaban": "C",
+      "penjelasan": "typeof null mengembalikan 'object' — ini adalah bug historis yang sudah ada sejak JavaScript pertama kali dibuat tahun 1995. Bug ini tidak bisa diperbaiki karena akan merusak jutaan website yang sudah ada. Untuk mengecek apakah sebuah nilai adalah null, gunakan nilai === null."
+    },
+    {
+      "id": 3,
+      "sub_bab_referensi": "3.3",
+      "pertanyaan": "Apa output dari kode berikut?\n\nconsole.log('5' + 3);\nconsole.log('5' - 3);",
+      "opsi": {
+        "A": "8 dan 2",
+        "B": "'53' dan 2",
+        "C": "'53' dan '2'",
+        "D": "8 dan '2'"
+      },
+      "jawaban": "B",
+      "penjelasan": "Operator + bersifat ambigu di JavaScript: jika salah satu operand adalah string, ia melakukan string concatenation bukan penjumlahan. Hasilnya '5' + 3 = '53'. Sebaliknya, operator - tidak bisa melakukan concatenation, sehingga JavaScript mengkonversi '5' menjadi number dan hasilnya 5 - 3 = 2."
+    },
+    {
+      "id": 4,
+      "sub_bab_referensi": "3.3",
+      "pertanyaan": "Dari pilihan berikut, manakah yang menghasilkan nilai true?",
+      "opsi": {
+        "A": "5 === '5'",
+        "B": "null === undefined",
+        "C": "0 === false",
+        "D": "null == undefined"
+      },
+      "jawaban": "D",
+      "penjelasan": "null == undefined menghasilkan true karena operator == melakukan type coercion — null dan undefined dianggap 'setara' secara longgar. Tapi null === undefined menghasilkan false karena === memeriksa tipe juga. Inilah mengapa selalu disarankan menggunakan === untuk menghindari hasil yang tidak terduga."
+    },
+    {
+      "id": 5,
+      "sub_bab_referensi": "3.4",
+      "pertanyaan": "Manakah nilai berikut yang bersifat TRUTHY di JavaScript?",
+      "opsi": {
+        "A": "0, '', null, undefined, NaN, false",
+        "B": "[] (array kosong) dan {} (object kosong)",
+        "C": "String '0' dan string 'false'",
+        "D": "Jawaban B dan C keduanya benar"
+      },
+      "jawaban": "D",
+      "penjelasan": "Di JavaScript, [] (array kosong), {} (object kosong), string '0', dan string 'false' semuanya adalah TRUTHY — mereka bernilai true dalam kondisi boolean. Yang FALSY hanya: false, 0, -0, '' (string kosong), null, undefined, dan NaN. Ini sering mengejutkan pemula yang mengira [] atau {} adalah falsy."
+    },
+    {
+      "id": 6,
+      "sub_bab_referensi": "3.5",
+      "pertanyaan": "Perhatikan kode berikut:\n\nfor (let i = 0; i < 5; i++) {\n  if (i === 3) continue;\n  console.log(i);\n}\n\nAngka apa saja yang akan dicetak?",
+      "opsi": {
+        "A": "0, 1, 2, 3, 4",
+        "B": "0, 1, 2",
+        "C": "0, 1, 2, 4",
+        "D": "0, 1, 2, 3"
+      },
+      "jawaban": "C",
+      "penjelasan": "Kata kunci continue melewati iterasi saat ini dan langsung melanjutkan ke iterasi berikutnya. Ketika i === 3, console.log(i) dilewati, lalu loop lanjut ke i = 4. Jika menggunakan break, loop akan berhenti total di i = 3 dan hanya mencetak 0, 1, 2."
+    },
+    {
+      "id": 7,
+      "sub_bab_referensi": "3.6",
+      "pertanyaan": "Apa perbedaan utama antara Function Declaration dan Function Expression?",
+      "opsi": {
+        "A": "Function Declaration lebih cepat dieksekusi daripada Function Expression",
+        "B": "Function Declaration bisa dipanggil sebelum didefinisikan karena hoisting, Function Expression tidak bisa",
+        "C": "Function Expression tidak bisa menerima parameter, Function Declaration bisa",
+        "D": "Keduanya identik, hanya berbeda sintaks penulisannya saja"
+      },
+      "jawaban": "B",
+      "penjelasan": "Function Declaration di-hoist ke atas scope-nya, artinya bisa dipanggil sebelum baris tempat ia ditulis. Function Expression disimpan ke variabel — variabelnya di-hoist tapi nilainya tidak, sehingga jika dipanggil sebelum baris definisinya akan menghasilkan TypeError (jika const/let) atau undefined is not a function (jika var)."
+    },
+    {
+      "id": 8,
+      "sub_bab_referensi": "3.7",
+      "pertanyaan": "Perhatikan kode berikut:\n\nconst angka = [1, 2, 3, 4, 5];\nconst hasil = angka.filter(n => n % 2 === 0).map(n => n * 10);\nconsole.log(hasil);",
+      "opsi": {
+        "A": "[10, 20, 30, 40, 50]",
+        "B": "[2, 4]",
+        "C": "[20, 40]",
+        "D": "[1, 3, 5]"
+      },
+      "jawaban": "C",
+      "penjelasan": "Kode ini menggunakan method chaining. Pertama, filter(n => n % 2 === 0) menyaring hanya angka genap: [2, 4]. Kemudian, map(n => n * 10) mengalikan setiap elemen dengan 10: [20, 40]. Array asli tidak berubah karena filter dan map menghasilkan array baru."
+    },
+    {
+      "id": 9,
+      "sub_bab_referensi": "3.8",
+      "pertanyaan": "Apa output dari kode berikut?\n\nconst user = { nama: 'Budi', kota: 'Jakarta', umur: 22 };\nconst { nama, ...sisanya } = user;\nconsole.log(sisanya);",
+      "opsi": {
+        "A": "{ nama: 'Budi', kota: 'Jakarta', umur: 22 }",
+        "B": "{ kota: 'Jakarta', umur: 22 }",
+        "C": "['Jakarta', 22]",
+        "D": "undefined"
+      },
+      "jawaban": "B",
+      "penjelasan": "Ini adalah kombinasi object destructuring dan rest operator (...). Variabel nama mengambil property 'nama' dari object user. Variabel sisanya mengumpulkan semua property yang tersisa menggunakan rest operator, menghasilkan object baru { kota: 'Jakarta', umur: 22 }. Object user asli tidak berubah."
+    },
+    {
+      "id": 10,
+      "sub_bab_referensi": "3.10",
+      "pertanyaan": "Kapan blok finally dalam try...catch...finally dijalankan?",
+      "opsi": {
+        "A": "Hanya ketika tidak ada error di blok try",
+        "B": "Hanya ketika ada error yang tertangkap di blok catch",
+        "C": "Selalu dijalankan, baik ketika try berhasil maupun ketika catch menangani error",
+        "D": "Hanya ketika ada keyword return di dalam blok try atau catch"
+      },
+      "jawaban": "C",
+      "penjelasan": "Blok finally SELALU dijalankan tanpa terkecuali — baik ketika try berhasil tanpa error, maupun ketika catch menangani sebuah error. Bahkan jika ada return di dalam try atau catch, finally tetap dijalankan sebelum fungsi benar-benar kembali. Ini membuatnya ideal untuk cleanup code seperti menyembunyikan loading spinner atau menutup koneksi database."
+    }
+  ]
+}
