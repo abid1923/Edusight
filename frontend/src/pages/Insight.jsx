@@ -535,7 +535,15 @@ const Insight = () => {
                     </a>
                   ) : (
                     <Link 
-                      to="/learning" 
+                      to={
+                        rec.path_name && rec.path_name.toLowerCase().includes('machine learning') 
+                          ? '/learning?pathId=1' 
+                          : rec.path_name && rec.path_name.toLowerCase().includes('frontend') 
+                            ? '/learning?pathId=2' 
+                            : rec.path_name && rec.path_name.toLowerCase().includes('backend') 
+                              ? '/learning?pathId=3' 
+                              : '/learning'
+                      }
                       className="text-brand-500 hover:text-brand-600 dark:text-brand-400 flex items-center font-bold"
                     >
                       <span>Mulai Belajar</span>
