@@ -1,3 +1,12 @@
+---
+title: Edusight
+emoji: 🧠
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+---
+
 # Edusight — Backend API
 
 Backend API untuk platform pembelajaran berbasis AI Edusight.

@@ -11,7 +11,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from app.database import Base, engine
 from seed import run_seed
 from seed_test_user import seed_test_user
-from seed_simulation_users import seed_simulation_users
 
 def main():
     print("=" * 60)
@@ -36,10 +35,6 @@ def main():
         # Seed testuser and researchadmin
         print("\n[*] Seeding test user and admin account...")
         seed_test_user()
-        
-        # Seed simulation users (Ardi, Siti, Budi)
-        print("\n[*] Seeding user activity simulation data...")
-        seed_simulation_users()
         
         print("\n[OK] Seeding complete!")
     except Exception as e:
